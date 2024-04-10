@@ -17,7 +17,7 @@ export const LoginPagesDoctor = () => {
           <button type="submit">Login</button>
         </form>
         <p className="flex gap-x-2 py-3 justify-between">
-          Don´t hace an account?{" "}
+          Don´t have an account?{" "}
           <a to="" className="text-sky-500">
             Go Register
           </a>{" "}
