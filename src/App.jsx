@@ -1,22 +1,16 @@
-
-import {Navbar} from './Components/Wrappers/Navbar';
-import {Footer} from './Components/Wrappers/Footer'
-import {AuditorPage} from './Views/Auditor';
-import Ejemplo from './Views/ejemplo';
-
+import { Navbar } from "./Components/Wrappers/Navbar";
+import { Footer } from "./Components/Wrappers/Footer";
+import { Homepage } from "./Views/Homepage";
+import Ejemplo from "./Views/ejemplo";
 
 function App() {
-
-  return(
-      <>
-      <Navbar/>
-      <AuditorPage/>
-      <Footer/>
-      </>
-     
-  ) 
+  return (
+    <>
+      <Navbar />
+      <Homepage />
+      <Footer />
+    </>
+  );
 }
 
-export default App
-
-
+export default App;
