@@ -1,13 +1,12 @@
 import { Navbar } from "./Components/Wrappers/Navbar";
 import { Footer } from "./Components/Wrappers/Footer";
-import { Homepage } from "./Views/Homepage";
-import Ejemplo from "./Views/ejemplo";
+import AuditorPage from "./Views/Auditor";
 
 function App() {
   return (
     <>
       <Navbar />
-      <Homepage />
+      <AuditorPage />
       <Footer />
     </>
   );
