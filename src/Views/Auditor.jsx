@@ -1,5 +1,7 @@
+import React from 'react'
 import Table from "../Components/Wrappers/Table";
 import { useForm } from "react-hook-form";
+
 
 export const AuditorPage = () => {
   return (
