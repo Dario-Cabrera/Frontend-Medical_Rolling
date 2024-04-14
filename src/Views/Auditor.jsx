@@ -1,5 +1,4 @@
 import React from 'react'
-import Auditor from '../assets/img/Auditor.jpg'
 
 export const AuditorPage = () => {
   return (

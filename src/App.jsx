@@ -1,16 +1,14 @@
 
 import {Navbar} from './Components/Wrappers/Navbar';
 import {Footer} from './Components/Wrappers/Footer'
-import {AuditorPage} from './Views/Auditor';
-import Ejemplo from './Views/ejemplo';
-
+import {ContactPage} from './Views/ContactPage';
 
 function App() {
 
   return(
       <>
       <Navbar/>
-      <AuditorPage/>
+      <ContactPage/>
       <Footer/>
       </>
      
