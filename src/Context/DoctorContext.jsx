@@ -57,6 +57,14 @@ export const DoctorProvider = ({ children }) => {
       setErrors([error.response.data.message]);
     }
   };
+ const logoutDoctor = ()=>{
+   localStorage.removeItem("Id_doctor");
+   setDoctor(null);
+   setIsAuthenticatedDoctor(false);
+ }
+
+
+
   useEffect(() => {
     async function checkLogin() {
       const dataDoctorId = localStorage.getItem("Id_doctor");
@@ -97,11 +105,13 @@ export const DoctorProvider = ({ children }) => {
     }
   }, [errors]);
 
+
   return (
     <DoctorContext.Provider
       value={{
         signup,
         signin,
+        logoutDoctor,
         loadingDoctor,
         doctor,
         isAuthenticatedDoctor,

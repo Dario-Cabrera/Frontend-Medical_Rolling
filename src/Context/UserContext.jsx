@@ -57,6 +57,13 @@ export const UserProvider = ({ children }) => {
     }
   };
 
+const logoutUser =()=>{
+  localStorage.removeItem("token");
+  setUser(null);
+  setIsAuthenticatedUser(false);
+}
+
+
   useEffect(() => {
     if (errors.length > 0) {
       const timer = setTimeout(() => {
@@ -100,7 +107,7 @@ export const UserProvider = ({ children }) => {
 
   return (
     <UserContext.Provider
-      value={{ signup, signin, loadingUser, user, isAuthenticatedUser, errors }}
+      value={{ signup, signin,logoutUser, loadingUser, user, isAuthenticatedUser, errors }}
     >
       {children}
     </UserContext.Provider>
