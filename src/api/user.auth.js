@@ -1,9 +1,15 @@
-import axios from "axios";
+import axios from "./axios";
 
-const API ="http://localhost:3001/api"
+export const registerRequestUser = (user) => axios.post(`/createuser/`, user);
 
-export const registerRequestUser = (user) => axios.post(`${API}/createuser/`, user)
+export const loginRequestUser = (user) => axios.post(`/loginuser`, user);
 
-export const loginRequestUser = (user) => axios.post(`${API}/loginuser`, user)
-
-
+export const varityTokenRequest = async (data) => {
+  // eslint-disable-next-line no-useless-catch
+  try {
+    const res = await axios.post("/verifyuser", data);
+    return res.data;
+  } catch (error) {
+    throw error;
+  }
+};

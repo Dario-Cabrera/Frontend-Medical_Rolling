@@ -1,9 +1,8 @@
-import axios from "axios";
-
-const API ="http://localhost:3001/api"
+import axios from "./axios";
 
 
 
-export const registerRequestAppointment = (appointment) => axios.post(`${API}/createappointment/`, appointment)
+
+export const registerRequestAppointment = (appointment) => axios.post(`/createappointment/`, appointment)
 
 
