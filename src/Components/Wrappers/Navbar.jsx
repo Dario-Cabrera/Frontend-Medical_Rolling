@@ -39,19 +39,19 @@ export const Navbar = () => {
             className="bg-w menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow rounded-box w-52"
           >
             <li>
-              <Link to="/about">Quienes Somos</Link>
+              <Link to="/AboutUs">Quienes Somos</Link>
             </li>
             <li>
-              <Link to="/error">Planes</Link>
+              <Link to="/contact">Planes</Link>
               <ul className="p-2 ">
                 <li>
-                  <Link to="/error">Plan Familiar</Link>
+                  <Link to="/contact">Plan Familiar</Link>
                 </li>
                 <li>
-                  <Link to="/error">Plan Joven</Link>
+                  <Link to="/contact">Plan Joven</Link>
                 </li>
                 <li>
-                  <Link to="/error">Plan Senior</Link>
+                  <Link to="/contact">Plan Senior</Link>
                 </li>
               </ul>
             </li>
@@ -139,29 +139,29 @@ export const Navbar = () => {
             )}
           </ul>
         </div>
-        {/* <NavLink to="/" className="w-16 cursor-pointer">
+        <Link to="/" className="w-16 cursor-pointer">
             <img src={Logo_MR} alt="logo" />
-          </NavLink> */}
-        <img className="w-16 cursor-pointer" src={Logo_MR} alt="logo" />
+          </Link>
+        {/* <img className="w-16 cursor-pointer" src={Logo_MR} alt="logo" /> */}
         {/* <Link className="btn btn-ghost text-xl">daisyUI</Link> */}
       </div>
       <div className="navbar-center hidden lg:flex ">
         <ul className="menu menu-horizontal px-1">
           <li>
-            <Link to="/about">Quienes Somos</Link>
+            <Link to="/AboutUs">Quienes Somos</Link>
           </li>
           <li>
             <details>
               <summary>Planes</summary>
               <ul className="p-2">
                 <li>
-                  <Link to="/error">Plan Familiar</Link>
+                  <Link to="/contact">Plan Familiar</Link>
                 </li>
                 <li>
-                  <Link to="/error">Plan Joven</Link>
+                  <Link to="/contact">Plan Joven</Link>
                 </li>
                 <li>
-                  <Link to="/error">Plan Senior</Link>
+                  <Link to="/contact">Plan Senior</Link>
                 </li>
               </ul>
             </details>

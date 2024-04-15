@@ -2,6 +2,8 @@ import React from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { Link } from "react-router-dom";
+
 
 const Carousel = () => {
   const images = [
@@ -35,7 +37,7 @@ const Carousel = () => {
                 <h1 className="mb-5 text-5xl font-bold text-w text-opacity-90 shadow-24g" style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.8)" }}>
                   Medical Rolling
                 </h1>
-                <button className="btn btn-info bg-ts hover:bg-hb hover:text-w">¡SOLICITA AHORA!</button>
+                <Link to="/contact"><button   className="btn btn-info bg-ts hover:bg-hb hover:text-w">¡SOLICITA AHORA!</button></Link>
               </div>
             </div>
           </div>
