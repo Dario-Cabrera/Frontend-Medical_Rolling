@@ -1,6 +1,9 @@
 /* eslint-disable no-useless-catch */
 import axios from "./axios";
 
+export const getDoctorsRequest = () => axios.get(`/gettingdoctors`)
+
+
 export const registerRequestDoctor = (doctor) =>
   axios.post(`/createdoctor/`, doctor);
 

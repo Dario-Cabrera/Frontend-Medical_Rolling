@@ -1,31 +1,106 @@
-import {  useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { useAppointment } from "../Context/AppointmentContext";
+import { useNavigate, useParams } from "react-router-dom";
+import { getDoctorsRequest } from "../api/doctor.auth.js";
+import { createRequestAppointment } from "../api/appointment.auth";
 
 export const AppointmentFormPage = () => {
-  const { register, handleSubmit, watch } = useForm();
+  const { register, handleSubmit, setValue, watch } = useForm();
+  const { getAppointment, updateAppointment } = useAppointment();
+  const navigate = useNavigate();
+  const params = useParams();
+  const [doctors, setDoctors] = useState([]);
+  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedTime, setSelectedTime] = useState("");
+  const token = localStorage.getItem("token");
 
-  const { appointments, createAppointment } = useAppointment();
+  useEffect(() => {
+    const loadAppointment = async () => {
+      if (params.id) {
+        const appointment = await getAppointment(params.id);
+        if (appointment) {
+          setValue("specialty", appointment.specialty);
+          setValue("doctor", appointment.doctor);
+          setValue("dateTime", appointment.dateTime);
+          // Parsear la fecha y hora para establecer los valores iniciales
+          const [date, time] = appointment.dateTime.split("T");
+          setSelectedDate(date);
+          setSelectedTime(time);
+          console.log("Estoy en loadAppointment")
+        }
+      }
+    };
+    loadAppointment();
+  }, [params.id, getAppointment, setValue]);
 
-  
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const res = await getDoctorsRequest();
+        setDoctors(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchDoctors();
+  }, []);
 
-  console.log(appointments);
+  const onSubmit = async (data) => {
+    console.log("Soy la data:",data)
+ // Verifica los valores de selectedDate y selectedTime
+ console.log("selectedDate:", selectedDate);
+ console.log("selectedTime:", selectedTime);
 
-  const selectedSpecialty = watch("specialty");
-  const selectedDoctor = watch("doctor");
-  const selectedDateTime = watch("dateTime");
+    const appointmentDate = `${selectedDate}T00:00:00Z`;
+    const appointmentTime = `${selectedDate}T${selectedTime}:00Z`;
 
-  const specialties = [
-    { id: 1, name: "Dermatología", doctors: ["Dr. Pérez", "Dra. Gómez"] },
-    { id: 2, name: "Pediatría", doctors: ["Dr. Rodríguez", "Dra. Martínez"] },
-  ];
+    if (params.id) {
+      const updateDate = await updateAppointment(params.id, {
+        ...data,
+        appointmentDate,
+        appointmentTime,
+      });
+      navigate("/appointmentsUser");
+    }  else {
+      const selectedDoctor = doctors.find(
+        (doctor) => doctor.name === data.doctor
+      );
 
-  const onSubmit = handleSubmit((data) => {
-    createAppointment(data);
-  });
+      if (!selectedDoctor) {
+        console.error("No se encontró el doctor seleccionado");
+        return;
+      }
+
+      const doctorId = selectedDoctor._id; // Obtener el ID del doctor seleccionado
+
+      const appointmentData = {
+        ...data,
+        appointmentDate,
+        appointmentTime,
+      };
+
+      try {
+        const response = await createRequestAppointment(
+          appointmentData,
+          token,
+          doctorId
+        );
+        if (response && response.data && response.data.appointmentSaved) {
+          navigate("/appointmentsUser");
+        } else {
+          console.error("Error al crear el turno:", response.data.message);
+        }
+      } catch (error) {
+        console.error("Error al crear el turno:", error);
+      }
+    }
+  };
+
   return (
     <div className="container mx-auto mt-8">
       <h2 className="text-2xl font-bold mb-4">Crear un turno médico</h2>
-      <form onSubmit={onSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-4">
           <label
             htmlFor="specialty"
@@ -39,15 +114,17 @@ export const AppointmentFormPage = () => {
             className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           >
             <option value="">Seleccionar especialidad</option>
-            {specialties.map((specialty) => (
-              <option key={specialty.id} value={specialty.name}>
-                {specialty.name}
-              </option>
-            ))}
+            {Array.from(new Set(doctors.map((doctor) => doctor.specialty))).map(
+              (specialty) => (
+                <option key={specialty} value={specialty}>
+                  {specialty}
+                </option>
+              )
+            )}
           </select>
         </div>
 
-        {selectedSpecialty && (
+        {watch("specialty") && (
           <div className="mb-4">
             <label
               htmlFor="doctor"
@@ -61,38 +138,53 @@ export const AppointmentFormPage = () => {
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             >
               <option value="">Seleccionar médico</option>
-              {specialties
-                .find((s) => s.name === selectedSpecialty)
-                ?.doctors.map((doctor, index) => (
-                  <option key={index} value={doctor}>
-                    {doctor}
+              {doctors
+                .filter((doctor) => doctor.specialty === watch("specialty"))
+                .map((doctor) => (
+                  <option key={doctor._id} value={doctor.name}>
+                    {doctor.name}
                   </option>
                 ))}
             </select>
           </div>
         )}
 
-        {selectedDoctor && (
-          <div className="mb-4">
-            <label
-              htmlFor="dateTime"
-              className="block text-sm font-medium text-gray-600"
-            >
-              Fecha y Hora del Turno
-            </label>
-            <input
-              type="datetime-local"
-              id="dateTime"
-              {...register("dateTime")}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            />
-          </div>
-        )}
+        <div className="mb-4">
+          <label
+            htmlFor="date"
+            className="block text-sm font-medium text-gray-600"
+          >
+            Fecha del Turno
+          </label>
+          <input
+            type="date"
+            id="date"
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          />
+        </div>
+
+        <div className="mb-4">
+          <label
+            htmlFor="time"
+            className="block text-sm font-medium text-gray-600"
+          >
+            Hora del Turno
+          </label>
+          <input
+            type="time"
+            id="time"
+            value={selectedTime}
+            onChange={(e) => setSelectedTime(e.target.value)}
+            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          />
+        </div>
 
         <button
           type="submit"
           className="bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition duration-300"
-          disabled={!selectedDateTime}
+          disabled={!selectedDate || !selectedTime}
         >
           Confirmar Turno
         </button>
