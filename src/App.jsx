@@ -1,27 +1,23 @@
-import React from "react";
-import { BrowserRouter as Routes, Route } from "react-router-dom";
-import { Navbar } from "./Components/Wrappers/Navbar";
-import { Footer } from "./Components/Wrappers/Footer";
-import Error404 from "./Views/ERROR404";
-import AboutUs from "./Views/AboutUs";
-import Homepage from "./Views/Homepage";
-import ContactForm from "./Views/ContactUs";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { RegisterPageUser } from "../src/Views/RegisterPageUser";
 import { RegisterPageDoctor } from "../src/Views/RegisterPageDoctor";
 import { UserProvider } from "../src/Context/UserContext";
 import { DoctorProvider } from "../src/Context/DoctorContext";
 import { LoginPagesUser } from "../src/Views/LoginPagesUser";
 import { LoginPagesDoctor } from "../src/Views/LoginPagesDoctor";
-import { AppointmentFormPage } from "./Views/AppointmentFormPage";
-import Auditor from "./Views/Auditor";
-import { ProtectedRouteUser } from "./ProtectedRouteUser";
-import { ProtectedRouteDoctor } from "./ProtectedRouteDoctor";
 import { PagesUserAppointmentManagement } from "./Views/PagesUserAppointmentManagement";
 import { PagesDoctorAppointmentManagement } from "./Views/PagesDoctorAppointmentManagement";
+import { AboutUs } from "./Views/AboutUs";
+import { Contact } from "./Views/Contact";
+import { AppointmentFormPage } from "./Views/AppointmentFormPage";
+import { PageAuditor } from "./Views/PageAuditor";
+import { ProtectedRouteUser } from "./ProtectedRouteUser";
+import { ProtectedRouteDoctor } from "./ProtectedRouteDoctor";
 import { AppointmentProvider } from "./Context/AppointmentContext";
+import { Navbar } from "./Components/Wrappers/Navbar";
 
-function App() {
+import { ErrorPage } from "./Views/ErrorPage";
+const App = () => {
   return (
     <UserProvider>
       <DoctorProvider>
@@ -29,14 +25,14 @@ function App() {
           <BrowserRouter>
             <Navbar />
             <Routes>
-              <Route path="/" element={<Homepage />} />
+              <Route path="/" element={<h1>Soy el home</h1>} />
               <Route path="/registerUser/" element={<RegisterPageUser />} />
               <Route path="/registerDoctor/" element={<RegisterPageDoctor />} />
               <Route path="/loginUser/" element={<LoginPagesUser />} />
               <Route path="/loginDoctor/" element={<LoginPagesDoctor />} />
-              <Route path="/about" element={<AboutUs />} />
-              <Route path="/contact" element={<ContactForm />} />
-              <Route path="/error" element={<Error404 />} />
+              <Route path="/AboutUs" element={<AboutUs />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/error" element={<ErrorPage />} />
 
               <Route element={<ProtectedRouteUser />}>
                 <Route
@@ -55,7 +51,7 @@ function App() {
                 <Route path="/users/:id" element={<RegisterPageUser />} />
               </Route>
               <Route element={<ProtectedRouteDoctor />}>
-                <Route path="/pageAuditor" element={<Auditor />} />
+                <Route path="/pageAuditor" element={<PageAuditor />} />
                 <Route
                   path="/appointmentsDoctor"
                   element={<PagesDoctorAppointmentManagement />}
@@ -71,12 +67,12 @@ function App() {
                 <Route path="/doctors/:id" element={<RegisterPageDoctor />} />
               </Route>
             </Routes>
-            <Footer />
           </BrowserRouter>
         </AppointmentProvider>
       </DoctorProvider>
     </UserProvider>
   );
-}
+};
+
 
 export default App;
