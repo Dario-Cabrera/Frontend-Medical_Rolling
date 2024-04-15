@@ -2,7 +2,7 @@ import { createContext, useContext, useState } from "react";
 import {
   createRequestAppointment,
   getAppointmentsRequest,
-} from "../api/appointment.auth.js";
+} from "../api/Appointmet.auth";
 
 const AppointmentContext = createContext();
 
@@ -27,7 +27,7 @@ export const AppointmentProvider = ({ children }) => {
   const getAppointments = async () => {
     try {
       const res = await getAppointmentsRequest();
-
+      console.log("Soy lo ahora estas haciendo",res)
       setAppointments(res.data);
     } catch (error) {
       console.log(error);

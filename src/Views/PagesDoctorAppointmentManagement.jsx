@@ -1,8 +1,23 @@
+import { useAppointment } from "../Context/AppointmentContext";
+import { useEffect } from "react";
+import { doctorAuth } from "../Context/DoctorContext";
+
 
 export const PagesDoctorAppointmentManagement = () => {
+  const { getAppointments, appointments  } = useAppointment();
+  const {doctor}= doctorAuth()
+
+  useEffect(() => {
+    getAppointments();
+  }, []);
+
+  if (appointments.length === 0) return <h1>No appointments</h1>;
+
+
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">GESTIÓN DE TURNOS</h1>
+      <h1 className="text-2xl font-bold mb-4">Wellcome {doctor.name}</h1>
+      <h2 className="text-2xl font-bold mb-4">GESTIÓN DE TURNOS</h2>
 
       {/* Contenedor para turnos activos y historial */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -54,3 +69,4 @@ export const PagesDoctorAppointmentManagement = () => {
   );
 };
 
+export default PagesDoctorAppointmentManagement;

@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { doctorAuth } from "../Context/DoctorContext";
-import {Link} from "react-router-dom"
+import {Link, useNavigate} from "react-router-dom"
+import { useEffect } from "react";
 
 export const LoginPagesDoctor = () => {
   const {
@@ -8,11 +9,19 @@ export const LoginPagesDoctor = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const { signin, errors: signinErrors } = doctorAuth();
+  const { signin, errors: signinErrors,isAuthenticatedDoctor } = doctorAuth();
+
+  const navigate = useNavigate();
+
   const onSubmit = handleSubmit((data) => {
     console.log(data);
     signin(data);
   });
+  useEffect(() => {
+    if(isAuthenticatedDoctor) navigate("/appointmentsDoctor")
+
+  }, [isAuthenticatedDoctor])
+  
 
   return (
     <div className="flex h-[calc(100vh-100px)] items-center justify-center">
