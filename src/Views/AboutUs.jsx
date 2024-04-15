@@ -6,7 +6,7 @@ import darioImage from '../assets/img/aboutus/darioabout.jpg';
 import fedeImage from '../assets/img/aboutus/fedeabout.jpg';
 import crisImage from '../assets/img/aboutus/crisabout.jpg';
 
-const AboutUs = () => {
+export const AboutUs = () => {
   const teamMembers = [
     {
       id: 1,
@@ -128,4 +128,3 @@ const AboutUs = () => {
   );
 };
 
-export default AboutUs;

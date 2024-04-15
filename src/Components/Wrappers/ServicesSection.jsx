@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const ServicesSection = () => {
   return (
@@ -20,7 +21,7 @@ const ServicesSection = () => {
               <div className="hero-overlay bg-opacity-60"></div>
               <div className="hero-content text-center text-neutral-content">
                 <div className="max-w-md">
-                  <button className="btn btn-info bg-ts hover:bg-hb hover:text-w text-sm md:text-xs">SANATORIOS</button>
+                <Link to="/error"><button className="btn btn-info bg-ts hover:bg-hb hover:text-w text-sm md:text-xs">SANATORIOS</button></Link>
                 </div>
               </div>
             </div>
@@ -30,7 +31,7 @@ const ServicesSection = () => {
               <div className="hero-overlay bg-opacity-60"></div>
               <div className="hero-content text-center text-neutral-content">
                 <div className="max-w-md">
-                  <button className="btn btn-info bg-ts hover:bg-hb hover:text-w text-sm md:text-xs">COMO TE ATENDIMOS?</button>
+                <Link to="/error"><button className="btn btn-info bg-ts hover:bg-hb hover:text-w text-sm md:text-xs">COMO TE ATENDIMOS?</button></Link>
                 </div>
               </div>
             </div>
@@ -40,7 +41,7 @@ const ServicesSection = () => {
               <div className="hero-overlay bg-opacity-60"></div>
               <div className="hero-content text-center text-neutral-content">
                 <div className="max-w-md">
-                  <button className="btn btn-info bg-ts hover:bg-hb hover:text-w text-sm md:text-xs">DESCARGA TU FACTURA</button>
+                <Link to="/error"><button className="btn btn-info bg-ts hover:bg-hb hover:text-w text-sm md:text-xs">DESCARGA TU FACTURA</button></Link>
                 </div>
               </div>
             </div>
@@ -50,7 +51,7 @@ const ServicesSection = () => {
               <div className="hero-overlay bg-opacity-60"></div>
               <div className="hero-content text-center text-neutral-content">
                 <div className="max-w-md">
-                  <button className="btn btn-info bg-ts hover:bg-hb hover:text-w text-md md:text-xs">AMBULANCIA</button>
+                <Link to="/error"><button className="btn btn-info bg-ts hover:bg-hb hover:text-w text-md md:text-xs">AMBULANCIA</button></Link>
                 </div>
               </div>
             </div>
@@ -60,7 +61,7 @@ const ServicesSection = () => {
               <div className="hero-overlay bg-opacity-60"></div>
               <div className="hero-content text-center text-neutral-content">
                 <div className="max-w-md">
-                  <button className="btn btn-info bg-ts hover:bg-hb hover:text-w text-sm md:text-xs">GUARDIA</button>
+                <Link to="/error"><button className="btn btn-info bg-ts hover:bg-hb hover:text-w text-sm md:text-xs">GUARDIA</button></Link>
                 </div>
               </div>
             </div>
@@ -70,7 +71,7 @@ const ServicesSection = () => {
               <div className="hero-overlay bg-opacity-60"></div>
               <div className="hero-content text-center text-neutral-content">
                 <div className="max-w-md">
-                  <button className="btn btn-info bg-ts hover:bg-hb hover:text-w text-sm md:text-xs">RECETAS</button>
+                <Link to="/error"><button className="btn btn-info bg-ts hover:bg-hb hover:text-w text-sm md:text-xs">RECETAS</button></Link>
                 </div>
               </div>
             </div>
@@ -80,7 +81,7 @@ const ServicesSection = () => {
               <div className="hero-overlay bg-opacity-60"></div>
               <div className="hero-content text-center text-neutral-content">
                 <div className="max-w-md">
-                  <button className="btn btn-info bg-ts hover:bg-hb hover:text-w text-sm md:text-xs">AUTORIZACIONES</button>
+                <Link to="/error"><button className="btn btn-info bg-ts hover:bg-hb hover:text-w text-sm md:text-xs">AUTORIZACIONES</button></Link>
                 </div>
               </div>
             </div>

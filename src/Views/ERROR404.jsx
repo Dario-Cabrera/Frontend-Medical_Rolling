@@ -1,7 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-const Error404 = () => {
+export const Error404 = () => {
   const navigate = useNavigate();
 
   const goBack = () => {
@@ -25,11 +26,11 @@ const Error404 = () => {
                 </svg>
                 <span>Volver atrás</span>
               </button>
-              <button
+              <Link to="/"><button
                 onClick={() => navigate("/home")}
                 className="w-1/2 px-5 py-2 text-sm tracking-wide text-w transition-colors duration-200 bg-hb rounded-lg shrink-0 sm:w-auto hover:bg-ts hover:text-c ">
                 Ir a Home
-              </button>
+              </button></Link>
             </div>
           </div>
           <div className="relative w-full mt-12 lg:w-1/2 lg:mt-0">
@@ -41,4 +42,3 @@ const Error404 = () => {
   );
 };
 
-export default Error404;

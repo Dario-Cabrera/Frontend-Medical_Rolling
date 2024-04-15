@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {Homepage } from "../src/Views/Homepage"
 import { RegisterPageUser } from "../src/Views/RegisterPageUser";
 import { RegisterPageDoctor } from "../src/Views/RegisterPageDoctor";
 import { UserProvider } from "../src/Context/UserContext";
@@ -8,15 +9,16 @@ import { LoginPagesDoctor } from "../src/Views/LoginPagesDoctor";
 import { PagesUserAppointmentManagement } from "./Views/PagesUserAppointmentManagement";
 import { PagesDoctorAppointmentManagement } from "./Views/PagesDoctorAppointmentManagement";
 import { AboutUs } from "./Views/AboutUs";
-import { Contact } from "./Views/Contact";
+import { ContactPage } from "./Views/ContactPage";
 import { AppointmentFormPage } from "./Views/AppointmentFormPage";
-import { PageAuditor } from "./Views/PageAuditor";
+import { AuditorPage } from "./Views/Auditor";
 import { ProtectedRouteUser } from "./ProtectedRouteUser";
 import { ProtectedRouteDoctor } from "./ProtectedRouteDoctor";
 import { AppointmentProvider } from "./Context/AppointmentContext";
 import { Navbar } from "./Components/Wrappers/Navbar";
+import { Footer } from "./Components/Wrappers/Footer";
+import { Error404 } from "./Views/ERROR404";
 
-import { ErrorPage } from "./Views/ErrorPage";
 const App = () => {
   return (
     <UserProvider>
@@ -25,14 +27,13 @@ const App = () => {
           <BrowserRouter>
             <Navbar />
             <Routes>
-              <Route path="/" element={<h1>Soy el home</h1>} />
+              <Route path="/" element={ <Homepage/> } />
               <Route path="/registerUser/" element={<RegisterPageUser />} />
-              <Route path="/registerDoctor/" element={<RegisterPageDoctor />} />
               <Route path="/loginUser/" element={<LoginPagesUser />} />
               <Route path="/loginDoctor/" element={<LoginPagesDoctor />} />
               <Route path="/AboutUs" element={<AboutUs />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/error" element={<ErrorPage />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/error" element={<Error404 />} />
 
               <Route element={<ProtectedRouteUser />}>
                 <Route
@@ -51,7 +52,8 @@ const App = () => {
                 <Route path="/users/:id" element={<RegisterPageUser />} />
               </Route>
               <Route element={<ProtectedRouteDoctor />}>
-                <Route path="/pageAuditor" element={<PageAuditor />} />
+                <Route path="/pageAuditor" element={<AuditorPage />} />
+                <Route path="/registerDoctor/" element={<RegisterPageDoctor />} />
                 <Route
                   path="/appointmentsDoctor"
                   element={<PagesDoctorAppointmentManagement />}
@@ -67,6 +69,7 @@ const App = () => {
                 <Route path="/doctors/:id" element={<RegisterPageDoctor />} />
               </Route>
             </Routes>
+            <Footer />
           </BrowserRouter>
         </AppointmentProvider>
       </DoctorProvider>
