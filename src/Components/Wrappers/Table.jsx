@@ -1,23 +1,223 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import eliminar from "../../assets/img/trash and edit/eliminar.png";
 import lapiz from "../../assets/img/trash and edit/lapiz.png";
 import estrellavacia from "../../assets/img/fijar/estrellavacia.png";
 import estrellallena from "../../assets/img/fijar/estrellallena.png";
 import { Formik, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import axios from "axios";
 
 const Table = () => {
+  // ----CRUD----
 
+  // ----GET USERS----
+
+  const [usuarios, setUsuarios] = useState([]);
+
+  // Función para obtener los usuarios desde el backend
+  async function obtenerUsuariosDesdeBackend() {
+    try {
+      const response = await axios.get("http://localhost:3000/users/gettingusers");
+      setUsuarios(response.data);
+      console.log(response);
+    } catch (error) {
+      console.error("Error al obtener los usuarios desde el backend:", error);
+    }
+  }
+
+  useEffect(() => {
+    // Llamar a la función para obtener los usuarios cuando el componente se monta
+    obtenerUsuariosDesdeBackend();
+  }, []);
+
+  // ----GET DOCTORS----
+
+  const [doctores, setDoctores] = useState([]);
+
+  // Función para obtener los usuarios desde el backend
+  async function obtenerDoctoresDesdeBackend() {
+    try {
+      const response = await axios.get("http://localhost:3000/doctors/gettingdoctors");
+      setDoctores(response.data);
+      console.log(response);
+    } catch (error) {
+      console.error("Error al obtener los usuarios desde el backend:", error);
+    }
+  }
+
+  useEffect(() => {
+    // Llamar a la función para obtener los usuarios cuando el componente se monta
+    obtenerDoctoresDesdeBackend();
+  }, []);
+
+  // ----GET APPOINMENTS----
+
+  const [citas, setCitas] = useState([]);
+
+  // Función para obtener los usuarios desde el backend
+  async function obtenerCitasDesdeBackend() {
+    try {
+      const response = await axios.get("http://localhost:3000/appointments/gettingappointments");
+      setCitas(response.data);
+      console.log(response);
+    } catch (error) {
+      console.error("Error al obtener los usuarios desde el backend:", error);
+    }
+  }
+
+  useEffect(() => {
+    // Llamar a la función para obtener los usuarios cuando el componente se monta
+    obtenerCitasDesdeBackend();
+  }, []);
+
+  // ----DELETE USERS----
+
+  const [userIdToDelete, setUserIdToDelete] = useState(null);
+
+  const handleCaptureUserId = (usuarioId) => {
+    setUserIdToDelete(usuarioId);
+    console.log("ID capturado:", usuarioId);
+  };
+
+  const handleDeleteUserConfirm = () => {
+    if (!userIdToDelete) {
+      console.log("No se ha capturado ningún ID para eliminar.");
+      return;
+    }
+
+    axios
+      .delete(`http://localhost:3000/users/deleteusers/${userIdToDelete}`)
+      .then((response) => {
+        console.log("Usuario eliminado con éxito:", response);
+        // Aquí puedes realizar acciones adicionales si es necesario, como mostrar un mensaje de éxito o actualizar la lista de usuarios
+      })
+      .catch((error) => {
+        console.error("Error al eliminar usuario:", error);
+        // Aquí puedes manejar el error, mostrar un mensaje de error, etc.
+      })
+      .finally(() => {
+        // Después de enviar la solicitud, ocultar el modal de confirmación y mostrar el modal de éxito
+        setShowDeleteModalUser(false);
+        setShowSuccessModalUser(true);
+        obtenerUsuariosDesdeBackend();
+      });
+  };
+
+  // ----DELETE DOCTORS----
+
+  const [doctorIdToDelete, setDoctorIdToDelete] = useState(null);
+
+  const handleCaptureDoctorId = (doctorId) => {
+    setDoctorIdToDelete(doctorId);
+    console.log("ID capturado:", doctorId);
+  };
+
+  const handleDeleteDoctorConfirm = () => {
+    if (!doctorIdToDelete) {
+      console.log("No se ha capturado ningún ID para eliminar.");
+      return;
+    }
+
+    axios
+      .delete(`http://localhost:3000/doctors/deletedoctors/${doctorIdToDelete}`)
+      .then((response) => {
+        console.log("Doctor eliminado con éxito:", response);
+        // Aquí puedes realizar acciones adicionales si es necesario, como mostrar un mensaje de éxito o actualizar la lista de usuarios
+      })
+      .catch((error) => {
+        console.error("Error al eliminar doctor:", error);
+        // Aquí puedes manejar el error, mostrar un mensaje de error, etc.
+      })
+      .finally(() => {
+        // Después de enviar la solicitud, ocultar el modal de confirmación y mostrar el modal de éxito
+        setShowDeleteModalDoctor(false);
+        setShowSuccessModalDoctor(true);
+        obtenerDoctoresDesdeBackend();
+      });
+  };
+
+  // ----DELETE APPOINMENTS----
+
+  const [citaIdToDelete, setCitaIdToDelete] = useState(null);
+
+  const handleCaptureCitaId = (citaId) => {
+    setCitaIdToDelete(citaId);
+    console.log("ID capturado:", citaId);
+  };
+
+  const handleDeleteCitaConfirm = () => {
+    if (!citaIdToDelete) {
+      console.log("No se ha capturado ningún ID para eliminar.");
+      return;
+    }
+
+    axios
+      .delete(`http://localhost:3000/appointments/deleteappointments/${citaIdToDelete}`)
+      .then((response) => {
+        console.log("Cita eliminada con éxito:", response);
+        // Aquí puedes realizar acciones adicionales si es necesario, como mostrar un mensaje de éxito o actualizar la lista de usuarios
+      })
+      .catch((error) => {
+        console.error("Error al eliminar cita:", error);
+        // Aquí puedes manejar el error, mostrar un mensaje de error, etc.
+      })
+      .finally(() => {
+        // Después de enviar la solicitud, ocultar el modal de confirmación y mostrar el modal de éxito
+        setShowDeleteModalAppoinment(false);
+        setShowSuccessModalAppoinment(true);
+        obtenerCitasDesdeBackend();
+      });
+  };
+
+  // ----UPDATE USERS----
+
+  const [userIdToUpdate, setUserIdToUpdate] = useState(null);
+
+  const handleCaptureUserIdUpdate = (usuarioId) => {
+    setUserIdToUpdate(usuarioId);
+    console.log("ID capturado:", usuarioId);
+  };
+  const [userDataToUpdate, setUserDataToUpdate] = useState(null);
+
+  // Función para obtener los datos del usuario a actualizar y guardarlos en userDataToUpdate
+  const obtenerDatosUsuario = (datos) => {
+    setUserDataToUpdate(datos);
+  };
+
+  const handleSaveChangesUserConfirm = () => {
+    if (!userIdToUpdate || !userDataToUpdate) {
+      console.log("No se ha capturado ningún ID o datos de usuario para actualizar.");
+      return;
+    }
+
+    axios
+      .put(`http://localhost:3000/users/updateusers/${userIdToUpdate}`, userDataToUpdate)
+      .then((response) => {
+        console.log("Usuario actualizado con éxito:", response);
+        // Aquí puedes realizar acciones adicionales si es necesario, como mostrar un mensaje de éxito o actualizar la lista de usuarios
+        closeEditModalUser();
+      })
+      .catch((error) => {
+        console.error("Error al actualizar usuario:", error);
+        // Aquí puedes manejar el error, mostrar un mensaje de error, etc.
+      })
+      .finally(() => {
+        // Si deseas realizar acciones adicionales después de la solicitud, puedes hacerlo aquí
+        obtenerUsuariosDesdeBackend();
+      });
+  };
+
+  // ----CRUD----
 
   // Funciones para cambiar de tabla con botones
   const [activeTab, setActiveTab] = useState("Users");
 
   // Estado para la búsqueda global
-  const [busqueda, setBusqueda] = useState('');
+  const [busqueda, setBusqueda] = useState("");
 
   // Estado para el campo de ordenamiento actual y dirección
-  const [campoOrdenActual, setCampoOrdenActual] = useState('');
-  const [direccionOrdenActual, setDireccionOrdenActual] = useState('asc');
+  const [campoOrdenActual, setCampoOrdenActual] = useState("");
+  const [direccionOrdenActual, setDireccionOrdenActual] = useState("asc");
 
   // Funciones para cambiar el estado de la estrella
   const [starFilledUsers, setStarFilledUsers] = useState(false); // Estado para controlar la estrella de Users
@@ -99,37 +299,9 @@ const Table = () => {
     estado: Yup.string().required("El estado es requerido"),
   });
 
-  //Funcion para randerizar los datos de la tabla
-  // Ejemplos de usuarios
-  const usuarios = [
-    { id: 1, dni: '12345678A', nombre: 'Juan', apellido: 'Perez', email: 'juan@example.com', provincia: 'Madrid', area: 'Medicina General', telefono: '123456789', direccion: 'Calle Principal 123', password: 'contraseña123', rol: 'Usuario' },
-    { id: 2, dni: '87654321B', nombre: 'María', apellido: 'López', email: 'maria@example.com', provincia: 'Barcelona', area: 'Pediatría', telefono: '987654321', direccion: 'Avenida Central 456', password: 'clave456', rol: 'Administrador' },
-    { id: 3, dni: '11111111C', nombre: 'Carlos', apellido: 'Martínez', email: 'carlos@example.com', provincia: 'Valencia', area: 'Dermatología', telefono: '555555555', direccion: 'Plaza Mayor 789', password: 'password789', rol: 'Usuario' }
-  ];
-
-  // Ejemplos de doctores
-  const doctores = [
-    { id: 1, dni: '98765432X', nombre: 'Dr. Maria', apellido: 'Gonzalez', especialidad: 'Pediatría', numLicencia: 'LIC12345' },
-    { id: 2, dni: '54321678Y', nombre: 'Dr. Alejandro', apellido: 'Sánchez', especialidad: 'Dermatología', numLicencia: 'LIC67890' },
-    { id: 3, dni: '12345678Z', nombre: 'Dra. Laura', apellido: 'Rodríguez', especialidad: 'Ginecología', numLicencia: 'LIC54321' }
-  ];
-
-  // Ejemplos de citas
-  const citas = [
-    { id: 1, usuario: 'Juan Perez', doctor: 'Dr. Maria Gonzalez', fecha: '2024-04-19', hora: '10:00', estado: 'Confirmada' },
-    { id: 2, usuario: 'María López', doctor: 'Dr. Alejandro Sánchez', fecha: '2024-04-20', hora: '11:30', estado: 'Pendiente' },
-    { id: 3, usuario: 'Carlos Martínez', doctor: 'Dra. Laura Rodríguez', fecha: '2024-04-21', hora: '15:45', estado: 'Cancelada' }
-  ];
-
   // Función para filtrar y ordenar los datos
   const filtrarYOrdenarDatos = (datos) => {
-    let datosFiltrados = datos.filter((fila) =>
-      Object.values(fila).some(
-        (valor) =>
-          typeof valor === 'string' &&
-          valor.toLowerCase().includes(busqueda.toLowerCase())
-      )
-    );
+    let datosFiltrados = datos.filter((fila) => Object.values(fila).some((valor) => typeof valor === "string" && valor.toLowerCase().includes(busqueda.toLowerCase())));
 
     if (campoOrdenActual) {
       datosFiltrados = datosFiltrados.sort((a, b) => {
@@ -137,10 +309,10 @@ const Table = () => {
         const valorB = b[campoOrdenActual];
 
         if (valorA < valorB) {
-          return direccionOrdenActual === 'asc' ? -1 : 1;
+          return direccionOrdenActual === "asc" ? -1 : 1;
         }
         if (valorA > valorB) {
-          return direccionOrdenActual === 'asc' ? 1 : -1;
+          return direccionOrdenActual === "asc" ? 1 : -1;
         }
         return 0;
       });
@@ -163,11 +335,11 @@ const Table = () => {
   const handleOrdenar = (campo) => {
     if (campo === campoOrdenActual) {
       // Si el campo de ordenamiento actual es el mismo, cambiar la dirección
-      setDireccionOrdenActual(direccionOrdenActual === 'asc' ? 'desc' : 'asc');
+      setDireccionOrdenActual(direccionOrdenActual === "asc" ? "desc" : "asc");
     } else {
       // Si el campo de ordenamiento es diferente, establecer nuevo campo y dirección ascendente
       setCampoOrdenActual(campo);
-      setDireccionOrdenActual('asc');
+      setDireccionOrdenActual("asc");
     }
   };
 
@@ -218,19 +390,19 @@ const Table = () => {
   const closeDropdownAndOpenCreateNewModalAppointment = () => {
     openCreateNewModalAppointment();
     closeDropdown();
-  }
+  };
 
   // Funciones para abrir y cerrar la modal Create New Doctor
   const closeDropdownAndOpenCreateNewModalDoctor = () => {
     openCreateNewModalDoctor();
     closeDropdown();
-  }
+  };
 
   // Funciones para abrir y cerrar la modal Create New User
   const closeDropdownAndOpenCreateNewModalUser = () => {
     openCreateNewModalUser();
     closeDropdown();
-  }
+  };
   // Funciones para abrir y cerrar la modal Create New Users
   const openCreateNewModalUser = () => {
     setShowCreateNewModalUser(true);
@@ -275,20 +447,12 @@ const Table = () => {
     setShowSaveChangesModalDoctor(false);
   };
   // Funciones para confirmar los cambios guardados de un User
-  const handleSaveChangesUserConfirm = () => {
-    setShowSaveChangesModalUser(true);
-  };
+  // const handleSaveChangesUserConfirm = () => {
+  //   setShowSaveChangesModalUser(true);
+  // };
 
   const handleCerrarSaveChangesUserSuccess = () => {
     setShowSaveChangesModalUser(false);
-  };
-
-  // Funciones para confirmar la eliminación de un Appoinment
-  const handleDeleteAppointmentConfirm = () => {
-    // Aquí puedes realizar la lógica para eliminar el usuario
-    // Luego, puedes mostrar el modal de éxito
-    setShowDeleteModalAppoinment(false);
-    setShowSuccessModalAppoinment(true);
   };
 
   const handleCerrarDeleteAppoinmentSucess = () => {
@@ -296,26 +460,9 @@ const Table = () => {
     setShowSuccessModalAppoinment(false);
   };
 
-
-  // Funciones para confirmar la eliminación de un Doctor
-  const handleDeleteDoctorConfirm = () => {
-    // Aquí puedes realizar la lógica para eliminar el doctor
-    // Luego, puedes mostrar el modal de éxito
-    setShowDeleteModalDoctor(false);
-    setShowSuccessModalDoctor(true); // Se cambió a true antes de false
-  };
-
   const handleCerrarDeleteDoctorSucess = () => {
     // Aquí puedes manejar la cancelación de la eliminación del doctor
     setShowSuccessModalDoctor(false);
-  };
-
-  // Funciones para confirmar la eliminación de un User
-  const handleDeleteUserConfirm = () => {
-    // Aquí puedes realizar la lógica para eliminar el usuario
-    // Luego, puedes mostrar el modal de éxito
-    setShowDeleteModalUser(false);
-    setShowSuccessModalUser(true); // Se cambió a true antes de false
   };
 
   const handleCerrarDeleteUserSucess = () => {
@@ -442,20 +589,26 @@ const Table = () => {
               <span className="font-medium">Export</span>
             </button>
             <div className="dropdown items-center">
-  <div tabIndex={0} role="button" onClick={toggleDropdown}>
-    <summary className="m-2 btn inline-flex justify-center items-center w-full sm:w-auto px-3 py-3 text-sm transition-colors duration-200 bg-ts border rounded-lg gap-x-2 sm:inline-block hover:bg-ts text-c border-c">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5 hidden sm:inline-block">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>Create New
-    </summary>
-  </div>
-  <ul tabIndex={0} className={`bg-c text-w dropdown-content z-[1] menu p-2 shadow font-sans font-medium rounded-box w-full sm:w-40 items-center ${isOpen ? 'block' : 'hidden'}`}>
-    <li className="content-center"><button onClick={closeDropdownAndOpenCreateNewModalUser}>User</button></li>
-    <li className="content-center"><button onClick={closeDropdownAndOpenCreateNewModalDoctor}>Doctor</button></li>
-    <li className="content-center"><button onClick={closeDropdownAndOpenCreateNewModalAppointment}>Appointment</button></li>
-  </ul>
-</div>
-
+              <div tabIndex={0} role="button" onClick={toggleDropdown}>
+                <summary className="m-2 btn inline-flex justify-center items-center w-full sm:w-auto px-3 py-3 text-sm transition-colors duration-200 bg-ts border rounded-lg gap-x-2 sm:inline-block hover:bg-ts text-c border-c">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5 hidden sm:inline-block">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Create New
+                </summary>
+              </div>
+              <ul tabIndex={0} className={`bg-c text-w dropdown-content z-[1] menu p-2 shadow font-sans font-medium rounded-box w-full sm:w-40 items-center ${isOpen ? "block" : "hidden"}`}>
+                <li className="content-center">
+                  <button onClick={closeDropdownAndOpenCreateNewModalUser}>User</button>
+                </li>
+                <li className="content-center">
+                  <button onClick={closeDropdownAndOpenCreateNewModalDoctor}>Doctor</button>
+                </li>
+                <li className="content-center">
+                  <button onClick={closeDropdownAndOpenCreateNewModalAppointment}>Appointment</button>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
         {/* ---Boton Export y Create New--- */}
@@ -495,79 +648,71 @@ const Table = () => {
                         <th scope="col" className="py-3.5 px-4 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">ID</span>
-                            <button onClick={() => handleOrdenar('id')} className="text-xxs text-w bg-transparent border-none focus:outline-none">
+                            <button onClick={() => handleOrdenar("id")} className="text-xxs text-w bg-transparent border-none focus:outline-none">
                               ↑↓
                             </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar('dni')} scope="col" className="py-3.5 px-4 text-sm font-medium text-center text-w relative">
+                        <th onClick={() => handleOrdenar("dni")} scope="col" className="py-3.5 px-4 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">DNI/LC/LE</span>
-                            <button onClick={() => handleOrdenar('dni')} className="text-xxs text-w bg-transparent border-none focus:outline-none">
+                            <button onClick={() => handleOrdenar("dni")} className="text-xxs text-w bg-transparent border-none focus:outline-none">
                               ↑↓
                             </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar('nombre')} scope="col" className="py-3.5 px-4 text-sm font-medium text-center text-w relative">
+                        <th onClick={() => handleOrdenar("nombre")} scope="col" className="py-3.5 px-4 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">Nombre Completo</span>
-                            <button onClick={() => handleOrdenar('nombre')} className="text-xxs text-w bg-transparent border-none focus:outline-none">
+                            <button onClick={() => handleOrdenar("nombre")} className="text-xxs text-w bg-transparent border-none focus:outline-none">
                               ↑↓
                             </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar('email')} scope="col" className="px-12 py-3.5 text-sm font-medium text-center text-w relative">
+                        <th onClick={() => handleOrdenar("email")} scope="col" className="px-12 py-3.5 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">Email</span>
-                            <button onClick={() => handleOrdenar('email')} className="text-xxs text-w bg-transparent border-none focus:outline-none">
+                            <button onClick={() => handleOrdenar("email")} className="text-xxs text-w bg-transparent border-none focus:outline-none">
                               ↑↓
                             </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar('provincia')} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
+                        <th onClick={() => handleOrdenar("provincia")} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">Provincia</span>
-                            <button onClick={() => handleOrdenar('provincia')} className="text-xxs text-w bg-transparent border-none focus:outline-none">
+                            <button onClick={() => handleOrdenar("provincia")} className="text-xxs text-w bg-transparent border-none focus:outline-none">
                               ↑↓
                             </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar('area')} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
+                        <th onClick={() => handleOrdenar("area")} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">Area</span>
-                            <button onClick={() => handleOrdenar('area')} className="text-xxs text-w bg-transparent border-none focus:outline-none">
+                            <button onClick={() => handleOrdenar("area")} className="text-xxs text-w bg-transparent border-none focus:outline-none">
                               ↑↓
                             </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar('telefono')} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
+                        <th onClick={() => handleOrdenar("telefono")} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">Telefono</span>
-                            <button onClick={() => handleOrdenar('telefono')} className="text-xxs text-w bg-transparent border-none focus:outline-none">
+                            <button onClick={() => handleOrdenar("telefono")} className="text-xxs text-w bg-transparent border-none focus:outline-none">
                               ↑↓
                             </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar('direccion')} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
+                        <th onClick={() => handleOrdenar("direccion")} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">Address</span>
-                            <button onClick={() => handleOrdenar('direccion')} className="text-xxs text-w bg-transparent border-none focus:outline-none">
+                            <button onClick={() => handleOrdenar("direccion")} className="text-xxs text-w bg-transparent border-none focus:outline-none">
                               ↑↓
                             </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar('password')} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
-                          <div className="flex items-center justify-center">
-                            <span className="mr-1">Password</span>
-                            <button onClick={() => handleOrdenar('password')} className="text-xxs text-w bg-transparent border-none focus:outline-none">
-                              ↑↓
-                            </button>
-                          </div>
-                        </th>
-                        <th onClick={() => handleOrdenar('rol')} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
+                        <th onClick={() => handleOrdenar("rol")} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">Rol</span>
-                            <button onClick={() => handleOrdenar('rol')} className="text-xxs text-w bg-transparent border-none focus:outline-none">
+                            <button onClick={() => handleOrdenar("rol")} className="text-xxs text-w bg-transparent border-none focus:outline-none">
                               ↑↓
                             </button>
                           </div>
@@ -585,29 +730,40 @@ const Table = () => {
                     <tbody className="bg-white divide-y divide-c">
                       {/* Renderizar las filas filtradas */}
                       {usuariosFiltrados.map((usuario) => (
-                        <tr key={usuario.id}>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{usuario.id}</td>
+                        <tr key={usuario._id}>
+                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{usuario._id}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{usuario.dni}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{usuario.nombre}</td>
+                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{`${usuario.name} ${usuario.lastname}`}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{usuario.email}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{usuario.provincia}</td>
+                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{usuario.province}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{usuario.area}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{usuario.telefono}</td>
+                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{usuario.phone}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{usuario.address}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{usuario.password}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{usuario.rol}</td>
+                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{usuario.isDoctor === false && usuario.isAuditor === false ? "User" : ""}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">
-                            <button onClick={openAppointmentByIdUserModal} className="px-2 py-1 text-w bg-hb hover:bg-ts hover:text-c  rounded-lg">Ver citas</button>
+                            <button onClick={openAppointmentByIdUserModal} className="px-2 py-1 text-w bg-hb hover:bg-ts hover:text-c  rounded-lg">
+                              Ver citas
+                            </button>
                           </td>
                           <td>
                             <div className="flex justify-center gap-1">
                               <button className="hover:bg-w rounded focus:outline-none focus:shadow-outline" onClick={handleStarClickUsers}>
                                 <img src={starFilledUsers ? estrellallena : estrellavacia} alt="Fijar" className="h-6 w-6" />
                               </button>
-                              <button onClick={openEditModalUser} className="hover:bg-w  rounded focus:outline-none focus:shadow-outline">
+                              <button
+                                onClick={() => {
+                                  handleCaptureUserIdUpdate(usuario._id);
+                                  openEditModalUser();
+                                }}
+                                className="hover:bg-w  rounded focus:outline-none focus:shadow-outline">
                                 <img src={lapiz} alt="Editar" className="h-6 w-6" />
                               </button>
-                              <button onClick={openDeleteModalUser} className="hover:bg-w   rounded focus:outline-none focus:shadow-outline">
+                              <button
+                                onClick={() => {
+                                  handleCaptureUserId(usuario._id);
+                                  openDeleteModalUser();
+                                }}
+                                className="hover:bg-w   rounded focus:outline-none focus:shadow-outline">
                                 <img src={eliminar} alt="Eliminar" className="h-6 w-6" />
                               </button>
                             </div>
@@ -625,66 +781,58 @@ const Table = () => {
                     {/* ---THEAD--- */}
                     <thead className="bg-c text-center">
                       <tr>
-                        <th onClick={() => handleOrdenar('id')} scope="col" className="py-3.5 px-4 text-sm font-medium text-center text-w relative">
+                        <th onClick={() => handleOrdenar("id")} scope="col" className="py-3.5 px-4 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">ID</span>
-                            <button onClick={() => handleOrdenar('id')} className="text-xxs text-ws bg-transparent border-none focus:outline-none">
+                            <button onClick={() => handleOrdenar("id")} className="text-xxs text-ws bg-transparent border-none focus:outline-none">
                               ↑↓
                             </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar('dni')} scope="col" className="py-3.5 px-4 text-sm font-medium text-center text-w relative">
+                        <th onClick={() => handleOrdenar("dni")} scope="col" className="py-3.5 px-4 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">DNI/LC/LE</span>
-                            <button onClick={() => handleOrdenar('dni')} className="text-xxs text-ws bg-transparent border-none focus:outline-none">
+                            <button onClick={() => handleOrdenar("dni")} className="text-xxs text-ws bg-transparent border-none focus:outline-none">
                               ↑↓
                             </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar('nombre_completo')} scope="col" className="py-3.5 px-4 text-sm font-medium text-center text-w relative">
+                        <th onClick={() => handleOrdenar("nombre_completo")} scope="col" className="py-3.5 px-4 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">Nombre Completo</span>
-                            <button onClick={() => handleOrdenar('nombre_completo')} className="text-xxs text-ws bg-transparent border-none focus:outline-none">
+                            <button onClick={() => handleOrdenar("nombre_completo")} className="text-xxs text-ws bg-transparent border-none focus:outline-none">
                               ↑↓
                             </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar('email')} scope="col" className="px-12 py-3.5 text-sm font-medium text-center text-w relative">
+                        <th onClick={() => handleOrdenar("email")} scope="col" className="px-12 py-3.5 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">Email</span>
-                            <button onClick={() => handleOrdenar('email')} className="text-xxs text-ws bg-transparent border-none focus:outline-none">
+                            <button onClick={() => handleOrdenar("email")} className="text-xxs text-ws bg-transparent border-none focus:outline-none">
                               ↑↓
                             </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar('password')} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
-                          <div className="flex items-center justify-center">
-                            <span className="mr-1">Password</span>
-                            <button onClick={() => handleOrdenar('password')} className="text-xxs text-ws bg-transparent border-none focus:outline-none">
-                              ↑↓
-                            </button>
-                          </div>
-                        </th>
-                        <th onClick={() => handleOrdenar('especialidad')} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
+                        <th onClick={() => handleOrdenar("especialidad")} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">Especialidad</span>
-                            <button onClick={() => handleOrdenar('especialidad')} className="text-xxs text-ws bg-transparent border-none focus:outline-none">
+                            <button onClick={() => handleOrdenar("especialidad")} className="text-xxs text-ws bg-transparent border-none focus:outline-none">
                               ↑↓
                             </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar('licencia')} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
+                        <th onClick={() => handleOrdenar("licencia")} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">Licencia</span>
-                            <button onClick={() => handleOrdenar('licencia')} className="text-xxs text-ws bg-transparent border-none focus:outline-none">
+                            <button onClick={() => handleOrdenar("licencia")} className="text-xxs text-ws bg-transparent border-none focus:outline-none">
                               ↑↓
                             </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar('rol')} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
+                        <th onClick={() => handleOrdenar("rol")} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">Rol</span>
-                            <button onClick={() => handleOrdenar('rol')} className="text-xxs text-ws bg-transparent border-none focus:outline-none">
+                            <button onClick={() => handleOrdenar("rol")} className="text-xxs text-ws bg-transparent border-none focus:outline-none">
                               ↑↓
                             </button>
                           </div>
@@ -701,17 +849,18 @@ const Table = () => {
                     {/* ---TBODY--- */}
                     <tbody className="bg-white divide-y divide-c">
                       {doctoresFiltrados.map((doctor) => (
-                        <tr key={doctor.id}>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{doctor.id}</td>
+                        <tr key={doctor._id}>
+                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{doctor._id}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{doctor.dni}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{`${doctor.nombre} ${doctor.apellido}`}</td>
+                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{`${doctor.name} ${doctor.lastname}`}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{doctor.email}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{doctor.password}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{doctor.especialidad}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{doctor.licencia}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{doctor.rol}</td>
+                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{doctor.specialty}</td>
+                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{doctor.licenceNumber}</td>
+                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{doctor.isDoctor === true && doctor.isAuditor === true ? "Auditor" : "Doctor"}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">
-                            <button onClick={openAppointmentByIdDoctorModal} className="px-2 py-1 text-w bg-hb hover:bg-ts hover:text-c  rounded-lg">Ver citas</button>
+                            <button onClick={openAppointmentByIdDoctorModal} className="px-2 py-1 text-w bg-hb hover:bg-ts hover:text-c  rounded-lg">
+                              Ver citas
+                            </button>
                           </td>
                           <td>
                             <div className="flex justify-center gap-1">
@@ -721,7 +870,12 @@ const Table = () => {
                               <button onClick={openEditModalDoctor} className="hover:bg-w rounded focus:outline-none focus:shadow-outline">
                                 <img src={lapiz} alt="Editar" className="h-6 w-6" />
                               </button>
-                              <button onClick={openDeleteModalDoctor} className="hover:bg-w  rounded focus:outline-none focus:shadow-outline">
+                              <button
+                                onClick={() => {
+                                  handleCaptureDoctorId(doctor._id);
+                                  openDeleteModalDoctor();
+                                }}
+                                className="hover:bg-w  rounded focus:outline-none focus:shadow-outline">
                                 <img src={eliminar} alt="Eliminar" className="h-6 w-6" />
                               </button>
                             </div>
@@ -739,50 +893,50 @@ const Table = () => {
                     {/* ---THEAD--- */}
                     <thead className="bg-c text-center">
                       <tr>
-                        <th onClick={() => handleOrdenar('id')} scope="col" className="py-3.5 px-4 text-sm font-medium text-center text-w relative">
+                        <th onClick={() => handleOrdenar("id")} scope="col" className="py-3.5 px-4 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">ID</span>
-                            <button onClick={() => handleOrdenar('id')} className="text-xxs text-w bg-transparent border-none focus:outline-none">
+                            <button onClick={() => handleOrdenar("id")} className="text-xxs text-w bg-transparent border-none focus:outline-none">
                               ↑↓
                             </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar('usuario')} scope="col" className="py-3.5 px-4 text-sm font-medium text-center text-w relative">
+                        <th onClick={() => handleOrdenar("usuario")} scope="col" className="py-3.5 px-4 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">User</span>
-                            <button onClick={() => handleOrdenar('usuario')} className="text-xxs text-w bg-transparent border-none focus:outline-none">
+                            <button onClick={() => handleOrdenar("usuario")} className="text-xxs text-w bg-transparent border-none focus:outline-none">
                               ↑↓
                             </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar('doctor')} scope="col" className="px-12 py-3.5 text-sm font-medium text-center text-w relative">
+                        <th onClick={() => handleOrdenar("doctor")} scope="col" className="px-12 py-3.5 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">Doctor</span>
-                            <button onClick={() => handleOrdenar('doctor')} className="text-xxs text-w bg-transparent border-none focus:outline-none">
+                            <button onClick={() => handleOrdenar("doctor")} className="text-xxs text-w bg-transparent border-none focus:outline-none">
                               ↑↓
                             </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar('fecha')} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
+                        <th onClick={() => handleOrdenar("fecha")} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">Fecha</span>
-                            <button onClick={() => handleOrdenar('fecha')} className="text-xxs text-w bg-transparent border-none focus:outline-none">
+                            <button onClick={() => handleOrdenar("fecha")} className="text-xxs text-w bg-transparent border-none focus:outline-none">
                               ↑↓
                             </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar('hora')} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
+                        <th onClick={() => handleOrdenar("hora")} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">Hora</span>
-                            <button onClick={() => handleOrdenar('hora')} className="text-xxs text-w bg-transparent border-none focus:outline-none">
+                            <button onClick={() => handleOrdenar("hora")} className="text-xxs text-w bg-transparent border-none focus:outline-none">
                               ↑↓
                             </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar('estado')} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
+                        <th onClick={() => handleOrdenar("estado")} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">Estado</span>
-                            <button onClick={() => handleOrdenar('estado')} className="text-xxs text-w bg-transparent border-none focus:outline-none">
+                            <button onClick={() => handleOrdenar("estado")} className="text-xxs text-w bg-transparent border-none focus:outline-none">
                               ↑↓
                             </button>
                           </div>
@@ -796,13 +950,16 @@ const Table = () => {
                     {/* ---TBODY--- */}
                     <tbody className="bg-white divide-y divide-c">
                       {citasFiltradas.map((cita) => (
-                        <tr key={cita.id}>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{cita.id}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{cita.usuario}</td>
+                        <tr key={cita._id}>
+                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{cita._id}</td>
+                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{cita.user}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{cita.doctor}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{cita.fecha}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{cita.hora}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{cita.estado}</td>
+                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">
+                            {" "}
+                            {cita.appointmentTime.split("T")[0]} {/* Fecha */}
+                          </td>
+                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{cita.appointmentTime.split("T")[1].split(".")[0]}</td>
+                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{cita.state === true ? "Activa" : "Inactiva"}</td>
                           <td>
                             <div className="flex justify-center gap-4">
                               <button className="hover:bg-w  rounded focus:outline-none focus:shadow-outline" onClick={handleStarClickAppointments}>
@@ -811,7 +968,12 @@ const Table = () => {
                               <button onClick={openEditModalAppointment} className="hover:bg-w rounded focus:outline-none focus:shadow-outline">
                                 <img src={lapiz} alt="Editar" className="h-6 w-6" />
                               </button>
-                              <button onClick={openDeleteModalAppointment} className="hover:bg-w  rounded focus:outline-none focus:shadow-outline">
+                              <button
+                                onClick={() => {
+                                  handleCaptureCitaId(cita._id);
+                                  openDeleteModalAppointment();
+                                }}
+                                className="hover:bg-w  rounded focus:outline-none focus:shadow-outline">
                                 <img src={eliminar} alt="Eliminar" className="h-6 w-6" />
                               </button>
                             </div>
@@ -861,16 +1023,16 @@ const Table = () => {
               <p>¿Estás seguro de que quieres eliminar este Usuario?</p>
               <div className="flex justify-center mt-4">
                 <button
-                  onClick={handleDeleteUserConfirm}
+                  onClick={() => handleDeleteUserConfirm(userIdToDelete)}
                   className="px-4 py-2 bg-red-500 text-white rounded mr-4 hover:bg-red-700"
-                // Llamar a la función para eliminar el elemento al confirmar
+                  // Llamar a la función para eliminar el elemento al confirmar
                 >
                   Sí, eliminar
                 </button>
                 <button
                   onClick={closeDeleteModalUser}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                // Llamar a la función para cerrar la modal al cancelar
+                  // Llamar a la función para cerrar la modal al cancelar
                 >
                   Cancelar
                 </button>
@@ -887,14 +1049,14 @@ const Table = () => {
                 <button
                   onClick={handleDeleteDoctorConfirm}
                   className="px-4 py-2 bg-red-500 text-white rounded mr-4 hover:bg-red-700"
-                // Llamar a la función para eliminar el elemento al confirmar
+                  // Llamar a la función para eliminar el elemento al confirmar
                 >
                   Sí, eliminar
                 </button>
                 <button
                   onClick={closeDeleteModalDoctor}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                // Llamar a la función para cerrar la modal al cancelar
+                  // Llamar a la función para cerrar la modal al cancelar
                 >
                   Cancelar
                 </button>
@@ -909,16 +1071,16 @@ const Table = () => {
               <p>¿Estás seguro de que quieres eliminar este Appointment?</p>
               <div className="flex justify-center mt-4">
                 <button
-                  onClick={handleDeleteAppointmentConfirm}
+                  onClick={handleDeleteCitaConfirm}
                   className="px-4 py-2 bg-red-500 text-white rounded mr-4 hover:bg-red-700"
-                // Llamar a la función para eliminar el elemento al confirmar
+                  // Llamar a la función para eliminar el elemento al confirmar
                 >
                   Sí, eliminar
                 </button>
                 <button
                   onClick={closeDeleteModalAppointment}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                // Llamar a la función para cerrar la modal al cancelar
+                  // Llamar a la función para cerrar la modal al cancelar
                 >
                   Cancelar
                 </button>
@@ -937,7 +1099,6 @@ const Table = () => {
                   nombre: "",
                   apellido: "",
                   email: "",
-                  password: "",
                   provincia: "",
                   direccion: "",
                   area: "",
@@ -947,8 +1108,8 @@ const Table = () => {
                 validationSchema={userValidationSchema}
                 onSubmit={(values) => {
                   console.log(values); // Aquí puedes manejar la lógica para enviar los datos del formulario
-                  closeEditModalUser()
-                  handleSaveChangesUserConfirm()
+                  handleSaveChangesUserConfirm();
+                  closeEditModalUser();
                 }}>
                 {({ handleSubmit }) => (
                   <form onSubmit={handleSubmit}>
@@ -969,10 +1130,6 @@ const Table = () => {
                       <ErrorMessage name="email" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="password" className="input-field" name="password" placeholder="Contraseña" />
-                      <ErrorMessage name="password" component="div" className="text-red-300" />
-                    </div>
-                    <div className="mb-4">
                       <Field type="text" className="input-field" name="provincia" placeholder="Provincia" />
                       <ErrorMessage name="provincia" component="div" className="text-red-300" />
                     </div>
@@ -989,7 +1146,9 @@ const Table = () => {
                       <ErrorMessage name="telefono" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <label htmlFor="rol" className="mr-6">Rol:</label>
+                      <label htmlFor="rol" className="mr-6">
+                        Rol:
+                      </label>
                       <Field as="select" className="input-field" name="rol">
                         <option value="">Selecciona un rol</option>
                         <option value="Doctor">User</option>
@@ -998,7 +1157,7 @@ const Table = () => {
                       <ErrorMessage name="rol" component="div" className="text-red-300" />
                     </div>
                     <div className="flex justify-between">
-                      <button type="submit" className="btn text-black  bg-ts hover:bg-hb hover:text-w">
+                      <button onClick={handleSaveChangesUserConfirm} type="submit" className="btn text-black  bg-ts hover:bg-hb hover:text-w">
                         Guardar Cambios
                       </button>
                       <button onClick={closeEditModalUser} className="btn text-black bg-ts hover:bg-hb hover:text-w">
@@ -1030,8 +1189,8 @@ const Table = () => {
                 validationSchema={doctorValidationSchema}
                 onSubmit={(values) => {
                   console.log(values); // Aquí puedes manejar la lógica para enviar los datos del formulario
-                  closeEditModalDoctor()
-                  handleSaveChangesDoctorConfirm()
+                  closeEditModalDoctor();
+                  handleSaveChangesDoctorConfirm();
                 }}>
                 {({ handleSubmit }) => (
                   <form onSubmit={handleSubmit}>
@@ -1064,7 +1223,9 @@ const Table = () => {
                       <ErrorMessage name="numLicencia" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <label htmlFor="rol" className="mr-6">Rol:</label>
+                      <label htmlFor="rol" className="mr-6">
+                        Rol:
+                      </label>
                       <Field as="select" className="input-field" name="rol">
                         <option value="">Selecciona un rol</option>
                         <option value="Doctor">Doctor</option>
@@ -1102,8 +1263,8 @@ const Table = () => {
                 validationSchema={appointmentValidationSchema}
                 onSubmit={(values) => {
                   console.log(values);
-                  closeEditModalAppointment()
-                  handleSaveChangesAppoinmentConfirm() // Aquí puedes manejar la lógica para enviar los datos del formulario
+                  closeEditModalAppointment();
+                  handleSaveChangesAppoinmentConfirm(); // Aquí puedes manejar la lógica para enviar los datos del formulario
                 }}>
                 {({ handleSubmit }) => (
                   <form onSubmit={handleSubmit}>
@@ -1150,7 +1311,7 @@ const Table = () => {
                 <button
                   onClick={handleCerrarDeleteUserSucess}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                // Llamar a la función para cerrar la modal de confirmación
+                  // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
                 </button>
@@ -1167,7 +1328,7 @@ const Table = () => {
                 <button
                   onClick={handleCerrarDeleteDoctorSucess}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                // Llamar a la función para cerrar la modal de confirmación
+                  // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
                 </button>
@@ -1184,7 +1345,7 @@ const Table = () => {
                 <button
                   onClick={handleCerrarDeleteAppoinmentSucess}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                // Llamar a la función para cerrar la modal de confirmación
+                  // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
                 </button>
@@ -1204,7 +1365,7 @@ const Table = () => {
                     closeEditModalUser();
                   }}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                // Llamar a la función para cerrar la modal de confirmación
+                  // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
                 </button>
@@ -1223,7 +1384,7 @@ const Table = () => {
                     closeEditModalDoctor();
                   }}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                // Llamar a la función para cerrar la modal de confirmación
+                  // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
                 </button>
@@ -1243,7 +1404,7 @@ const Table = () => {
                     closeEditModalAppointment();
                   }}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                // Llamar a la función para cerrar la modal de confirmación
+                  // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
                 </button>
@@ -1272,8 +1433,8 @@ const Table = () => {
                 validationSchema={userValidationSchema}
                 onSubmit={(values) => {
                   console.log(values); // Aquí puedes manejar la lógica para enviar los datos del formulario
-                  closeCreateNewModalUser()
-                  handleCreateNewUserConfirm()
+                  closeCreateNewModalUser();
+                  handleCreateNewUserConfirm();
                 }}>
                 {({ handleSubmit }) => (
                   <form onSubmit={handleSubmit}>
@@ -1314,7 +1475,9 @@ const Table = () => {
                       <ErrorMessage name="telefono" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <label htmlFor="rol" className="mr-6">Rol:</label>
+                      <label htmlFor="rol" className="mr-6">
+                        Rol:
+                      </label>
                       <Field as="select" className="input-field" name="rol">
                         <option value="">Selecciona un rol</option>
                         <option value="Doctor">User</option>
@@ -1355,8 +1518,8 @@ const Table = () => {
                 validationSchema={doctorValidationSchema}
                 onSubmit={(values) => {
                   console.log(values); // Aquí puedes manejar la lógica para enviar los datos del formulario
-                  closeCreateNewModalDoctor()
-                  handleCreateNewDoctorConfirm()
+                  closeCreateNewModalDoctor();
+                  handleCreateNewDoctorConfirm();
                 }}>
                 {({ handleSubmit }) => (
                   <form onSubmit={handleSubmit}>
@@ -1389,7 +1552,9 @@ const Table = () => {
                       <ErrorMessage name="numLicencia" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <label htmlFor="rol" className="mr-6">Rol:</label>
+                      <label htmlFor="rol" className="mr-6">
+                        Rol:
+                      </label>
                       <Field as="select" className="input-field" name="rol">
                         <option value="">Selecciona un rol</option>
                         <option value="Doctor">Doctor</option>
@@ -1427,8 +1592,8 @@ const Table = () => {
                 validationSchema={appointmentValidationSchema}
                 onSubmit={(values) => {
                   console.log(values);
-                  closeCreateNewModalAppointment()
-                  handleCreateNewAppoinmentConfirm() // Aquí puedes manejar la lógica para enviar los datos del formulario
+                  closeCreateNewModalAppointment();
+                  handleCreateNewAppoinmentConfirm(); // Aquí puedes manejar la lógica para enviar los datos del formulario
                 }}>
                 {({ handleSubmit }) => (
                   <form onSubmit={handleSubmit}>
@@ -1466,7 +1631,6 @@ const Table = () => {
             </div>
           </div>
         )}
-
         {showCreateNewModalUserConfirm && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={handleCerrarCreateNewUserSuccess}>
             <div className="bg-white rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
@@ -1478,7 +1642,7 @@ const Table = () => {
                     closeCreateNewModalUser();
                   }}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                // Llamar a la función para cerrar la modal de confirmación
+                  // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
                 </button>
@@ -1497,7 +1661,7 @@ const Table = () => {
                     closeCreateNewModalDoctor();
                   }}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                // Llamar a la función para cerrar la modal de confirmación
+                  // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
                 </button>
@@ -1517,7 +1681,7 @@ const Table = () => {
                     closeCreateNewModalAppointment();
                   }}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                // Llamar a la función para cerrar la modal de confirmación
+                  // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
                 </button>
@@ -1527,7 +1691,7 @@ const Table = () => {
         )}
         {/* Modal de appoinments By Id User */}
         {showAppointmentbyIdUserModal && (
-          <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={handleCerrarSaveChangesAppoinmentSuccess}>
+          <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={closeAppointmentByIdUserModal}>
             <div className="bg-white rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
               <div className="citas-contenedor max-h-80 overflow-y-auto bg-w">
                 {/* Contenedor de citas */}
@@ -1548,10 +1712,10 @@ const Table = () => {
               <div className="flex justify-center mt-4">
                 <button
                   onClick={() => {
-                    closeAppointmentByIdUserModal()
+                    closeAppointmentByIdUserModal();
                   }}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                // Llamar a la función para cerrar la modal de confirmación
+                  // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
                 </button>
@@ -1561,7 +1725,7 @@ const Table = () => {
         )}
         {/* Modal de appoinments By Id Doctor */}
         {showAppointmentbyIdDoctorModal && (
-          <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={handleCerrarSaveChangesAppoinmentSuccess}>
+          <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={closeAppointmentByIdDoctorModal}>
             <div className="bg-white rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
               <div className="citas-contenedor max-h-80 overflow-y-auto bg-w">
                 {/* Contenedor de citas */}
@@ -1582,10 +1746,10 @@ const Table = () => {
               <div className="flex justify-center mt-4">
                 <button
                   onClick={() => {
-                    closeAppointmentByIdDoctorModal()
+                    closeAppointmentByIdDoctorModal();
                   }}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                // Llamar a la función para cerrar la modal de confirmación
+                  // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
                 </button>
