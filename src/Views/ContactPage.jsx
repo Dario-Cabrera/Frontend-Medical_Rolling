@@ -18,6 +18,7 @@ export const ContactPage = () => {
           }).then(
             (result) => {
               console.log('SUCCESS!',result.text);
+              window.location.reload();
             },
             (error) => {
               console.log('FAILED...', error.text);
@@ -28,11 +29,10 @@ export const ContactPage = () => {
     console.log('Datos enviados:', 
                 document.getElementById('user_name').value,
                 document.getElementById('user_lastname').value);
-    // window.location.reload();
   }
 
   const form = useRef();
-  
+
   return (
    
     <div className="flex w-full justify-center rounded-md mt-6 mb-6">
@@ -188,14 +188,18 @@ export const ContactPage = () => {
               {errors.user_email && <span className="text-red-700">⚠️{errors.user_email.message}</span>}
             
             <div className="flex justify-center">               
-              <input type="checkbox" className="mr-3" />
+              <input type="checkbox" 
+              className="mr-3" 
+
+              />
               <label className="label-text flex place-items-center">¿Tiene Hijos?</label>
               <input 
                 name="user_children"
                 type="text" 
                 className="w-1/3 bg-white border-green-400 border-2 solid text-black px-4 py-2 my-2 rounded-md ml-6"
                 placeholder="Children"
-                {...register('children', { required: false })}
+                {...register('user_children', { required: false })}
+                
               />
             </div>
             <div className="flex place-items-center ">
@@ -253,4 +257,3 @@ export const ContactPage = () => {
     </div>
       )
     }
-

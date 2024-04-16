@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const Carousel = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -58,7 +59,7 @@ const Carousel = () => {
             <div className="p-4 bg-w rounded-b-lg text-center">
               <h2 className="text-xl font-bold mb-2 text-c">{card.title}</h2>
               <p className="text-sm mb-4 text-c">{card.description}</p>
-              <button className="btn btn-info bg-ts hover:bg-hb hover:text-w">Conocer más</button>
+              <Link to="/contact"><button className="btn btn-info bg-ts hover:bg-hb hover:text-w">Conocer más</button></Link>
             </div>
           </div>
         ))}
