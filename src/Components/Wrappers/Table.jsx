@@ -223,39 +223,37 @@ const Table = () => {
   // ----UPDATE USERS----
 
   const [userIdToUpdate, setUserIdToUpdate] = useState(null);
+  const [userData, setUserData] = useState(null);
 
   const handleCaptureUserIdUpdate = (usuarioId) => {
     setUserIdToUpdate(usuarioId);
     console.log("ID capturado:", usuarioId);
   };
-  const [userDataToUpdate, setUserDataToUpdate] = useState(null);
 
-  // Función para obtener los datos del usuario a actualizar y guardarlos en userDataToUpdate
-  const obtenerDatosUsuario = (datos) => {
-    setUserDataToUpdate(datos);
+  const handleCaptureUserData = (userData) => {
+    // Aquí guardamos los datos del usuario en el estado local o en un contexto, para luego utilizarlos al abrir la modal de edición
+    setUserData(userData);
   };
 
-  const handleSaveChangesUserConfirm = () => {
-    if (!userIdToUpdate || !userDataToUpdate) {
-      console.log("No se ha capturado ningún ID o datos de usuario para actualizar.");
-      return;
-    }
-
-    axios
-      .put(`http://localhost:3001/users/updateusers/${userIdToUpdate}`, userDataToUpdate)
-      .then((response) => {
-        console.log("Usuario actualizado con éxito:", response);
-        // Aquí puedes realizar acciones adicionales si es necesario, como mostrar un mensaje de éxito o actualizar la lista de usuarios
-        closeEditModalUser();
-      })
-      .catch((error) => {
-        console.error("Error al actualizar usuario:", error);
-        // Aquí puedes manejar el error, mostrar un mensaje de error, etc.
-      })
-      .finally(() => {
-        // Si deseas realizar acciones adicionales después de la solicitud, puedes hacerlo aquí
-        obtenerUsuariosDesdeBackend();
+  const actualizarDatosEnBackend = async (userIdToUpdate, formData) => {
+    try {
+      const response = await fetch(`http://localhost:3001/api/updateusers/${userIdToUpdate}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
       });
+
+      if (!response.ok) {
+        throw new Error('Error al enviar los datos al backend');
+      }
+
+      console.log('Datos actualizados correctamente');
+    } catch (error) {
+      console.error(error.message);
+    }
+    obtenerUsuariosDesdeBackend();
   };
 
   // ----CRUD----
@@ -294,13 +292,6 @@ const Table = () => {
 
   const userValidationSchema = Yup.object().shape({
     email: Yup.string().email("Correo electrónico inválido").required("El correo electrónico es requerido"),
-    password: Yup.string()
-      .required("La contraseña es requerida")
-      .min(8, "La contraseña debe tener al menos 8 caracteres")
-      .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-        "La contraseña debe contener al menos una letra minúscula, una letra mayúscula, un número y un carácter especial"
-      ),
     telefono: Yup.string()
       .matches(/^\d{9}$/, "El teléfono debe tener 9 dígitos")
       .required("El teléfono es requerido"),
@@ -447,9 +438,9 @@ const Table = () => {
     setShowSaveChangesModalDoctor(false);
   };
   // Funciones para confirmar los cambios guardados de un User
-  // const handleSaveChangesUserConfirm = () => {
-  //   setShowSaveChangesModalUser(true);
-  // };
+  const handleSaveChangesUserConfirm = () => {
+    setShowSaveChangesModalUser(true);
+  };
 
   const handleCerrarSaveChangesUserSuccess = () => {
     setShowSaveChangesModalUser(false);
@@ -708,6 +699,7 @@ const Table = () => {
                               <button
                                 onClick={() => {
                                   handleCaptureUserIdUpdate(usuario._id);
+                                  handleCaptureUserData(usuario)
                                   openEditModalUser();
                                 }}
                                 className="hover:bg-w  rounded focus:outline-none focus:shadow-outline">
@@ -908,14 +900,14 @@ const Table = () => {
                 <button
                   onClick={() => handleDeleteUserConfirm(userIdToDelete)}
                   className="px-4 py-2 bg-red-500 text-white rounded mr-4 hover:bg-red-700"
-                  // Llamar a la función para eliminar el elemento al confirmar
+                // Llamar a la función para eliminar el elemento al confirmar
                 >
                   Sí, eliminar
                 </button>
                 <button
                   onClick={closeDeleteModalUser}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                  // Llamar a la función para cerrar la modal al cancelar
+                // Llamar a la función para cerrar la modal al cancelar
                 >
                   Cancelar
                 </button>
@@ -932,14 +924,14 @@ const Table = () => {
                 <button
                   onClick={handleDeleteDoctorConfirm}
                   className="px-4 py-2 bg-red-500 text-white rounded mr-4 hover:bg-red-700"
-                  // Llamar a la función para eliminar el elemento al confirmar
+                // Llamar a la función para eliminar el elemento al confirmar
                 >
                   Sí, eliminar
                 </button>
                 <button
                   onClick={closeDeleteModalDoctor}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                  // Llamar a la función para cerrar la modal al cancelar
+                // Llamar a la función para cerrar la modal al cancelar
                 >
                   Cancelar
                 </button>
@@ -956,14 +948,14 @@ const Table = () => {
                 <button
                   onClick={handleDeleteCitaConfirm}
                   className="px-4 py-2 bg-red-500 text-white rounded mr-4 hover:bg-red-700"
-                  // Llamar a la función para eliminar el elemento al confirmar
+                // Llamar a la función para eliminar el elemento al confirmar
                 >
                   Sí, eliminar
                 </button>
                 <button
                   onClick={closeDeleteModalAppointment}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                  // Llamar a la función para cerrar la modal al cancelar
+                // Llamar a la función para cerrar la modal al cancelar
                 >
                   Cancelar
                 </button>
@@ -978,19 +970,51 @@ const Table = () => {
               <h1 className="text-3xl font-bold mb-6">Editar Usuario</h1>
               <Formik
                 initialValues={{
-                  dni: "",
-                  nombre: "",
-                  apellido: "",
-                  email: "",
-                  provincia: "",
-                  direccion: "",
-                  area: "",
-                  telefono: "",
-                  rol: "",
+                  dni: userData.dni || "",
+                  nombre: userData.name || "",
+                  apellido: userData.lastname || "",
+                  email: userData.email || "",
+                  provincia: userData.province || "",
+                  direccion: userData.address || "",
+                  area: userData.area || "",
+                  telefono: userData.phone || "",
+                  rol: (userData.isDoctor === false && userData.isAuditor === false) ? "User" : ""
                 }}
                 validationSchema={userValidationSchema}
                 onSubmit={(values) => {
                   console.log(values); // Aquí puedes manejar la lógica para enviar los datos del formulario
+                  // Define initial values for isDoctor and isAuditor
+                  let isDoctorValue = false;
+                  let isAuditorValue = false;
+
+                  // Check the value of the role and update isDoctor and isAuditor accordingly
+                  if (values.rol === "User") {
+                    isDoctorValue = false;
+                    isAuditorValue = false;
+                  } else if (values.rol === "Doctor") {
+                    isDoctorValue = true;
+                    isAuditorValue = false;
+                  } else if (values.rol === "Auditor") {
+                    isDoctorValue = true;
+                    isAuditorValue = true;
+                  }
+
+                  // Create an object with the form values including isDoctor and isAuditor
+                  const formData = {
+                    dni: values.dni,
+                    name: values.nombre,
+                    lastname: values.apellido,
+                    email: values.email,
+                    province: values.provincia,
+                    address: values.direccion,
+                    area: values.area,
+                    phone: values.telefono,
+                    role: values.rol,
+                    isDoctor: isDoctorValue,
+                    isAuditor: isAuditorValue
+                  };
+                  console.log("soy el objeto", formData);
+                  actualizarDatosEnBackend(userIdToUpdate, formData);
                   handleSaveChangesUserConfirm();
                   closeEditModalUser();
                 }}>
@@ -1034,8 +1058,9 @@ const Table = () => {
                       </label>
                       <Field as="select" className="input-field" name="rol">
                         <option value="">Selecciona un rol</option>
-                        <option value="Doctor">User</option>
-                        <option value="Auditor">Doctor</option>
+                        <option value="User">User</option> {/* Cambia el valor de esta opción a "User" */}
+                        <option value="Doctor">Doctor</option>
+                        <option value="Auditor">Auditor</option>
                       </Field>
                       <ErrorMessage name="rol" component="div" className="text-red-300" />
                     </div>
@@ -1194,7 +1219,7 @@ const Table = () => {
                 <button
                   onClick={handleCerrarDeleteUserSucess}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                  // Llamar a la función para cerrar la modal de confirmación
+                // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
                 </button>
@@ -1211,7 +1236,7 @@ const Table = () => {
                 <button
                   onClick={handleCerrarDeleteDoctorSucess}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                  // Llamar a la función para cerrar la modal de confirmación
+                // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
                 </button>
@@ -1228,7 +1253,7 @@ const Table = () => {
                 <button
                   onClick={handleCerrarDeleteAppoinmentSucess}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                  // Llamar a la función para cerrar la modal de confirmación
+                // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
                 </button>
@@ -1248,7 +1273,7 @@ const Table = () => {
                     closeEditModalUser();
                   }}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                  // Llamar a la función para cerrar la modal de confirmación
+                // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
                 </button>
@@ -1267,7 +1292,7 @@ const Table = () => {
                     closeEditModalDoctor();
                   }}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                  // Llamar a la función para cerrar la modal de confirmación
+                // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
                 </button>
@@ -1287,7 +1312,7 @@ const Table = () => {
                     closeEditModalAppointment();
                   }}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                  // Llamar a la función para cerrar la modal de confirmación
+                // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
                 </button>
@@ -1525,7 +1550,7 @@ const Table = () => {
                     closeCreateNewModalUser();
                   }}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                  // Llamar a la función para cerrar la modal de confirmación
+                // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
                 </button>
@@ -1544,7 +1569,7 @@ const Table = () => {
                     closeCreateNewModalDoctor();
                   }}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                  // Llamar a la función para cerrar la modal de confirmación
+                // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
                 </button>
@@ -1564,7 +1589,7 @@ const Table = () => {
                     closeCreateNewModalAppointment();
                   }}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                  // Llamar a la función para cerrar la modal de confirmación
+                // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
                 </button>
@@ -1598,7 +1623,7 @@ const Table = () => {
                     closeAppointmentByIdUserModal();
                   }}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                  // Llamar a la función para cerrar la modal de confirmación
+                // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
                 </button>
@@ -1632,7 +1657,7 @@ const Table = () => {
                     closeAppointmentByIdDoctorModal();
                   }}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                  // Llamar a la función para cerrar la modal de confirmación
+                // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
                 </button>
