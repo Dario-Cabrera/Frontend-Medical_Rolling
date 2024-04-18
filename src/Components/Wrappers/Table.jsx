@@ -1,23 +1,29 @@
 import { useState, useEffect } from "react";
 import eliminar from "../../assets/img/trash and edit/eliminar.png";
 import lapiz from "../../assets/img/trash and edit/lapiz.png";
-import estrellavacia from "../../assets/img/fijar/estrellavacia.png";
-import estrellallena from "../../assets/img/fijar/estrellallena.png";
 import { Formik, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 
 const Table = () => {
-  // ----CRUD----
-
-  // ----GET USERS----
-
   const [usuarios, setUsuarios] = useState([]);
+  const [doctores, setDoctores] = useState([]);
+  const [citas, setCitas] = useState([]);
+
+  // Estado para la búsqueda global
+  const [busqueda, setBusqueda] = useState("");
+
+  // ----CRUD----
+  // ----GET USERS----
+  useEffect(() => {
+    // Llamar a la función para obtener los usuarios cuando el componente se monta
+    obtenerUsuariosDesdeBackend();
+  }, []);
 
   // Función para obtener los usuarios desde el backend
   async function obtenerUsuariosDesdeBackend() {
     try {
-      const response = await axios.get("http://localhost:3000/users/gettingusers");
+      const response = await axios.get("http://localhost:3001/api/gettingusers");
       setUsuarios(response.data);
       console.log(response);
     } catch (error) {
@@ -25,19 +31,42 @@ const Table = () => {
     }
   }
 
-  useEffect(() => {
-    // Llamar a la función para obtener los usuarios cuando el componente se monta
-    obtenerUsuariosDesdeBackend();
-  }, []);
+  const filteredUsuarios = usuarios.filter((usuario) => {
+    // Combinar nombre y apellido en una sola cadena
+    const nombreCompleto = `${usuario.name} ${usuario.lastname}`.toLowerCase();
+
+    // Verificar si las propiedades están definidas antes de llamar a toLowerCase()
+    const dni = usuario.dni ? usuario.dni.toString().toLowerCase() : "";
+    const area = usuario.area ? usuario.area.toString().toLowerCase() : "";
+    const phone = usuario.phone ? usuario.phone.toString().toLowerCase() : "";
+    const address = usuario.address ? usuario.address.toString().toLowerCase() : "";
+
+    return (
+      (usuario._id && usuario._id.toLowerCase().includes(busqueda.toLowerCase())) ||
+      (dni && dni.includes(busqueda.toLowerCase())) ||
+      nombreCompleto.includes(busqueda.toLowerCase()) || // Buscar en el nombre completo
+      (usuario.email && usuario.email.toLowerCase().includes(busqueda.toLowerCase())) ||
+      (usuario.province && usuario.province.toLowerCase().includes(busqueda.toLowerCase())) ||
+      (area && area.includes(busqueda.toLowerCase())) ||
+      (phone && phone.includes(busqueda.toLowerCase())) ||
+      (usuario.address && usuario.address.toLowerCase().includes(busqueda.toLowerCase())) ||
+      (usuario.rol && usuario.rol.toLowerCase().includes(busqueda.toLowerCase()))
+
+      // Agrega más campos de usuario si es necesario
+    );
+  });
 
   // ----GET DOCTORS----
 
-  const [doctores, setDoctores] = useState([]);
+  useEffect(() => {
+    // Llamar a la función para obtener los usuarios cuando el componente se monta
+    obtenerDoctoresDesdeBackend();
+  }, []);
 
   // Función para obtener los usuarios desde el backend
   async function obtenerDoctoresDesdeBackend() {
     try {
-      const response = await axios.get("http://localhost:3000/doctors/gettingdoctors");
+      const response = await axios.get("http://localhost:3001/api/gettingdoctors");
       setDoctores(response.data);
       console.log(response);
     } catch (error) {
@@ -45,19 +74,35 @@ const Table = () => {
     }
   }
 
-  useEffect(() => {
-    // Llamar a la función para obtener los usuarios cuando el componente se monta
-    obtenerDoctoresDesdeBackend();
-  }, []);
+  const filteredDoctors = doctores.filter((doctor) => {
+    // Combinar nombre y apellido en una sola cadena
+    const nombreCompleto = `${doctor.name} ${doctor.lastname}`.toLowerCase();
+
+    // Verificar si las propiedades están definidas antes de llamar a toLowerCase()
+    const dni = doctor.dni ? doctor.dni.toString().toLowerCase() : "";
+    const licenceNumber = doctor.licenceNumber ? doctor.licenceNumber.toString() : "";
+
+    return (
+      (doctor._id && doctor._id.toLowerCase().includes(busqueda.toLowerCase())) ||
+      (dni && dni.includes(busqueda.toLowerCase())) ||
+      nombreCompleto.includes(busqueda.toLowerCase()) || // Buscar en el nombre completo
+      (doctor.email && doctor.email.toLowerCase().includes(busqueda.toLowerCase())) ||
+      (doctor.specialty && doctor.specialty.toLowerCase().includes(busqueda.toLowerCase())) ||
+      (licenceNumber && licenceNumber.includes(busqueda.toLowerCase()))
+    );
+  });
 
   // ----GET APPOINMENTS----
 
-  const [citas, setCitas] = useState([]);
+  useEffect(() => {
+    // Llamar a la función para obtener los usuarios cuando el componente se monta
+    obtenerCitasDesdeBackend();
+  }, []);
 
   // Función para obtener los usuarios desde el backend
   async function obtenerCitasDesdeBackend() {
     try {
-      const response = await axios.get("http://localhost:3000/appointments/gettingappointments");
+      const response = await axios.get("http://localhost:3001/api/gettingappointments");
       setCitas(response.data);
       console.log(response);
     } catch (error) {
@@ -65,11 +110,17 @@ const Table = () => {
     }
   }
 
-  useEffect(() => {
-    // Llamar a la función para obtener los usuarios cuando el componente se monta
-    obtenerCitasDesdeBackend();
-  }, []);
-
+  const filteredCitas = citas.filter((cita) => {
+    const searchString = busqueda.toLowerCase();
+    const stateLowerCase = typeof cita.state === "boolean" ? (cita.state ? "activa" : "inactiva") : (cita.state || "").toLowerCase();
+    return (
+      (cita._id && cita._id.toLowerCase().includes(searchString)) ||
+      (cita.user && cita.user.toLowerCase().includes(searchString)) ||
+      (cita.doctor && cita.doctor.toLowerCase().includes(searchString)) ||
+      (cita.appointmentTime && cita.appointmentTime.toLowerCase().includes(searchString)) ||
+      stateLowerCase.includes(searchString)
+    );
+  });
   // ----DELETE USERS----
 
   const [userIdToDelete, setUserIdToDelete] = useState(null);
@@ -86,7 +137,7 @@ const Table = () => {
     }
 
     axios
-      .delete(`http://localhost:3000/users/deleteusers/${userIdToDelete}`)
+      .delete(`http://localhost:3001/api/deleteusers/${userIdToDelete}`)
       .then((response) => {
         console.log("Usuario eliminado con éxito:", response);
         // Aquí puedes realizar acciones adicionales si es necesario, como mostrar un mensaje de éxito o actualizar la lista de usuarios
@@ -119,7 +170,7 @@ const Table = () => {
     }
 
     axios
-      .delete(`http://localhost:3000/doctors/deletedoctors/${doctorIdToDelete}`)
+      .delete(`http://localhost:3001/api/deletedoctors/${doctorIdToDelete}`)
       .then((response) => {
         console.log("Doctor eliminado con éxito:", response);
         // Aquí puedes realizar acciones adicionales si es necesario, como mostrar un mensaje de éxito o actualizar la lista de usuarios
@@ -152,7 +203,7 @@ const Table = () => {
     }
 
     axios
-      .delete(`http://localhost:3000/appointments/deleteappointments/${citaIdToDelete}`)
+      .delete(`http://localhost:3001/api/deleteappointments/${citaIdToDelete}`)
       .then((response) => {
         console.log("Cita eliminada con éxito:", response);
         // Aquí puedes realizar acciones adicionales si es necesario, como mostrar un mensaje de éxito o actualizar la lista de usuarios
@@ -191,7 +242,7 @@ const Table = () => {
     }
 
     axios
-      .put(`http://localhost:3000/users/updateusers/${userIdToUpdate}`, userDataToUpdate)
+      .put(`http://localhost:3001/users/updateusers/${userIdToUpdate}`, userDataToUpdate)
       .then((response) => {
         console.log("Usuario actualizado con éxito:", response);
         // Aquí puedes realizar acciones adicionales si es necesario, como mostrar un mensaje de éxito o actualizar la lista de usuarios
@@ -211,18 +262,6 @@ const Table = () => {
 
   // Funciones para cambiar de tabla con botones
   const [activeTab, setActiveTab] = useState("Users");
-
-  // Estado para la búsqueda global
-  const [busqueda, setBusqueda] = useState("");
-
-  // Estado para el campo de ordenamiento actual y dirección
-  const [campoOrdenActual, setCampoOrdenActual] = useState("");
-  const [direccionOrdenActual, setDireccionOrdenActual] = useState("asc");
-
-  // Funciones para cambiar el estado de la estrella
-  const [starFilledUsers, setStarFilledUsers] = useState(false); // Estado para controlar la estrella de Users
-  const [starFilledDoctors, setStarFilledDoctors] = useState(false); // Estado para controlar la estrella de Doctors
-  const [starFilledAppointments, setStarFilledAppointments] = useState(false); // Estado para controlar la estrella de Appointments
 
   const [showDeleteModalUser, setShowDeleteModalUser] = useState(false); // Estado para controlar la visibilidad de la modal Users
   const [showDeleteModalDoctor, setShowDeleteModalDoctor] = useState(false); // Estado para controlar la visibilidad de la modal Doctors
@@ -299,48 +338,9 @@ const Table = () => {
     estado: Yup.string().required("El estado es requerido"),
   });
 
-  // Función para filtrar y ordenar los datos
-  const filtrarYOrdenarDatos = (datos) => {
-    let datosFiltrados = datos.filter((fila) => Object.values(fila).some((valor) => typeof valor === "string" && valor.toLowerCase().includes(busqueda.toLowerCase())));
-
-    if (campoOrdenActual) {
-      datosFiltrados = datosFiltrados.sort((a, b) => {
-        const valorA = a[campoOrdenActual];
-        const valorB = b[campoOrdenActual];
-
-        if (valorA < valorB) {
-          return direccionOrdenActual === "asc" ? -1 : 1;
-        }
-        if (valorA > valorB) {
-          return direccionOrdenActual === "asc" ? 1 : -1;
-        }
-        return 0;
-      });
-    }
-
-    return datosFiltrados;
-  };
-
-  // Filtrar y ordenar los datos según la búsqueda y el orden actual
-  const usuariosFiltrados = filtrarYOrdenarDatos(usuarios);
-  const doctoresFiltrados = filtrarYOrdenarDatos(doctores);
-  const citasFiltradas = filtrarYOrdenarDatos(citas);
-
   //Funciones para manejar los filtros busqueda y de ordenamiento
   const handleBusquedaChange = (e) => {
     setBusqueda(e.target.value);
-  };
-
-  // Función para manejar el ordenamiento
-  const handleOrdenar = (campo) => {
-    if (campo === campoOrdenActual) {
-      // Si el campo de ordenamiento actual es el mismo, cambiar la dirección
-      setDireccionOrdenActual(direccionOrdenActual === "asc" ? "desc" : "asc");
-    } else {
-      // Si el campo de ordenamiento es diferente, establecer nuevo campo y dirección ascendente
-      setCampoOrdenActual(campo);
-      setDireccionOrdenActual("asc");
-    }
   };
 
   // Funciones para manejar la visibilidad de la modal de appoinments by id user
@@ -529,21 +529,6 @@ const Table = () => {
     setActiveTab(tabName);
   };
 
-  // Cambiar el estado de la estrella de vacía a llena o viceversa de User
-  const handleStarClickUsers = () => {
-    setStarFilledUsers(!starFilledUsers);
-  };
-
-  // Cambiar el estado de la estrella de vacía a llena o viceversa de Doctors
-  const handleStarClickDoctors = () => {
-    setStarFilledDoctors(!starFilledDoctors);
-  };
-
-  // Cambiar el estado de la estrella de vacía a llena o viceversa de Appointments
-  const handleStarClickAppointments = () => {
-    setStarFilledAppointments(!starFilledAppointments);
-  };
-
   // Cierrar boton Create New
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -648,73 +633,46 @@ const Table = () => {
                         <th scope="col" className="py-3.5 px-4 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">ID</span>
-                            <button onClick={() => handleOrdenar("id")} className="text-xxs text-w bg-transparent border-none focus:outline-none">
-                              ↑↓
-                            </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar("dni")} scope="col" className="py-3.5 px-4 text-sm font-medium text-center text-w relative">
+                        <th scope="col" className="py-3.5 px-4 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">DNI/LC/LE</span>
-                            <button onClick={() => handleOrdenar("dni")} className="text-xxs text-w bg-transparent border-none focus:outline-none">
-                              ↑↓
-                            </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar("nombre")} scope="col" className="py-3.5 px-4 text-sm font-medium text-center text-w relative">
+                        <th scope="col" className="py-3.5 px-4 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">Nombre Completo</span>
-                            <button onClick={() => handleOrdenar("nombre")} className="text-xxs text-w bg-transparent border-none focus:outline-none">
-                              ↑↓
-                            </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar("email")} scope="col" className="px-12 py-3.5 text-sm font-medium text-center text-w relative">
+                        <th scope="col" className="px-12 py-3.5 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">Email</span>
-                            <button onClick={() => handleOrdenar("email")} className="text-xxs text-w bg-transparent border-none focus:outline-none">
-                              ↑↓
-                            </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar("provincia")} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
+                        <th scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">Provincia</span>
-                            <button onClick={() => handleOrdenar("provincia")} className="text-xxs text-w bg-transparent border-none focus:outline-none">
-                              ↑↓
-                            </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar("area")} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
+                        <th scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">Area</span>
-                            <button onClick={() => handleOrdenar("area")} className="text-xxs text-w bg-transparent border-none focus:outline-none">
-                              ↑↓
-                            </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar("telefono")} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
+                        <th scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">Telefono</span>
-                            <button onClick={() => handleOrdenar("telefono")} className="text-xxs text-w bg-transparent border-none focus:outline-none">
-                              ↑↓
-                            </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar("direccion")} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
+                        <th scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">Address</span>
-                            <button onClick={() => handleOrdenar("direccion")} className="text-xxs text-w bg-transparent border-none focus:outline-none">
-                              ↑↓
-                            </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar("rol")} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
+                        <th scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">Rol</span>
-                            <button onClick={() => handleOrdenar("rol")} className="text-xxs text-w bg-transparent border-none focus:outline-none">
-                              ↑↓
-                            </button>
                           </div>
                         </th>
                         <th scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w">
@@ -729,7 +687,7 @@ const Table = () => {
                     {/* ---TBODY--- */}
                     <tbody className="bg-white divide-y divide-c">
                       {/* Renderizar las filas filtradas */}
-                      {usuariosFiltrados.map((usuario) => (
+                      {filteredUsuarios.map((usuario) => (
                         <tr key={usuario._id}>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{usuario._id}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{usuario.dni}</td>
@@ -747,9 +705,6 @@ const Table = () => {
                           </td>
                           <td>
                             <div className="flex justify-center gap-1">
-                              <button className="hover:bg-w rounded focus:outline-none focus:shadow-outline" onClick={handleStarClickUsers}>
-                                <img src={starFilledUsers ? estrellallena : estrellavacia} alt="Fijar" className="h-6 w-6" />
-                              </button>
                               <button
                                 onClick={() => {
                                   handleCaptureUserIdUpdate(usuario._id);
@@ -781,60 +736,39 @@ const Table = () => {
                     {/* ---THEAD--- */}
                     <thead className="bg-c text-center">
                       <tr>
-                        <th onClick={() => handleOrdenar("id")} scope="col" className="py-3.5 px-4 text-sm font-medium text-center text-w relative">
+                        <th scope="col" className="py-3.5 px-4 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">ID</span>
-                            <button onClick={() => handleOrdenar("id")} className="text-xxs text-ws bg-transparent border-none focus:outline-none">
-                              ↑↓
-                            </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar("dni")} scope="col" className="py-3.5 px-4 text-sm font-medium text-center text-w relative">
+                        <th scope="col" className="py-3.5 px-4 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">DNI/LC/LE</span>
-                            <button onClick={() => handleOrdenar("dni")} className="text-xxs text-ws bg-transparent border-none focus:outline-none">
-                              ↑↓
-                            </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar("nombre_completo")} scope="col" className="py-3.5 px-4 text-sm font-medium text-center text-w relative">
+                        <th scope="col" className="py-3.5 px-4 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">Nombre Completo</span>
-                            <button onClick={() => handleOrdenar("nombre_completo")} className="text-xxs text-ws bg-transparent border-none focus:outline-none">
-                              ↑↓
-                            </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar("email")} scope="col" className="px-12 py-3.5 text-sm font-medium text-center text-w relative">
+                        <th scope="col" className="px-12 py-3.5 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">Email</span>
-                            <button onClick={() => handleOrdenar("email")} className="text-xxs text-ws bg-transparent border-none focus:outline-none">
-                              ↑↓
-                            </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar("especialidad")} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
+                        <th scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">Especialidad</span>
-                            <button onClick={() => handleOrdenar("especialidad")} className="text-xxs text-ws bg-transparent border-none focus:outline-none">
-                              ↑↓
-                            </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar("licencia")} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
+                        <th scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">Licencia</span>
-                            <button onClick={() => handleOrdenar("licencia")} className="text-xxs text-ws bg-transparent border-none focus:outline-none">
-                              ↑↓
-                            </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar("rol")} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
+                        <th scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">Rol</span>
-                            <button onClick={() => handleOrdenar("rol")} className="text-xxs text-ws bg-transparent border-none focus:outline-none">
-                              ↑↓
-                            </button>
                           </div>
                         </th>
                         <th scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w">
@@ -848,7 +782,7 @@ const Table = () => {
                     {/* ---THEAD--- */}
                     {/* ---TBODY--- */}
                     <tbody className="bg-white divide-y divide-c">
-                      {doctoresFiltrados.map((doctor) => (
+                      {filteredDoctors.map((doctor) => (
                         <tr key={doctor._id}>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{doctor._id}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{doctor.dni}</td>
@@ -864,9 +798,6 @@ const Table = () => {
                           </td>
                           <td>
                             <div className="flex justify-center gap-1">
-                              <button className="hover:bg-w rounded focus:outline-none focus:shadow-outline" onClick={handleStarClickDoctors}>
-                                <img src={starFilledDoctors ? estrellallena : estrellavacia} alt="Fijar" className="h-6 w-6" />
-                              </button>
                               <button onClick={openEditModalDoctor} className="hover:bg-w rounded focus:outline-none focus:shadow-outline">
                                 <img src={lapiz} alt="Editar" className="h-6 w-6" />
                               </button>
@@ -893,52 +824,34 @@ const Table = () => {
                     {/* ---THEAD--- */}
                     <thead className="bg-c text-center">
                       <tr>
-                        <th onClick={() => handleOrdenar("id")} scope="col" className="py-3.5 px-4 text-sm font-medium text-center text-w relative">
+                        <th scope="col" className="py-3.5 px-4 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">ID</span>
-                            <button onClick={() => handleOrdenar("id")} className="text-xxs text-w bg-transparent border-none focus:outline-none">
-                              ↑↓
-                            </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar("usuario")} scope="col" className="py-3.5 px-4 text-sm font-medium text-center text-w relative">
+                        <th scope="col" className="py-3.5 px-4 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">User</span>
-                            <button onClick={() => handleOrdenar("usuario")} className="text-xxs text-w bg-transparent border-none focus:outline-none">
-                              ↑↓
-                            </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar("doctor")} scope="col" className="px-12 py-3.5 text-sm font-medium text-center text-w relative">
+                        <th scope="col" className="px-12 py-3.5 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">Doctor</span>
-                            <button onClick={() => handleOrdenar("doctor")} className="text-xxs text-w bg-transparent border-none focus:outline-none">
-                              ↑↓
-                            </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar("fecha")} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
+                        <th scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">Fecha</span>
-                            <button onClick={() => handleOrdenar("fecha")} className="text-xxs text-w bg-transparent border-none focus:outline-none">
-                              ↑↓
-                            </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar("hora")} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
+                        <th scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">Hora</span>
-                            <button onClick={() => handleOrdenar("hora")} className="text-xxs text-w bg-transparent border-none focus:outline-none">
-                              ↑↓
-                            </button>
                           </div>
                         </th>
-                        <th onClick={() => handleOrdenar("estado")} scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
+                        <th scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">Estado</span>
-                            <button onClick={() => handleOrdenar("estado")} className="text-xxs text-w bg-transparent border-none focus:outline-none">
-                              ↑↓
-                            </button>
                           </div>
                         </th>
                         <th scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w">
@@ -949,7 +862,7 @@ const Table = () => {
                     {/* ---THEAD--- */}
                     {/* ---TBODY--- */}
                     <tbody className="bg-white divide-y divide-c">
-                      {citasFiltradas.map((cita) => (
+                      {filteredCitas.map((cita) => (
                         <tr key={cita._id}>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{cita._id}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{cita.user}</td>
@@ -959,12 +872,9 @@ const Table = () => {
                             {cita.appointmentTime.split("T")[0]} {/* Fecha */}
                           </td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{cita.appointmentTime.split("T")[1].split(".")[0]}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{cita.state === true ? "Activa" : "Inactiva"}</td>
+                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{typeof cita.state === "string" ? cita.state.toLowerCase() : cita.state ? "Activa" : "Inactiva"}</td>
                           <td>
                             <div className="flex justify-center gap-4">
-                              <button className="hover:bg-w  rounded focus:outline-none focus:shadow-outline" onClick={handleStarClickAppointments}>
-                                <img src={starFilledAppointments ? estrellallena : estrellavacia} alt="Fijar" className="h-6 w-6" />
-                              </button>
                               <button onClick={openEditModalAppointment} className="hover:bg-w rounded focus:outline-none focus:shadow-outline">
                                 <img src={lapiz} alt="Editar" className="h-6 w-6" />
                               </button>
@@ -988,33 +898,6 @@ const Table = () => {
               </div>
             </div>
           </div>
-        </div>
-        {/* ---PAGINAS--- */}
-        <div className="mt-6 mb-6 sm:flex sm:items-center sm:justify-between">
-          <div className="text-sm text-gray-500">
-            Page <span className="font-medium text-gray-700">1 of 10</span>
-          </div>
-          {/* ---PAGINAS--- */}
-          {/* ---BOTONES PREVIOUS AND NEXT PAGE--- */}
-          <div className="flex items-center mt-4 gap-x-4 sm:mt-0">
-            <a
-              href="#"
-              className="flex items-center justify-center w-1/2 px-5 py-2 text-sm text-w font-medium transition-colors duration-200 bg-hb border rounded-md sm:w-auto gap-x-2 hover:bg-ts hover:text-c">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5 rtl:-scale-x-100">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18" />
-              </svg>
-              <span>Previous</span>
-            </a>
-            <a
-              href="#"
-              className="flex items-center justify-center w-1/2 px-5 py-2 text-sm text-w font-medium transition-colors duration-200 bg-hb border rounded-md sm:w-auto gap-x-2 hover:bg-ts hover:text-c">
-              <span>Next</span>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5 rtl:-scale-x-100">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
-              </svg>
-            </a>
-          </div>
-          {/* ---BOTONES PREVIOUS AND NEXT PAGE--- */}
         </div>
         {/* Modal de confirmación para eliminar Users */}
         {showDeleteModalUser && (
