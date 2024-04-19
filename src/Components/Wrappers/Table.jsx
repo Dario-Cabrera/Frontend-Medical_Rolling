@@ -80,7 +80,7 @@ const Table = () => {
 
     // Verificar si las propiedades están definidas antes de llamar a toLowerCase()
     const dni = doctor.dni ? doctor.dni.toString().toLowerCase() : "";
-    const licenceNumber = doctor.licenceNumber ? doctor.licenceNumber.toString() : "";
+    const LicenceNumber = doctor.LicenceNumber ? doctor.LicenceNumber.toString() : "";
 
     return (
       (doctor._id && doctor._id.toLowerCase().includes(busqueda.toLowerCase())) ||
@@ -88,7 +88,7 @@ const Table = () => {
       nombreCompleto.includes(busqueda.toLowerCase()) || // Buscar en el nombre completo
       (doctor.email && doctor.email.toLowerCase().includes(busqueda.toLowerCase())) ||
       (doctor.specialty && doctor.specialty.toLowerCase().includes(busqueda.toLowerCase())) ||
-      (licenceNumber && licenceNumber.includes(busqueda.toLowerCase()))
+      (LicenceNumber && LicenceNumber.includes(busqueda.toLowerCase()))
     );
   });
 
@@ -235,25 +235,61 @@ const Table = () => {
     setUserData(userData);
   };
 
-  const actualizarDatosEnBackend = async (userIdToUpdate, formData) => {
+  const actualizarDatosEnBackendUser = async (userIdToUpdate, formDataUser) => {
     try {
       const response = await fetch(`http://localhost:3001/api/updateusers/${userIdToUpdate}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formDataUser),
       });
 
       if (!response.ok) {
-        throw new Error('Error al enviar los datos al backend');
+        throw new Error("Error al enviar los datos al backend");
       }
 
-      console.log('Datos actualizados correctamente');
+      console.log("Datos actualizados correctamente");
     } catch (error) {
       console.error(error.message);
     }
     obtenerUsuariosDesdeBackend();
+  };
+
+  // ----UPDATE DOCTORS----
+
+  const [doctorIdToUpdate, setDoctorIdToUpdate] = useState(null);
+  const [doctorData, setDoctorData] = useState(null);
+
+  const handleCaptureDoctorIdUpdate = (doctorId) => {
+    setDoctorIdToUpdate(doctorId);
+    console.log("ID capturado:", doctorId);
+  };
+
+  const handleCaptureDoctorData = (doctorData) => {
+    // Aquí guardamos los datos del usuario en el estado local o en un contexto, para luego utilizarlos al abrir la modal de edición
+    setDoctorData(doctorData);
+  };
+
+  const actualizarDatosEnBackendDoctor = async (doctorIdToUpdate, formDataDoctor) => {
+    try {
+      const response = await fetch(`http://localhost:3001/api/updatedoctors/${doctorIdToUpdate}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formDataDoctor),
+      });
+
+      if (!response.ok) {
+        throw new Error("Error al enviar los datos al backend");
+      }
+
+      console.log("Datos actualizados correctamente");
+    } catch (error) {
+      console.error(error.message);
+    }
+    obtenerDoctoresDesdeBackend();
   };
 
   // ----CRUD----
@@ -292,10 +328,8 @@ const Table = () => {
 
   const userValidationSchema = Yup.object().shape({
     email: Yup.string().email("Correo electrónico inválido").required("El correo electrónico es requerido"),
-    telefono: Yup.string()
-      .matches(/^\d{9}$/, "El teléfono debe tener 9 dígitos")
-      .required("El teléfono es requerido"),
-    dni: Yup.string().required("El DNI es requerido"),
+    telefono: Yup.number().required("El DNI es requerido"),
+    dni: Yup.number().required("El DNI es requerido"),
     nombre: Yup.string().required("El nombre es requerido"),
     apellido: Yup.string().required("El apellido es requerido"),
     provincia: Yup.string().required("La provincia es requerida"),
@@ -306,19 +340,12 @@ const Table = () => {
 
   const doctorValidationSchema = Yup.object().shape({
     email: Yup.string().email("Correo electrónico inválido").required("El correo electrónico es requerido"),
-    password: Yup.string()
-      .required("La contraseña es requerida")
-      .min(8, "La contraseña debe tener al menos 8 caracteres")
-      .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-        "La contraseña debe contener al menos una letra minúscula, una letra mayúscula, un número y un carácter especial"
-      ),
-    dni: Yup.string().required("El DNI es requerido"),
+    DNI: Yup.number().required("El DNI es requerido"),
     nombre: Yup.string().required("El nombre es requerido"),
     apellido: Yup.string().required("El apellido es requerido"),
     rol: Yup.string().required("El rol es requerido"),
     especialidad: Yup.string().required("La especialidad es requerida"),
-    numLicencia: Yup.string().required("El número de licencia es requerido"),
+    numLicencia: Yup.number().required("El número de licencia es requerido"),
   });
 
   const appointmentValidationSchema = Yup.object().shape({
@@ -699,7 +726,7 @@ const Table = () => {
                               <button
                                 onClick={() => {
                                   handleCaptureUserIdUpdate(usuario._id);
-                                  handleCaptureUserData(usuario)
+                                  handleCaptureUserData(usuario);
                                   openEditModalUser();
                                 }}
                                 className="hover:bg-w  rounded focus:outline-none focus:shadow-outline">
@@ -781,7 +808,7 @@ const Table = () => {
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{`${doctor.name} ${doctor.lastname}`}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{doctor.email}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{doctor.specialty}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{doctor.licenceNumber}</td>
+                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{doctor.LicenceNumber}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{doctor.isDoctor === true && doctor.isAuditor === true ? "Auditor" : "Doctor"}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">
                             <button onClick={openAppointmentByIdDoctorModal} className="px-2 py-1 text-w bg-hb hover:bg-ts hover:text-c  rounded-lg">
@@ -790,7 +817,13 @@ const Table = () => {
                           </td>
                           <td>
                             <div className="flex justify-center gap-1">
-                              <button onClick={openEditModalDoctor} className="hover:bg-w rounded focus:outline-none focus:shadow-outline">
+                              <button
+                                onClick={() => {
+                                  handleCaptureDoctorIdUpdate(doctor._id);
+                                  handleCaptureDoctorData(doctor);
+                                  openEditModalDoctor();
+                                }}
+                                className="hover:bg-w rounded focus:outline-none focus:shadow-outline">
                                 <img src={lapiz} alt="Editar" className="h-6 w-6" />
                               </button>
                               <button
@@ -900,14 +933,14 @@ const Table = () => {
                 <button
                   onClick={() => handleDeleteUserConfirm(userIdToDelete)}
                   className="px-4 py-2 bg-red-500 text-white rounded mr-4 hover:bg-red-700"
-                // Llamar a la función para eliminar el elemento al confirmar
+                  // Llamar a la función para eliminar el elemento al confirmar
                 >
                   Sí, eliminar
                 </button>
                 <button
                   onClick={closeDeleteModalUser}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                // Llamar a la función para cerrar la modal al cancelar
+                  // Llamar a la función para cerrar la modal al cancelar
                 >
                   Cancelar
                 </button>
@@ -924,14 +957,14 @@ const Table = () => {
                 <button
                   onClick={handleDeleteDoctorConfirm}
                   className="px-4 py-2 bg-red-500 text-white rounded mr-4 hover:bg-red-700"
-                // Llamar a la función para eliminar el elemento al confirmar
+                  // Llamar a la función para eliminar el elemento al confirmar
                 >
                   Sí, eliminar
                 </button>
                 <button
                   onClick={closeDeleteModalDoctor}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                // Llamar a la función para cerrar la modal al cancelar
+                  // Llamar a la función para cerrar la modal al cancelar
                 >
                   Cancelar
                 </button>
@@ -948,14 +981,14 @@ const Table = () => {
                 <button
                   onClick={handleDeleteCitaConfirm}
                   className="px-4 py-2 bg-red-500 text-white rounded mr-4 hover:bg-red-700"
-                // Llamar a la función para eliminar el elemento al confirmar
+                  // Llamar a la función para eliminar el elemento al confirmar
                 >
                   Sí, eliminar
                 </button>
                 <button
                   onClick={closeDeleteModalAppointment}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                // Llamar a la función para cerrar la modal al cancelar
+                  // Llamar a la función para cerrar la modal al cancelar
                 >
                   Cancelar
                 </button>
@@ -978,7 +1011,7 @@ const Table = () => {
                   direccion: userData.address || "",
                   area: userData.area || "",
                   telefono: userData.phone || "",
-                  rol: (userData.isDoctor === false && userData.isAuditor === false) ? "User" : ""
+                  rol: userData.isDoctor === false && userData.isAuditor === false ? "User" : "",
                 }}
                 validationSchema={userValidationSchema}
                 onSubmit={(values) => {
@@ -1000,8 +1033,8 @@ const Table = () => {
                   }
 
                   // Create an object with the form values including isDoctor and isAuditor
-                  const formData = {
-                    dni: values.dni,
+                  const formDataUser = {
+                    dni: values.DNI,
                     name: values.nombre,
                     lastname: values.apellido,
                     email: values.email,
@@ -1011,18 +1044,18 @@ const Table = () => {
                     phone: values.telefono,
                     role: values.rol,
                     isDoctor: isDoctorValue,
-                    isAuditor: isAuditorValue
+                    isAuditor: isAuditorValue,
                   };
-                  console.log("soy el objeto", formData);
-                  actualizarDatosEnBackend(userIdToUpdate, formData);
+                  console.log("soy el objeto", formDataUser);
+                  actualizarDatosEnBackendUser(userIdToUpdate, formDataUser);
                   handleSaveChangesUserConfirm();
                   closeEditModalUser();
                 }}>
                 {({ handleSubmit }) => (
                   <form onSubmit={handleSubmit}>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="dni" placeholder="DNI/LC/LE/PASSPORT" />
-                      <ErrorMessage name="dni" component="div" className="text-red-300" />
+                      <Field type="number" className="input-field" name="dni" placeholder="DNI/LC/LE/PASSPORT" />
+                      <ErrorMessage name="DNI" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
                       <Field type="text" className="input-field" name="nombre" placeholder="Nombre" />
@@ -1085,26 +1118,55 @@ const Table = () => {
               <h1 className="text-3xl font-bold mb-6">Editar Doctor</h1>
               <Formik
                 initialValues={{
-                  dni: "",
-                  nombre: "",
-                  apellido: "",
-                  email: "",
-                  password: "",
-                  especialidad: "",
-                  numLicencia: "",
-                  rol: "",
+                  DNI: doctorData.dni || "",
+                  nombre: doctorData.name || "",
+                  apellido: doctorData.lastname || "",
+                  email: doctorData.email || "",
+                  especialidad: doctorData.specialty || "",
+                  numLicencia: doctorData.LicenceNumber || "",
+                  rol: doctorData.isDoctor === true && doctorData.isAuditor === false ? "Doctor" : "Auditor",
                 }}
                 validationSchema={doctorValidationSchema}
                 onSubmit={(values) => {
                   console.log(values); // Aquí puedes manejar la lógica para enviar los datos del formulario
-                  closeEditModalDoctor();
+                  // Define initial values for isDoctor and isAuditor
+                  let isDoctorValue = false;
+                  let isAuditorValue = false;
+
+                  // Check the value of the role and update isDoctor and isAuditor accordingly
+                  if (values.rol === "User") {
+                    isDoctorValue = false;
+                    isAuditorValue = false;
+                  } else if (values.rol === "Doctor") {
+                    isDoctorValue = true;
+                    isAuditorValue = false;
+                  } else if (values.rol === "Auditor") {
+                    isDoctorValue = true;
+                    isAuditorValue = true;
+                  }
+
+                  // Create an object with the form values including isDoctor and isAuditor
+                  const formDataDoctor = {
+                    dni: values.DNI,
+                    name: values.nombre,
+                    lastname: values.apellido,
+                    email: values.email,
+                    specialty: values.especialidad,
+                    LicenceNumber: values.numLicencia,
+                    role: values.rol,
+                    isDoctor: isDoctorValue,
+                    isAuditor: isAuditorValue,
+                  };
+                  console.log("soy el objeto", formDataDoctor);
+                  actualizarDatosEnBackendDoctor(doctorIdToUpdate, formDataDoctor);
                   handleSaveChangesDoctorConfirm();
+                  closeEditModalDoctor();
                 }}>
                 {({ handleSubmit }) => (
                   <form onSubmit={handleSubmit}>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="dni" placeholder="DNI/LC/LE/PASSPORT" />
-                      <ErrorMessage name="dni" component="div" className="text-red-300" />
+                      <Field type="number" className="input-field" name="DNI" placeholder="DNI/LC/LE/PASSPORT" />
+                      <ErrorMessage name="DNI" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
                       <Field type="text" className="input-field" name="nombre" placeholder="Nombre" />
@@ -1119,15 +1181,11 @@ const Table = () => {
                       <ErrorMessage name="email" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="password" className="input-field" name="password" placeholder="Contraseña" />
-                      <ErrorMessage name="password" component="div" className="text-red-300" />
-                    </div>
-                    <div className="mb-4">
                       <Field type="text" className="input-field" name="especialidad" placeholder="Especialidad" />
                       <ErrorMessage name="especialidad" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="numLicencia" placeholder="Numero de Licencia" />
+                      <Field type="number" className="input-field" name="numLicencia" placeholder="Numero de Licencia" />
                       <ErrorMessage name="numLicencia" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
@@ -1142,7 +1200,7 @@ const Table = () => {
                       <ErrorMessage name="rol" component="div" className="text-red-300" />
                     </div>
                     <div className="flex justify-between">
-                      <button type="submit" className="btn text-black  bg-ts hover:bg-hb hover:text-w">
+                      <button onClick={handleSaveChangesDoctorConfirm} type="submit" className="btn text-black  bg-ts hover:bg-hb hover:text-w">
                         Guardar Cambios
                       </button>
                       <button onClick={closeEditModalDoctor} className="btn text-black bg-ts hover:bg-hb hover:text-w">
@@ -1219,7 +1277,7 @@ const Table = () => {
                 <button
                   onClick={handleCerrarDeleteUserSucess}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                // Llamar a la función para cerrar la modal de confirmación
+                  // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
                 </button>
@@ -1236,7 +1294,7 @@ const Table = () => {
                 <button
                   onClick={handleCerrarDeleteDoctorSucess}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                // Llamar a la función para cerrar la modal de confirmación
+                  // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
                 </button>
@@ -1253,7 +1311,7 @@ const Table = () => {
                 <button
                   onClick={handleCerrarDeleteAppoinmentSucess}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                // Llamar a la función para cerrar la modal de confirmación
+                  // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
                 </button>
@@ -1273,7 +1331,7 @@ const Table = () => {
                     closeEditModalUser();
                   }}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                // Llamar a la función para cerrar la modal de confirmación
+                  // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
                 </button>
@@ -1292,7 +1350,7 @@ const Table = () => {
                     closeEditModalDoctor();
                   }}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                // Llamar a la función para cerrar la modal de confirmación
+                  // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
                 </button>
@@ -1312,7 +1370,7 @@ const Table = () => {
                     closeEditModalAppointment();
                   }}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                // Llamar a la función para cerrar la modal de confirmación
+                  // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
                 </button>
@@ -1550,7 +1608,7 @@ const Table = () => {
                     closeCreateNewModalUser();
                   }}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                // Llamar a la función para cerrar la modal de confirmación
+                  // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
                 </button>
@@ -1569,7 +1627,7 @@ const Table = () => {
                     closeCreateNewModalDoctor();
                   }}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                // Llamar a la función para cerrar la modal de confirmación
+                  // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
                 </button>
@@ -1589,7 +1647,7 @@ const Table = () => {
                     closeCreateNewModalAppointment();
                   }}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                // Llamar a la función para cerrar la modal de confirmación
+                  // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
                 </button>
@@ -1623,7 +1681,7 @@ const Table = () => {
                     closeAppointmentByIdUserModal();
                   }}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                // Llamar a la función para cerrar la modal de confirmación
+                  // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
                 </button>
@@ -1657,7 +1715,7 @@ const Table = () => {
                     closeAppointmentByIdDoctorModal();
                   }}
                   className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
-                // Llamar a la función para cerrar la modal de confirmación
+                  // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
                 </button>
