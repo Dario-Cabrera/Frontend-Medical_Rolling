@@ -39,7 +39,6 @@ const Table = () => {
     const dni = usuario.dni ? usuario.dni.toString().toLowerCase() : "";
     const area = usuario.area ? usuario.area.toString().toLowerCase() : "";
     const phone = usuario.phone ? usuario.phone.toString().toLowerCase() : "";
-    const address = usuario.address ? usuario.address.toString().toLowerCase() : "";
 
     return (
       (usuario._id && usuario._id.toLowerCase().includes(busqueda.toLowerCase())) ||
@@ -49,6 +48,7 @@ const Table = () => {
       (usuario.province && usuario.province.toLowerCase().includes(busqueda.toLowerCase())) ||
       (area && area.includes(busqueda.toLowerCase())) ||
       (phone && phone.includes(busqueda.toLowerCase())) ||
+      (usuario.address && usuario.address.toLowerCase().includes(busqueda.toLowerCase())) ||
       (usuario.address && usuario.address.toLowerCase().includes(busqueda.toLowerCase())) ||
       (usuario.rol && usuario.rol.toLowerCase().includes(busqueda.toLowerCase()))
 
@@ -329,7 +329,7 @@ const Table = () => {
   const userValidationSchema = Yup.object().shape({
     email: Yup.string().email("Correo electrónico inválido").required("El correo electrónico es requerido"),
     telefono: Yup.number().required("El DNI es requerido"),
-    dni: Yup.number().required("El DNI es requerido"),
+    DNI: Yup.number().required("El DNI es requerido"),
     nombre: Yup.string().required("El nombre es requerido"),
     apellido: Yup.string().required("El apellido es requerido"),
     provincia: Yup.string().required("La provincia es requerida"),
@@ -1003,7 +1003,7 @@ const Table = () => {
               <h1 className="text-3xl font-bold mb-6">Editar Usuario</h1>
               <Formik
                 initialValues={{
-                  dni: userData.dni || "",
+                  DNI: userData.dni || "",
                   nombre: userData.name || "",
                   apellido: userData.lastname || "",
                   email: userData.email || "",
@@ -1054,7 +1054,7 @@ const Table = () => {
                 {({ handleSubmit }) => (
                   <form onSubmit={handleSubmit}>
                     <div className="mb-4">
-                      <Field type="number" className="input-field" name="dni" placeholder="DNI/LC/LE/PASSPORT" />
+                      <Field type="number" className="input-field" name="DNI" placeholder="DNI/LC/LE/PASSPORT" />
                       <ErrorMessage name="DNI" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
