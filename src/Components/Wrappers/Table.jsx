@@ -337,20 +337,35 @@ const Table = () => {
     obtenerCitasDesdeBackend();
   };
 
+  const [availableTimes, setAvailableTimes] = useState([]);
+
+  const handleDateChange = async (date, doctor) => {
+    try {
+      const response = await axios.get("http://localhost:3001/api/availableTimes", {
+        params: {
+          doctorId: doctor,
+          date: moment(date).format("YYYY-MM-DD"),
+        },
+      });
+      setAvailableTimes(response.data.availableTimes);
+    } catch (error) {
+      console.error("Error al obtener los horarios disponibles:", error);
+    }
+  };
+
   const generateTimeOptions = () => {
     let options = [];
-    for (let hour = 9; hour <= 20; hour++) {
-      for (let minute = 0; minute < 60; minute += 30) {
-        const time = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
-        options.push(
-          <option key={time} value={time}>
-            {time}
-          </option>
-        );
-      }
-    }
+    availableTimes.forEach((time) => {
+      options.push(
+        <option key={time} value={time}>
+          {time}
+        </option>
+      );
+    });
     return options;
   };
+
+  // Manejador de cambio de fecha
 
   // ----CRUD----
 
@@ -964,6 +979,8 @@ const Table = () => {
                                   handleCaptureCitaIdUpdate(cita._id);
                                   handleCaptureCitaData(cita);
                                   openEditModalAppointment();
+                                  // Aquí llamamos a handleDateChange con los valores relevantes
+                                  handleDateChange(cita.appointmentDate, cita.doctor);
                                 }}
                                 className="hover:bg-w rounded focus:outline-none focus:shadow-outline">
                                 <img src={lapiz} alt="Editar" className="h-6 w-6" />
@@ -1356,16 +1373,17 @@ const Table = () => {
                       <DatePicker
                         className="input-field"
                         selected={values.fecha}
-                        onChange={(date) => setFieldValue("fecha", date)}
+                        onChange={(date) => {
+                          setFieldValue("fecha", date);
+                          handleDateChange(date, values.Doctor);
+                        }}
                         dateFormat="yyyy-MM-dd"
                         placeholderText="Selecciona una fecha"
                         name="fecha"
                         filterDate={(date) => {
-                          // Obtener el día de la semana
+                          // Restringe la selección a días posteriores a hoy y que no sean sábado ni domingo
                           const day = date.getDay();
-                          // Obtener la fecha de hoy
                           const today = new Date();
-                          // Restringir la selección a días posteriores a hoy y que no sean sábado ni domingo
                           return day !== 0 && day !== 6 && date >= today;
                         }}
                       />
