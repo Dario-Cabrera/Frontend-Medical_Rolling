@@ -18,6 +18,7 @@ import { AppointmentProvider } from "./Context/AppointmentContext";
 import { Navbar } from "./Components/Wrappers/Navbar";
 import { Footer } from "./Components/Wrappers/Footer";
 import { Error404 } from "./Views/ERROR404";
+import { ContactForm } from "./Views/ContactUs";
 
 const App = () => {
   return (
@@ -32,9 +33,10 @@ const App = () => {
               <Route path="/loginUser/" element={<LoginPagesUser />} />
               <Route path="/loginDoctor/" element={<LoginPagesDoctor />} />
               <Route path="/AboutUs" element={<AboutUs />} />
-              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/contactPlan" element={<ContactPage />} />
               <Route path="/error" element={<Error404 />} />
               <Route path="/pageAuditor" element={<AuditorPage />} />
+              <Route path="/contactForm" element={<ContactForm />} />
               <Route element={<ProtectedRouteUser />}>
                 <Route path="/appointmentsUser" element={<PagesUserAppointmentManagement />} />
 

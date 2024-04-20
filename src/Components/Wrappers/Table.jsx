@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import eliminar from "../../assets/img/trash and edit/eliminar.png";
 import lapiz from "../../assets/img/trash and edit/lapiz.png";
-import { Formik, Field, ErrorMessage } from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const Table = () => {
   const [usuarios, setUsuarios] = useState([]);
@@ -292,6 +294,43 @@ const Table = () => {
     obtenerDoctoresDesdeBackend();
   };
 
+  // ----UPDATE APPOINTMENTS----
+
+  const [citaIdToUpdate, setCitaIdToUpdate] = useState(null);
+  const [citaData, setCitaData] = useState(null);
+
+  const handleCaptureCitaIdUpdate = (citaId) => {
+    setCitaIdToUpdate(citaId);
+    console.log("ID capturado:", citaId);
+  };
+
+  const handleCaptureCitaData = (citaData) => {
+    // Aquí guardamos los datos del usuario en el estado local o en un contexto, para luego utilizarlos al abrir la modal de edición
+    setCitaData(citaData);
+    console.log("Datos de la cita:", citaData);
+  };
+
+  const actualizarDatosEnBackendCita = async (citaIdToUpdate, formDataCita) => {
+    try {
+      const response = await fetch(`http://localhost:3001/api/updateappointments/${citaIdToUpdate}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formDataCita),
+      });
+
+      if (!response.ok) {
+        throw new Error("Error al enviar los datos al backend");
+      }
+
+      console.log("Datos actualizados correctamente");
+    } catch (error) {
+      console.error(error.message);
+    }
+    obtenerCitasDesdeBackend();
+  };
+
   // ----CRUD----
 
   // Funciones para cambiar de tabla con botones
@@ -349,8 +388,8 @@ const Table = () => {
   });
 
   const appointmentValidationSchema = Yup.object().shape({
-    usuario: Yup.string().required("El usuario es requerido"),
-    doctor: Yup.string().required("El doctor es requerido"),
+    // usuario: Yup.string().required("El usuario es requerido"),
+    // doctor: Yup.string().required("El doctor es requerido"),
     fecha: Yup.string().required("La fecha es requerida"),
     hora: Yup.string().required("La hora es requerida"),
     estado: Yup.string().required("El estado es requerido"),
@@ -893,14 +932,19 @@ const Table = () => {
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{cita.user}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{cita.doctor}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">
-                            {" "}
-                            {cita.appointmentTime.split("T")[0]} {/* Fecha */}
+                            {cita.appointmentDate} {/* Fecha */}
                           </td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{cita.appointmentTime.split("T")[1].split(".")[0]}</td>
+                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{cita.appointmentTime}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{typeof cita.state === "string" ? cita.state.toLowerCase() : cita.state ? "Activa" : "Inactiva"}</td>
                           <td>
                             <div className="flex justify-center gap-4">
-                              <button onClick={openEditModalAppointment} className="hover:bg-w rounded focus:outline-none focus:shadow-outline">
+                              <button
+                                onClick={() => {
+                                  handleCaptureCitaIdUpdate(cita._id);
+                                  handleCaptureCitaData(cita);
+                                  openEditModalAppointment();
+                                }}
+                                className="hover:bg-w rounded focus:outline-none focus:shadow-outline">
                                 <img src={lapiz} alt="Editar" className="h-6 w-6" />
                               </button>
                               <button
@@ -1220,30 +1264,86 @@ const Table = () => {
               <h1 className="text-3xl font-bold mb-6">Editar Cita</h1>
               <Formik
                 initialValues={{
-                  usuario: "",
-                  doctor: "",
-                  fecha: "",
-                  hora: "",
-                  estado: "",
+                  usuario: citaData.user || "",
+                  Doctor: citaData.doctor || "",
+                  fecha: citaData.appointmentDate || "",
+                  hora: citaData.appointmentTime || "",
+                  estado: citaData.state === true ? "Activa" : "Inactiva",
                 }}
                 validationSchema={appointmentValidationSchema}
                 onSubmit={(values) => {
-                  console.log(values);
+                  // Agregar un console.log para verificar los valores que se pasan a la función onSubmit
+                  console.log("Valores del formulario:", values);
+
+                  // Lógica para manejar la lógica de envío del formulario
+                  console.log("Iniciando el envío del formulario...");
+
+                  // Define initial values for isDoctor and isAuditor
+                  let stateValue = false;
+
+                  // Check the value of the state and update stateValue accordingly
+                  if (values.estado === "Activa") {
+                    stateValue = true;
+                  } else if (values.estado === "Inactiva") {
+                    stateValue = false;
+                  }
+
+                  const formattedDate = values.fecha.toISOString().split("T")[0];
+
+                  // Create an object with the form values including isDoctor and isAuditor
+                  const formDataCita = {
+                    user: values.usuario,
+                    doctor: values.Doctor,
+                    appointmentDate: formattedDate,
+                    appointmentTime: values.hora,
+                    state: stateValue,
+                  };
+
+                  console.log(typeof formattedDate);
+
+                  // Agregar un console.log para verificar los datos que se enviarán al backend
+                  console.log("Datos que se enviarán al backend:", formDataCita);
+
+                  // Lógica para enviar los datos del formulario al backend
+                  console.log("Enviando datos al backend...");
+
+                  // Agregar un console.log para verificar cuando la función onSubmit se completa
+                  console.log("Formulario enviado con éxito");
+
+                  // Aquí puedes manejar la lógica para enviar los datos del formulario
+                  actualizarDatosEnBackendCita(citaIdToUpdate, formDataCita);
                   closeEditModalAppointment();
-                  handleSaveChangesAppoinmentConfirm(); // Aquí puedes manejar la lógica para enviar los datos del formulario
+                  handleSaveChangesAppoinmentConfirm();
                 }}>
-                {({ handleSubmit }) => (
+                {(
+                  { handleSubmit, values, setFieldValue } // Asegúrate de incluir values aquí
+                ) => (
                   <form onSubmit={handleSubmit}>
                     <div className="mb-4">
                       <Field type="text" className="input-field" name="usuario" placeholder="Usuario" />
                       <ErrorMessage name="usuario" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="doctor" placeholder="Doctor" />
-                      <ErrorMessage name="doctor" component="div" className="text-red-300" />
+                      <Field type="text" className="input-field" name="Doctor" placeholder="Doctor" />
+                      <ErrorMessage name="Doctor" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="fecha" placeholder="Fecha" />
+                      <DatePicker
+                        className="input-field"
+                        selected={values.fecha}
+                        onChange={(date) => setFieldValue("fecha", date)}
+                        dateFormat="yyyy-MM-dd"
+                        placeholderText="Selecciona una fecha"
+                        name="fecha"
+                        filterDate={(date) => {
+                          // Obtener el día de la semana
+                          const day = date.getDay();
+                          // Obtener la fecha de hoy
+                          const today = new Date();
+                          // Restringir la selección a días posteriores a hoy y que no sean sábado ni domingo
+                          return day !== 0 && day !== 6 && date >= today;
+                        }}
+                      />
                       <ErrorMessage name="fecha" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
@@ -1251,11 +1351,17 @@ const Table = () => {
                       <ErrorMessage name="hora" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="estado" placeholder="Estado" />
+                      <label htmlFor="estado" className="mr-2">
+                        Estado:
+                      </label>
+                      <Field as="select" className="input-field" name="estado">
+                        <option value="Activa">Activa</option>
+                        <option value="Inactiva">Inactiva</option>
+                      </Field>
                       <ErrorMessage name="estado" component="div" className="text-red-300" />
                     </div>
                     <div className="flex justify-between">
-                      <button type="submit" className="btn text-black  bg-ts hover:bg-hb hover:text-w">
+                      <button onClick={handleSaveChangesAppoinmentConfirm} type="submit" className="btn text-black  bg-ts hover:bg-hb hover:text-w">
                         Guardar Cambios
                       </button>
                       <button onClick={closeEditModalAppointment} className="btn text-black bg-ts hover:bg-hb hover:text-w">
@@ -1268,6 +1374,7 @@ const Table = () => {
             </div>
           </div>
         )}
+
         {/* Modal de confirmación de eliminar User */}
         {showSuccessModalUser && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={handleCerrarDeleteUserSucess}>

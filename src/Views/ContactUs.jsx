@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 
-const ContactForm = () => {
+export const ContactForm = () => {
   const {
     register,
     handleSubmit,
@@ -131,5 +131,3 @@ const ContactForm = () => {
     </div>
   );
 };
-
-export default ContactForm;
