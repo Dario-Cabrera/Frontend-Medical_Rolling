@@ -19,6 +19,10 @@ import { Navbar } from "./Components/Wrappers/Navbar";
 import { Footer } from "./Components/Wrappers/Footer";
 import { Error404 } from "./Views/ERROR404";
 import { ContactForm } from "./Views/ContactUs";
+import moment from "moment-timezone";
+
+// Establecer la zona horaria por defecto
+moment.tz.setDefault("America/Argentina/Buenos_Aires");
 
 const App = () => {
   return (

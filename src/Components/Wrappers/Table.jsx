@@ -1,11 +1,15 @@
 import { useState, useEffect } from "react";
 import eliminar from "../../assets/img/trash and edit/eliminar.png";
 import lapiz from "../../assets/img/trash and edit/lapiz.png";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import moment from "moment-timezone";
+
+// Establecer la zona horaria por defecto
+moment.tz.setDefault("America/Argentina/Buenos_Aires");
 
 const Table = () => {
   const [usuarios, setUsuarios] = useState([]);
@@ -294,6 +298,8 @@ const Table = () => {
     obtenerDoctoresDesdeBackend();
   };
 
+  // Formatear la fecha en el formato deseado antes de enviarla al servidor
+
   // ----UPDATE APPOINTMENTS----
 
   const [citaIdToUpdate, setCitaIdToUpdate] = useState(null);
@@ -329,6 +335,21 @@ const Table = () => {
       console.error(error.message);
     }
     obtenerCitasDesdeBackend();
+  };
+
+  const generateTimeOptions = () => {
+    let options = [];
+    for (let hour = 9; hour <= 20; hour++) {
+      for (let minute = 0; minute < 60; minute += 30) {
+        const time = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+        options.push(
+          <option key={time} value={time}>
+            {time}
+          </option>
+        );
+      }
+    }
+    return options;
   };
 
   // ----CRUD----
@@ -1257,6 +1278,7 @@ const Table = () => {
             </div>
           </div>
         )}
+
         {/* Modal para editar Appointments */}
         {showEditModalAppoinment && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={closeEditModalAppointment}>
@@ -1266,7 +1288,7 @@ const Table = () => {
                 initialValues={{
                   usuario: citaData.user || "",
                   Doctor: citaData.doctor || "",
-                  fecha: citaData.appointmentDate || "",
+                  fecha: moment(citaData.appointmentDate, "YYYY-MM-DD").toDate() || "",
                   hora: citaData.appointmentTime || "",
                   estado: citaData.state === true ? "Activa" : "Inactiva",
                 }}
@@ -1288,7 +1310,10 @@ const Table = () => {
                     stateValue = false;
                   }
 
-                  const formattedDate = values.fecha.toISOString().split("T")[0];
+                  const selectedDate = moment(values.fecha); // Obtener la fecha seleccionada del formulario
+
+                  // Obtener la fecha formateada para enviarla al backend
+                  const formattedDate = selectedDate.format("YYYY-MM-DD");
 
                   // Create an object with the form values including isDoctor and isAuditor
                   const formDataCita = {
@@ -1347,7 +1372,13 @@ const Table = () => {
                       <ErrorMessage name="fecha" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="hora" placeholder="Hora" />
+                      <label htmlFor="hora" className="mr-2">
+                        Hora:
+                      </label>
+                      <Field as="select" className="input-field" name="hora">
+                        <option value="">Selecciona una hora</option>
+                        {generateTimeOptions()}
+                      </Field>
                       <ErrorMessage name="hora" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
