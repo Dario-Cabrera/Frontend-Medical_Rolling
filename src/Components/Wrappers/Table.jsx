@@ -15,6 +15,9 @@ const Table = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [doctores, setDoctores] = useState([]);
   const [citas, setCitas] = useState([]);
+  
+  const [filteredCitas, setFilteredCitas] = useState([]);
+  const [nombresApellidosDoctores, setNombresApellidosDoctores] = useState({});
 
   // Estado para la búsqueda global
   const [busqueda, setBusqueda] = useState("");
@@ -100,33 +103,84 @@ const Table = () => {
 
   // ----GET APPOINMENTS----
 
-  useEffect(() => {
-    // Llamar a la función para obtener los usuarios cuando el componente se monta
-    obtenerCitasDesdeBackend();
-  }, []);
 
-  // Función para obtener los usuarios desde el backend
+
+  useEffect(() => {
+    obtenerCitasDesdeBackend();
+  }, [busqueda]);
+  
   async function obtenerCitasDesdeBackend() {
     try {
       const response = await axios.get("http://localhost:3001/api/gettingappointments");
       setCitas(response.data);
       console.log(response);
+      // Llama a obtenerValorDoctor después de obtener las citas
+      const { nombresApellidosDoctores, filteredCitas } = await obtenerValorDoctor(response.data);
+      // Actualiza el estado con las citas filtradas
+      setFilteredCitas(filteredCitas);
+      // Guarda los nombres y apellidos de los doctores en el estado
+      setNombresApellidosDoctores(nombresApellidosDoctores);
     } catch (error) {
-      console.error("Error al obtener los usuarios desde el backend:", error);
+      console.error("Error al obtener las citas desde el backend:", error);
     }
   }
 
-  const filteredCitas = citas.filter((cita) => {
-    const searchString = busqueda.toLowerCase();
-    const stateLowerCase = typeof cita.state === "boolean" ? (cita.state ? "activa" : "inactiva") : (cita.state || "").toLowerCase();
-    return (
-      (cita._id && cita._id.toLowerCase().includes(searchString)) ||
-      (cita.user && cita.user.toLowerCase().includes(searchString)) ||
-      (cita.doctor && cita.doctor.toLowerCase().includes(searchString)) ||
-      (cita.appointmentTime && cita.appointmentTime.toLowerCase().includes(searchString)) ||
-      stateLowerCase.includes(searchString)
-    );
-  });
+  console.log("Datos de citas filtradas:", filteredCitas);
+  console.log("Nombres y apellidos de los doctores:", nombresApellidosDoctores);
+  
+  async function obtenerValorDoctor(citas) {
+    const idsDoctores = citas.map(cita => cita.doctor);
+    // Pasa la variable busqueda como argumento
+    return obtenerInformacionDoctores(idsDoctores, citas, busqueda);
+  }
+  
+  const obtenerInformacionDoctores = async (idsDoctores, citas, busqueda) => {
+    try {
+      const doctoresPromesas = idsDoctores.map(async idDoctor => {
+        const response = await axios.get(`http://localhost:3001/api/getonedoctor/${idDoctor}`);
+        return response.data;
+      });
+  
+      const doctores = await Promise.all(doctoresPromesas);
+  
+      // Filtra los doctores que no son nulos y extrae sus nombres y apellidos
+      const nombresApellidosDoctores = doctores
+        .filter(doctor => doctor !== null) // Filtra los doctores que no son nulos
+        .reduce((acc, doctor) => {
+          acc[doctor._id] = `${doctor?.name ?? ''} ${doctor?.lastname ?? ''}`; // Utiliza el operador de encadenamiento opcional y el operador de fusión nula para manejar datos nulos
+          return acc;
+        }, {});
+  
+      console.log("Nombres y apellidos de los doctores:", nombresApellidosDoctores);
+  
+      const filteredCitas = citas.filter((cita) => {
+        const searchString = busqueda.toLowerCase();
+        const stateLowerCase = typeof cita.state === "boolean" ? (cita.state ? "activa" : "inactiva") : (cita.state || "").toLowerCase();
+        const nombreCompletoDoctor = nombresApellidosDoctores[cita.doctor] || ""; // Obtén el nombre y apellido del doctor usando su ID
+        
+        // Verificar si nombreCompletoDoctor no es undefined antes de llamar a toLowerCase()
+        return (
+          (cita._id && cita._id.toLowerCase().includes(searchString)) ||
+          (cita.user && cita.user.toLowerCase().includes(searchString)) ||
+          (nombreCompletoDoctor && nombreCompletoDoctor.toLowerCase().includes(searchString)) || // Utiliza el nombre y apellido del doctor en lugar del ID
+          (cita.appointmentTime && cita.appointmentTime.toLowerCase().includes(searchString)) ||
+          stateLowerCase.includes(searchString)
+        );
+      });
+      
+
+  
+      // Devuelve tanto los nombres de los doctores como las citas filtradas
+      return { nombresApellidosDoctores, filteredCitas };
+  
+    } catch (error) {
+      console.error("Error al obtener información de los doctores:", error);
+      return { nombresApellidosDoctores: {}, filteredCitas: [] };
+    }
+}
+
+  
+
   // ----DELETE USERS----
 
   const [userIdToDelete, setUserIdToDelete] = useState(null);
@@ -939,6 +993,11 @@ const Table = () => {
                             <span className="mr-1">Doctor</span>
                           </div>
                         </th>
+                        <th scope="col" className="px-12 py-3.5 text-sm font-medium text-center text-w relative">
+                          <div className="flex items-center justify-center">
+                            <span className="mr-1">Nombre Doctor</span>
+                          </div>
+                        </th>
                         <th scope="col" className="px-4 py-3.5 text-sm font-medium text-center text-w relative">
                           <div className="flex items-center justify-center">
                             <span className="mr-1">Fecha</span>
@@ -967,6 +1026,7 @@ const Table = () => {
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{cita._id}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{cita.user}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{cita.doctor}</td>
+                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{nombresApellidosDoctores[cita.doctor]}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">
                             {cita.appointmentDate} {/* Fecha */}
                           </td>
