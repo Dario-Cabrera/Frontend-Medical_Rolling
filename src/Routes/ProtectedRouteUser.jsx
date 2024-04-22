@@ -1,4 +1,4 @@
-import { userAuth } from "./Context/UserContext";
+import { userAuth } from "../Context/UserContext";
 import { Navigate, Outlet } from "react-router-dom";
 
 export const ProtectedRouteUser = () => {

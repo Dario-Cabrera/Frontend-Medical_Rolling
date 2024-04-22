@@ -1,9 +1,45 @@
 import { useForm } from "react-hook-form";
 import { userAuth } from "../Context/UserContext";
 import {Link} from "react-router-dom"
-import { useEffect } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { useNavigate } from "react-router-dom";
+
+
 export const LoginPagesUser = () => {
+  
+  //---------------Pruebas--------------------//
+
+  const [email, setEmail] = useState('')
+  const [pass, setPass] = useState('')
+
+  // const user = 
+  //   {
+  //   email: 'admin@gmail.com',
+  //   pass: '12345678',
+  //   isAuditor: true,
+  //   isDoctor: true,
+  //   isUser: false
+  // }
+  // {
+  //   email: 'doctor@gmail.com',
+  //   pass: '12345678',
+  //   isAuditor: false,
+  //   isDoctor: true,
+  //   isUser: false
+  // }
+//   {
+//     email: 'user@gmail.com',
+//     pass: '12345678',
+//     isAuditor: false,
+//     isDoctor: false,
+//     isUser: true
+//   },
+
+// ]
+
+//---------------Pruebas--------------------//
+ 
+  
   const {
     register,
     handleSubmit,
@@ -11,16 +47,53 @@ export const LoginPagesUser = () => {
   } = useForm();
   const { signin, errors: signinErrors,isAuthenticatedUser } = userAuth();
   const navigate = useNavigate()
+
   const onSubmit = handleSubmit((data) => {
     console.log(data);
-    signin(data);
-  });
+    // signin(data);
+  
+//---------------Pruebas--------------------//
+
+  
+//   if (user.email === email && user.pass === pass) {
+//     if (user.isAuditor) {
+//       console.log("Inicio de sesión correcta");
+//       localStorage.setItem('email', JSON.stringify(user.email));
+//       localStorage.setItem('admin', JSON.stringify(user.isAuditor));
+//       localStorage.setItem('doctor', JSON.stringify(user.isDoctor));
+//       localStorage.setItem('user', JSON.stringify(user.isUser));
+//       // navigate('/auditorPage');
+//     } else if (user.isDoctor) {
+//       console.log("Inicio de sesión correcta");
+//       localStorage.setItem('email', JSON.stringify(user.email));
+//       localStorage.setItem('admin', JSON.stringify(user.isAuditor));
+//       localStorage.setItem('doctor', JSON.stringify(user.isDoctor));
+//       localStorage.setItem('user', JSON.stringify(user.isUser));
+//       // navigate('/appointmentsDoctor');
+//     } else if (user.isUser) {
+//       console.log("Inicio de sesión correcta");
+//       localStorage.setItem('email', JSON.stringify(user.email));
+//       localStorage.setItem('admin', JSON.stringify(user.isAuditor));
+//       localStorage.setItem('doctor', JSON.stringify(user.isDoctor));
+//       localStorage.setItem('user', JSON.stringify(user.isUser));
+//       // navigate('/appointmentsUser');
+//     } else {
+//       alert('Acceso denegado. Rol no válido.'); 
+//     }
+//   } else {
+//     alert('Correo o contraseña incorrecta');
+//   };
+
+ });
+  
+
+
+//--------------------------------------//
 
   useEffect(() => {
     if (isAuthenticatedUser) navigate("/appointmentsUser")
   }, [isAuthenticatedUser])
   
-
 
 
 
@@ -39,6 +112,8 @@ export const LoginPagesUser = () => {
             {...register("email", { required: true })}
             className="w-full bg-zinc-700 text-white px-4 py-2 my-2 rounded-md"
             placeholder="Email"
+            value={email}
+            onChange={(e)=>setEmail(e.target.value)}
           />
           {errors.email && <p className="text-red-500">Email is required</p>}
           <input
@@ -46,13 +121,17 @@ export const LoginPagesUser = () => {
             {...register("pass", { required: true })}
             className="w-full bg-zinc-700 text-white px-4 py-2 my-2 rounded-md"
             placeholder="Password"
+            value={pass}
+            onChange={(e)=>setPass(e.target.value)}
           />
           {errors.pass && <p className="text-red-500">Password is required</p>}
 
-          <button type="submit">Login</button>
+          <button type="submit"
+          >
+            Login</button>
         </form>
         <p className="flex gap-x-2 py-3 justify-between">
-          Don´t hace an account?{" "}
+          Don´t have an account?{" "}
           <Link to="/register/" className="text-sky-500">
             Go Register
           </Link>{" "}
