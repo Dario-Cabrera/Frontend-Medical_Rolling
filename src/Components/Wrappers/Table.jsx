@@ -89,7 +89,7 @@ const Table = () => {
 
     // Verificar si las propiedades están definidas antes de llamar a toLowerCase()
     const dni = doctor.dni ? doctor.dni.toString().toLowerCase() : "";
-    const LicenceNumber = doctor.LicenceNumber ? doctor.LicenceNumber.toString() : "";
+    const licenceNumber = doctor.licenceNumber ? doctor.licenceNumber.toString() : "";
 
     return (
       (doctor._id && doctor._id.toLowerCase().includes(busqueda.toLowerCase())) ||
@@ -97,22 +97,23 @@ const Table = () => {
       nombreCompleto.includes(busqueda.toLowerCase()) || // Buscar en el nombre completo
       (doctor.email && doctor.email.toLowerCase().includes(busqueda.toLowerCase())) ||
       (doctor.specialty && doctor.specialty.toLowerCase().includes(busqueda.toLowerCase())) ||
-      (LicenceNumber && LicenceNumber.includes(busqueda.toLowerCase()))
+      (licenceNumber && licenceNumber.includes(busqueda.toLowerCase()))
     );
   });
 
   // ----GET APPOINMENTS----
 
-  // OBTENER NOMBRE DOCTOR
+  // OBTENER NOMBRE DOCTOR Y NOMBRE USUARIO
   useEffect(() => {
     obtenerCitasDesdeBackend();
   }, [busqueda]);
-
+  
   async function obtenerCitasDesdeBackend() {
     try {
       const response = await axios.get("http://localhost:3001/api/gettingappointments");
       const citas = response.data;
       const { nombresApellidosDoctores, nombresApellidosUsuarios, filteredCitas } = await obtenerValorDoctor(citas);
+      console.log("Citas filtradas:", filteredCitas); // Agregamos un console.log para depurar
       setFilteredCitas(filteredCitas);
       setNombresApellidosDoctores(nombresApellidosDoctores);
       setNombresApellidosUsuarios(nombresApellidosUsuarios);
@@ -120,13 +121,13 @@ const Table = () => {
       console.error("Error al obtener las citas desde el backend:", error);
     }
   }
-
+  
   async function obtenerValorDoctor(citas) {
     const idsDoctores = citas.map(cita => cita.doctor);
     const idsUsuarios = citas.map(cita => cita.user);
     const responseDoctores = await Promise.all(idsDoctores.map(idDoctor => axios.get(`http://localhost:3001/api/getonedoctor/${idDoctor}`)));
     const responseUsuarios = await Promise.all(idsUsuarios.map(idUsuario => axios.get(`http://localhost:3001/api/getoneuser/${idUsuario}`)));
-
+  
     const nombresApellidosDoctores = responseDoctores.reduce((acc, response) => {
       const doctor = response.data;
       if (doctor) {
@@ -134,7 +135,7 @@ const Table = () => {
       }
       return acc;
     }, {});
-
+  
     const nombresApellidosUsuarios = responseUsuarios.reduce((acc, response) => {
       const usuario = response.data;
       if (usuario) {
@@ -142,22 +143,26 @@ const Table = () => {
       }
       return acc;
     }, {});
-
+  
     const filteredCitas = citas.filter(cita => {
       const searchString = busqueda.toLowerCase();
-      const nombreCompletoDoctor = nombresApellidosDoctores[cita.doctor] ?? '';
-      const nombreCompletoUsuario = nombresApellidosUsuarios[cita.user] ?? '';
-
+      const nombreCompletoDoctor = (nombresApellidosDoctores[cita.doctor] ?? '').toLowerCase();
+      const nombreCompletoUsuario = (nombresApellidosUsuarios[cita.user] ?? '').toLowerCase();
+      const estado = typeof cita.state === 'boolean' ? (cita.state ? 'activa' : 'inactiva') : cita.state.toLowerCase();
+    
       return (
         cita._id.toLowerCase().includes(searchString) ||
         cita.user.toLowerCase().includes(searchString) ||
-        nombreCompletoDoctor.toLowerCase().includes(searchString) ||
-        nombreCompletoUsuario.toLowerCase().includes(searchString) ||
+        nombreCompletoDoctor.includes(searchString) ||
+        nombreCompletoUsuario.includes(searchString) ||
         cita.appointmentTime.toLowerCase().includes(searchString) ||
-        (typeof cita.state === "boolean" ? (cita.state ? "activa" : "inactiva") : cita.state.toLowerCase().includes(searchString))
+        estado.includes(searchString)
       );
     });
-
+  
+    console.log("Valor de búsqueda:", busqueda); // Agregamos un console.log para depurar
+    console.log("Citas filtradas:", filteredCitas); // Agregamos un console.log para depurar
+  
     return { nombresApellidosDoctores, nombresApellidosUsuarios, filteredCitas };
   }
 
@@ -467,7 +472,8 @@ const Table = () => {
 
   //Funciones para manejar los filtros busqueda y de ordenamiento
   const handleBusquedaChange = (e) => {
-    setBusqueda(e.target.value);
+    const searchTerm = e.target.value;
+    setBusqueda(searchTerm);
   };
 
   // Funciones para manejar la visibilidad de la modal de appoinments by id user
@@ -917,7 +923,7 @@ const Table = () => {
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{`${doctor.name} ${doctor.lastname}`}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{doctor.email}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{doctor.specialty}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{doctor.LicenceNumber}</td>
+                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{doctor.licenceNumber}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{doctor.isDoctor === true && doctor.isAuditor === true ? "Auditor" : "Doctor"}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">
                             <button onClick={openAppointmentByIdDoctorModal} className="px-2 py-1 text-w bg-hb hover:bg-ts hover:text-c  rounded-lg">
@@ -1251,7 +1257,7 @@ const Table = () => {
                   apellido: doctorData.lastname || "",
                   email: doctorData.email || "",
                   especialidad: doctorData.specialty || "",
-                  numLicencia: doctorData.LicenceNumber || "",
+                  numLicencia: doctorData.licenceNumber || "",
                   rol: doctorData.isDoctor === true && doctorData.isAuditor === false ? "Doctor" : "Auditor",
                 }}
                 validationSchema={doctorValidationSchema}
@@ -1280,7 +1286,7 @@ const Table = () => {
                     lastname: values.apellido,
                     email: values.email,
                     specialty: values.especialidad,
-                    LicenceNumber: values.numLicencia,
+                    licenceNumber: values.numLicencia,
                     role: values.rol,
                     isDoctor: isDoctorValue,
                     isAuditor: isAuditorValue,
