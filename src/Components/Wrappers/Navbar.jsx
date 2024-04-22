@@ -1,15 +1,37 @@
-import React from "react";
+import React, { useState } from "react";
 import Logo_MR from "../../assets/img/Logo_MR.png";
-import { Link } from "react-router-dom";
+import { Link, NavLink, Navigate } from "react-router-dom";
 import { userAuth } from "../../Context/UserContext";
 import { doctorAuth } from "../../Context/DoctorContext";
+import {ProtectedRoutes} from "../../Routes/ProtectedRoutes";
+
 // import { NavLink } from 'react-router-dom';
 
-export const Navbar = () => {
-  const { isAuthenticatedUser, logoutUser, user } = userAuth();
-  const { isAuthenticatedDoctor, logoutDoctor, doctor } = doctorAuth();
-  console.log(user);
 
+
+export const Navbar = () => {
+  // const { isAuthenticatedUser, logoutUser, user } = userAuth();
+  // const { isAuthenticatedDoctor, logoutDoctor, doctor } = doctorAuth();
+ // console.log(user);
+  
+ const isAuthenticatedAuditor = false
+ const isAuthenticatedDoctor = false
+ const isAuthenticatedUser = false
+ 
+  const LogOut = () => {
+    alert('Sesión cerrada')
+  
+    logoutUser()
+    logoutDoctor()
+  
+  }
+  const LogIn = () => {
+   <Navigate to='/loginUser/'/> 
+
+  }
+ 
+  
+ 
   return (
     <div className="navbar bg-w text-c">
       <div className="navbar-start">
@@ -17,7 +39,7 @@ export const Navbar = () => {
           <div
             tabIndex={0}
             role="button"
-            className="btn btn-ghost lg:hidde bg-w"
+            className="btn btn-ghost lg:hidden bg-w"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -36,13 +58,15 @@ export const Navbar = () => {
           </div>
           <ul
             tabIndex={0}
-            className="bg-w menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow rounded-box w-52"
+            className=" bg-w menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow rounded-box w-52"
           >
+            {!(isAuthenticatedAuditor || isAuthenticatedDoctor) && (
+              <>
             <li>
               <Link to="/AboutUs">Quienes Somos</Link>
             </li>
             <li>
-              <Link to="/contact">Planes</Link>
+              <a>Planes</a>
               <ul className="p-2 ">
                 <li>
                   <Link to="/contact">Plan Familiar</Link>
@@ -64,87 +88,68 @@ export const Navbar = () => {
             <li>
               <Link to="/error">Subí tu CV</Link>
             </li>
+            </>
+          )}
 
-            {isAuthenticatedUser == true && isAuthenticatedDoctor == false ? (
-              <>
-                <li>
-                  <Link
-                    to="/add-appointmentsUser/"
-                    className="btn btn-xs mt-3 btn-info bg-hb text-w hover:text-c"
+{/* ----------------Botones Dropdown ----------------- */}
+
+            {isAuthenticatedAuditor && (<li>
+              <Link
+                to="/auditorPage"
+                className="btn btn-xs mt-3 btn-info bg-hb text-w hover:text-c"
+                >
+                Admin
+                </Link>
+            </li>)}
+            {isAuthenticatedDoctor && (<li>
+              <Link
+                to="/appointmentsDoctor"
+                className="btn btn-xs mt-3 btn-info bg-hb text-w hover:text-c"
+                >
+                Mis Turnos
+                </Link>
+            </li>)}
+            {isAuthenticatedUser && (<li>
+              <Link
+                to="/appointmentsUser"
+                className="btn btn-xs mt-3 btn-info bg-hb text-w hover:text-c"
+                >
+                Mis Turnos
+                </Link>
+            </li>)}
+            {!(isAuthenticatedAuditor || isAuthenticatedDoctor ||isAuthenticatedUser) && (
+              <li>
+              <Link
+                to="/registerUser"
+                  className="btn btn-xs mt-3 btn-info bg-hb text-w hover:text-c"
                   >
-                    Crear Turno
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/"
-                    onClick={() => {
-                      logoutUser();
-                    }}
-                    className="btn btn-xs mt-3 btn-info bg-hb text-w hover:text-c"
-                  >
-                    Cerrar sesion
-                  </Link>
-                </li>
-              </>
-            ) : isAuthenticatedDoctor == true &&
-              isAuthenticatedUser == false ? (
-              <>
-                <li>
-                  <Link
-                    to="/appointmentsDoctor/"
-                    className="btn btn-xs mt-3 btn-info bg-hb text-w hover:text-c"
-                  >
-                    Mis citas
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/"
-                    onClick={() => {
-                      logoutDoctor();
-                    }}
-                  >
-                    Cerrar sesion
-                  </Link>
-                </li>
-              </>
-            ) : (
-              <>
-                <li>
-                  <Link
-                    to="/loginDoctor/"
-                    className="btn btn-xs mt-3 btn-info bg-hb text-w hover:text-c"
-                  >
-                    Admin
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/registerUser/"
-                    className="btn btn-xs mt-3 btn-info bg-hb text-w hover:text-c"
-                  >
-                    Registrar
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/loginUser/"
-                    className="btn btn-xs mt-3 btn-info bg-hb text-w hover:text-c"
-                  >
-                    LogIn
-                  </Link>
-                </li>
-              </>
+                  Registrar
+                </Link>
+              </li>
             )}
+                <li>
+                  <Link
+                    to="/loginUser"
+                    className="btn btn-xs mt-3 btn-info bg-hb text-w hover:text-c"
+                  >
+                    {(isAuthenticatedAuditor || isAuthenticatedDoctor || isAuthenticatedUser) ?
+                    'LogOut':'LogIn'}
+                  </Link>
+                </li>
           </ul>
+
+{/* ----------------Botones Dropdown ----------------- */}
         </div>
+
         <Link to="/" className="w-16 cursor-pointer">
             <img src={Logo_MR} alt="logo" />
           </Link>
-        {/* <img className="w-16 cursor-pointer" src={Logo_MR} alt="logo" /> */}
-        {/* <Link className="btn btn-ghost text-xl">daisyUI</Link> */}
+       
       </div>
+      
+{/* ----------------Menú Navbar ----------------- */}
+
+      {!(isAuthenticatedAuditor || isAuthenticatedDoctor) && (
       <div className="navbar-center hidden lg:flex ">
         <ul className="menu menu-horizontal px-1">
           <li>
@@ -152,8 +157,8 @@ export const Navbar = () => {
           </li>
           <li>
             <details>
-              <summary>Planes</summary>
-              <ul className="p-2">
+              <summary role="button">Planes</summary>
+              <ul className="p-2 bg-white rounded-box mt-3 z-[1] shadow">
                 <li>
                   <Link to="/contact">Plan Familiar</Link>
                 </li>
@@ -166,7 +171,6 @@ export const Navbar = () => {
               </ul>
             </details>
           </li>
-          {/* <li><NavLink to="*">Cartilla</NavLink></li> */}
           <li>
             <Link to="/error">Cartilla</Link>
           </li>
@@ -178,69 +182,59 @@ export const Navbar = () => {
           </li>
         </ul>
       </div>
-      <div className="navbar-end hidden lg:flex">
-        {isAuthenticatedUser == true && isAuthenticatedDoctor == false ? (
-          <>
-            <Link
-              to="/add-appointmentsUser/"
-              className="btn mr-4 btn-info bg-hb text-w hover:text-c"
-            >
-              Crear Turno
-            </Link>
+      )}
 
-            <Link
-              to="/"
-              onClick={() => {
-                logoutUser();
-              }}
-              className="btn mr-4 btn-info bg-hb text-w hover:text-c"
-            >
-              Cerrar sesion
-            </Link>
-          </>
-        ) : isAuthenticatedDoctor == true && isAuthenticatedUser == false ? (
-          <>
-            <Link
-              to="/appointmentsDoctor/"
-              className="btn mr-4 btn-info bg-hb text-w hover:text-c"
-            >
-              Mis citas
-            </Link>
+{/* ----------------Menú Navbar ----------------- */}
 
-            <Link
-              to="/"
-              onClick={() => {
-                logoutDoctor;
-              }}
+{/* ----------------Botones Navbar ----------------- */}
+       
+        <div className="navbar-end hidden lg:flex">
+                    
+           {isAuthenticatedAuditor &&  (           
+              <Link
+              to="/auditorPage"
               className="btn mr-4 btn-info bg-hb text-w hover:text-c"
-            >
-              Cerrar sesion
-            </Link>
-          </>
-        ) : (
-          <>
-            <Link
-              to="/loginDoctor/"
-              className="btn mr-4 btn-info bg-hb text-w hover:text-c"
-            >
+              >
               Admin
-            </Link>
-
-            <Link
-              to="/registerUser/"
+              </Link>
+            )}
+            {isAuthenticatedDoctor &&  (           
+              <NavLink
+              to="/appointmentsDoctor"
+              className="btn mr-4 btn-info bg-hb text-w hover:text-c"
+              >
+              Mis Turnos
+              </NavLink>
+            )}
+            {isAuthenticatedUser &&  (           
+              <NavLink
+              to="/appointmentsUser"
+              className="btn mr-4 btn-info bg-hb text-w hover:text-c"
+              >
+              Mis Turnos
+              </NavLink>
+            )}
+            
+           {(!isAuthenticatedAuditor && !isAuthenticatedDoctor && !isAuthenticatedUser) && (
+           <Link
+              to="/registerUser"
               className="btn mr-4 btn-info bg-hb text-w hover:text-c"
             >
               Registrar
-            </Link>
-
+            </Link>)}
+            
+            
             <Link
-              to="/loginUser/"
+              to={(!isAuthenticatedAuditor && !isAuthenticatedDoctor && !isAuthenticatedUser)? "/loginUser/" : null}
               className="btn mr-4 btn-info bg-hb text-w hover:text-c"
+              onClick={() => (isAuthenticatedAuditor || isAuthenticatedDoctor || isAuthenticatedUser)?
+                LogOut() : LogIn()
+              }
             >
-              LogIn
+               {(isAuthenticatedAuditor || isAuthenticatedDoctor || isAuthenticatedUser) ?
+               'LogOut':'LogIn'}
             </Link>
-          </>
-        )}
+            
       </div>
     </div>
   );
