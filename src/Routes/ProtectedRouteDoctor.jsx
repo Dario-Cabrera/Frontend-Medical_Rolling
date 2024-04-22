@@ -1,4 +1,4 @@
-import { doctorAuth } from "./Context/DoctorContext";
+import { doctorAuth } from "../Context/DoctorContext";
 import { Navigate, Outlet } from "react-router-dom";
 
 export const ProtectedRouteDoctor = () => {
