@@ -52,6 +52,13 @@ export const RegisterPageUser = () => {
             <p className="text-red-500">Lastname is required</p>
           )}
           <input
+            type="number"
+            {...register("dni", { required: true })}
+            className="w-full bg-zinc-700 text-white px-4 py-2 my-2 rounded-md"
+            placeholder="dni"
+          />
+          {errors.dni && <p className="text-red-500">dni is required</p>}
+          <input
             type="email"
             {...register("email", { required: true })}
             className="w-full bg-zinc-700 text-white px-4 py-2 my-2 rounded-md"

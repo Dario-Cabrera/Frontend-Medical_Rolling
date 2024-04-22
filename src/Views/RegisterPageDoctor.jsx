@@ -79,6 +79,32 @@ export const RegisterPageDoctor = () => {
         {errors.LicenceNumber && (
           <p className="text-red-500">Licence Number is required</p>
         )}
+        <div className="flex items-center my-3">
+          <input
+            type="checkbox"
+            {...register("isDoctor")}
+            id="isDoctor"
+            className="w-5 h-5 mr-2 bg-zinc-700 rounded-md focus:ring-2 focus:ring-indigo-500 mx-2"
+          />
+          <label htmlFor="isDoctor" className="text-white">
+            Doctor?
+          </label>
+          {errors.isDoctor && (
+          <p className="text-red-500">Doctor Number is required</p>
+        )}
+          <input
+            type="checkbox"
+            {...register("isAuditor")}
+            id="isAuditor"
+            className="w-5 h-5 mr-2 bg-zinc-700 rounded-md focus:ring-2 focus:ring-indigo-500 mx-2"
+          />
+          <label htmlFor="isAuditor" className="text-white">
+            Auditor?
+          </label>
+          {errors.isAuditor && (
+          <p className="text-red-500">Auditor is required</p>
+        )}
+        </div>
         <button type="submit">Register</button>
       </form>
       <p className="flex gap-x-2 py-3 justify-between">

@@ -1,7 +1,10 @@
+
+
 import React, { useState } from "react";
 import Logo_MR from "../../assets/img/Logo_MR.png";
 import { Link, NavLink, Navigate } from "react-router-dom";
 import { userAuth } from "../../Context/UserContext";
+
 import { doctorAuth } from "../../Context/DoctorContext";
 import {ProtectedRoutes} from "../../Routes/ProtectedRoutes";
 
@@ -10,6 +13,16 @@ import {ProtectedRoutes} from "../../Routes/ProtectedRoutes";
 
 
 export const Navbar = () => {
+  const {
+    isAuthenticatedUser,
+    isAuthenticatedDoctor,
+    isAuthenticatedAuditor,
+    logoutUser,
+    user,
+    doctor,
+    auditor,
+  } = userAuth();
+  console.log(user);
   // const { isAuthenticatedUser, logoutUser, user } = userAuth();
   // const { isAuthenticatedDoctor, logoutDoctor, doctor } = doctorAuth();
  // console.log(user);
@@ -142,9 +155,12 @@ export const Navbar = () => {
         </div>
 
         <Link to="/" className="w-16 cursor-pointer">
-            <img src={Logo_MR} alt="logo" />
-          </Link>
-       
+
+          <img src={Logo_MR} alt="logo" />
+        </Link>
+        {/* <img className="w-16 cursor-pointer" src={Logo_MR} alt="logo" /> */}
+        {/* <Link className="btn btn-ghost text-xl">daisyUI</Link> */}  
+
       </div>
       
 {/* ----------------Menú Navbar ----------------- */}
