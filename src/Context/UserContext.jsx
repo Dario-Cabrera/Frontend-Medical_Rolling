@@ -20,24 +20,18 @@ export const userAuth = () => {
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [doctor, setDoctor] = useState(null);
-  const [auditor, setAuditor] = useState(null);
   const [isAuthenticatedUser, setIsAuthenticatedUser] = useState(false);
-  const [isAuthenticatedDoctor, setIsAuthenticatedDoctor] = useState(false);
-  const [isAuthenticatedAuditor, setIsAuthenticatedAuditor] = useState(false);
   const [errors, setErrors] = useState([]);
   const [loadingUser, setLoadingUser] = useState(true);
   const signup = async (user) => {
     try {
       user.area = parseInt(user.area);
       user.phone = parseInt(user.phone);
-      user.dni = parseInt(user.dni);
-      user.licenceNumber = parseInt(user.licenceNumber);
       const res = await registerRequestUser(user);
-
       const token = res.data;
       localStorage.setItem("token", token);
-
+      console.log(token);
+      console.log(res.data);
       setUser(res.data);
       setIsAuthenticatedUser(true);
     } catch (error) {
@@ -49,26 +43,12 @@ export const UserProvider = ({ children }) => {
   const signin = async (user) => {
     try {
       const res = await loginRequestUser(user);
-
       const token = res.data; // Suponiendo que el token está devuelto en res.data
+      console.log(res.data)
       localStorage.setItem("token", token);
-
-      const resUser = await varityTokenRequest({ token }); //De lo que llegue tendra que jugar con validaciones para que se actualice una data determinada user, doctor o auditor
-      const { isDoctor, isAuditor } = resUser;
-
-      if (!isDoctor && !isAuditor) {
-        // Usuario normal
-        setIsAuthenticatedUser(true);
-        setUser(resUser);
-      } else if (isDoctor && !isAuditor) {
-        // Doctor
-        setDoctor(resUser);
-        setIsAuthenticatedDoctor(true);
-      } else {
-        // Auditor
-        setAuditor(resUser);
-        setIsAuthenticatedAuditor(true);
-      }
+      const resUser = await varityTokenRequest({ token });
+      setUser(resUser)
+      setIsAuthenticatedUser(true);
     } catch (error) {
       if (Array.isArray(error.response.data)) {
         return setErrors(error.response.data);
@@ -127,8 +107,7 @@ const logoutUser =()=>{
 
   return (
     <UserContext.Provider
-      value={{ signup, signin,logoutUser, loadingUser, user,doctor,auditor, isAuthenticatedUser,isAuthenticatedDoctor,
-        isAuthenticatedAuditor, errors }}
+      value={{ signup, signin,logoutUser, loadingUser, user, isAuthenticatedUser, errors }}
     >
       {children}
     </UserContext.Provider>

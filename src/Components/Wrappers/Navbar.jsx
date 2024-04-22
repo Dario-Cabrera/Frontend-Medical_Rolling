@@ -1,18 +1,13 @@
+import React from "react";
 import Logo_MR from "../../assets/img/Logo_MR.png";
 import { Link } from "react-router-dom";
 import { userAuth } from "../../Context/UserContext";
+import { doctorAuth } from "../../Context/DoctorContext";
 // import { NavLink } from 'react-router-dom';
 
 export const Navbar = () => {
-  const {
-    isAuthenticatedUser,
-    isAuthenticatedDoctor,
-    isAuthenticatedAuditor,
-    logoutUser,
-    user,
-    doctor,
-    auditor,
-  } = userAuth();
+  const { isAuthenticatedUser, logoutUser, user } = userAuth();
+  const { isAuthenticatedDoctor, logoutDoctor, doctor } = doctorAuth();
   console.log(user);
 
   return (
@@ -145,8 +140,8 @@ export const Navbar = () => {
           </ul>
         </div>
         <Link to="/" className="w-16 cursor-pointer">
-          <img src={Logo_MR} alt="logo" />
-        </Link>
+            <img src={Logo_MR} alt="logo" />
+          </Link>
         {/* <img className="w-16 cursor-pointer" src={Logo_MR} alt="logo" /> */}
         {/* <Link className="btn btn-ghost text-xl">daisyUI</Link> */}
       </div>

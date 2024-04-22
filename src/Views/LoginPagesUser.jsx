@@ -11,8 +11,6 @@ export const LoginPagesUser = () => {
   } = useForm();
   const { signin, errors: signinErrors,isAuthenticatedUser } = userAuth();
   const navigate = useNavigate()
-
-  
   const onSubmit = handleSubmit((data) => {
     console.log(data);
     signin(data);
@@ -55,7 +53,7 @@ export const LoginPagesUser = () => {
         </form>
         <p className="flex gap-x-2 py-3 justify-between">
           Don´t hace an account?{" "}
-          <Link to="/registerUser/" className="text-sky-500">
+          <Link to="/register/" className="text-sky-500">
             Go Register
           </Link>{" "}
         </p>
