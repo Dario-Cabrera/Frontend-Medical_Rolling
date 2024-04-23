@@ -5,6 +5,6 @@ export const ProtectedRouteDoctor = () => {
   const { loadingDoctor, isAuthenticatedDoctor } = doctorAuth();
   console.log(loadingDoctor, isAuthenticatedDoctor);
   if (loadingDoctor) return <h1>loadingDoctor...</h1>;
-  if (!loadingDoctor && !isAuthenticatedDoctor) return <Navigate to="/loginDoctor/" />;
+  if (!loadingDoctor && !isAuthenticatedDoctor) return <Navigate to="/loginUser/" />;
   return <Outlet />;
 };

@@ -13,8 +13,8 @@ import { AboutUs } from "./Views/AboutUs";
 import { ContactPage } from "./Views/ContactPage";
 import { AppointmentFormPage } from "./Views/AppointmentFormPage";
 import { AuditorPage } from "./Views/Auditor";
-// import { ProtectedRouteUser } from "./ProtectedRouteUser";
-// import { ProtectedRouteDoctor } from "./ProtectedRouteDoctor";
+import { ProtectedRouteUser } from "../src/Routes/ProtectedRouteUser";
+import { ProtectedRouteDoctor } from "../src/Routes/ProtectedRouteDoctor";
 import { AppointmentProvider } from "./Context/AppointmentContext";
 import { Navbar } from "./Components/Wrappers/Navbar";
 import { Footer } from "./Components/Wrappers/Footer";
@@ -23,16 +23,8 @@ import { ProtectedRoutes } from "./Routes/ProtectedRoutes";
 
 const App = () => {
 
-  const email = JSON.parse(localStorage.getItem("email")) || null;
-  const isAdmin = JSON.parse(localStorage.getItem("admin")) || null;
-  const isDoctor = JSON.parse(localStorage.getItem("doctor")) || null;
-  const isUser = JSON.parse(localStorage.getItem("user")) || null;
-
-  console.log("Valor de admin: ",isAdmin, isDoctor)
 
  
-
-
   return (
     <UserProvider>
       <DoctorProvider>
@@ -50,21 +42,37 @@ const App = () => {
               <Route path="/error" element={<Error404 />} />
 
               <Route path="/auditorPage" element={
-                <ProtectedRoutes isAdmin={isAdmin}>
+                <ProtectedRoutes >
                     <AuditorPage />
                 </ProtectedRoutes>
               }/>
-              <Route path="/appointmentsDoctor" element={
-                <ProtectedRoutes isDoctor={isDoctor}>
-                  <PagesDoctorAppointmentManagement />
-                </ProtectedRoutes>
-              } />
-              <Route path="/appointmentsUser" element={
-                <ProtectedRoutes isUser={isUser}>
-                  <AppointmentFormPage />
-                </ProtectedRoutes>
-              } />
 
+             <Route element={<ProtectedRouteDoctor />}>
+                <Route
+                  path="/appointmentsDoctor"
+                  element={<PagesDoctorAppointmentManagement />}
+                />
+                <Route
+                  path="/createappointmentsDoctor"
+                  element={<AppointmentFormPage />}
+                />
+              </Route>
+
+              <Route element={<ProtectedRouteUser />}>
+                <Route
+                   path="/appointmentsUser"
+                   element={<PagesUserAppointmentManagement />}
+                />   
+                <Route
+                  path="/createappointmentsUser"
+                  element={<AppointmentFormPage />}
+                />
+              </Route>
+
+              {/* <ProtectedRouteUser >
+              <Route path="/appointmentsUser" element={<AppointmentFormPage />   
+              } />
+              </ProtectedRouteUser> */}
               
 
               {/* <Route
