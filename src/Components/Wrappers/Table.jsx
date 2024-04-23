@@ -1379,6 +1379,8 @@ const Table = () => {
                     stateValue = false;
                   }
 
+                  stateValue = Boolean(stateValue); // Convertir a booleano
+
                   const selectedDate = moment(values.fecha); // Obtener la fecha seleccionada del formulario
 
                   // Obtener la fecha formateada para enviarla al backend
