@@ -144,21 +144,30 @@ const Table = () => {
       return acc;
     }, {});
   
+  
+
     const filteredCitas = citas.filter(cita => {
       const searchString = busqueda.toLowerCase();
       const nombreCompletoDoctor = (nombresApellidosDoctores[cita.doctor] ?? '').toLowerCase();
       const nombreCompletoUsuario = (nombresApellidosUsuarios[cita.user] ?? '').toLowerCase();
       const estado = typeof cita.state === 'boolean' ? (cita.state ? 'activa' : 'inactiva') : cita.state.toLowerCase();
     
+      // Obtener partes de la fecha para búsqueda
+      const selectedDate = moment(cita.appointmentDate); // Obtener la fecha seleccionada del formulario
+
+      // Obtener la fecha formateada para enviarla al backend
+      const formattedDate = selectedDate.format("YYYY-MM-DD");
+    
       return (
         cita._id.toLowerCase().includes(searchString) ||
         cita.user.toLowerCase().includes(searchString) ||
         nombreCompletoDoctor.includes(searchString) ||
         nombreCompletoUsuario.includes(searchString) ||
-        cita.appointmentTime.toLowerCase().includes(searchString) ||
+        formattedDate.includes(searchString) || // Buscar por fecha formateada
         estado.includes(searchString)
       );
     });
+    
   
     console.log("Valor de búsqueda:", busqueda); // Agregamos un console.log para depurar
     console.log("Citas filtradas:", filteredCitas); // Agregamos un console.log para depurar
@@ -1020,7 +1029,7 @@ const Table = () => {
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{cita.doctor}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{nombresApellidosDoctores[cita.doctor]}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">
-                            {cita.appointmentDate} {/* Fecha */}
+                          {cita.appointmentDate} {/* Fecha */}
                           </td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{cita.appointmentTime}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{typeof cita.state === "string" ? cita.state.toLowerCase() : cita.state ? "Activa" : "Inactiva"}</td>
