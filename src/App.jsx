@@ -1,9 +1,9 @@
 // import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import {Homepage } from "../src/Views/Homepage"
+import { Homepage } from "../src/Views/Homepage";
 import { RegisterPageUser } from "../src/Views/RegisterPageUser";
 import { RegisterPageDoctor } from "../src/Views/RegisterPageDoctor";
-import { UserProvider, userAuth } from "../src/Context/UserContext";
+import { UserProvider } from "../src/Context/UserContext";
 import { DoctorProvider } from "../src/Context/DoctorContext";
 import { LoginPagesUser } from "../src/Views/LoginPagesUser";
 import { LoginPagesDoctor } from "../src/Views/LoginPagesDoctor";
@@ -15,24 +15,22 @@ import { AppointmentFormPage } from "./Views/AppointmentFormPage";
 import { AuditorPage } from "./Views/Auditor";
 import { ProtectedRouteUser } from "../src/Routes/ProtectedRouteUser";
 import { ProtectedRouteDoctor } from "../src/Routes/ProtectedRouteDoctor";
+import { ProtectedRouteAuditor } from "../src/Routes/ProtectedRouteAuditor";
 import { AppointmentProvider } from "./Context/AppointmentContext";
 import { Navbar } from "./Components/Wrappers/Navbar";
 import { Footer } from "./Components/Wrappers/Footer";
 import { Error404 } from "./Views/ERROR404";
-import { ProtectedRoutes } from "./Routes/ProtectedRoutes";
-
+/* import { ProtectedRoutes } from "./Routes/ProtectedRoutes";
+ */
 const App = () => {
-
-
- 
   return (
     <UserProvider>
       <DoctorProvider>
         <AppointmentProvider>
           <BrowserRouter>
-            <Navbar/>
+            <Navbar />
             <Routes>
-              <Route path="/" element={ <Homepage/> } />
+              <Route path="/" element={<Homepage />} />
               <Route path="/registerUser/" element={<RegisterPageUser />} />
               <Route path="/registerDoctor/" element={<RegisterPageDoctor />} />
               <Route path="/loginUser/" element={<LoginPagesUser />} />
@@ -41,13 +39,11 @@ const App = () => {
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/error" element={<Error404 />} />
 
-              <Route path="/auditorPage" element={
-                <ProtectedRoutes >
-                    <AuditorPage />
-                </ProtectedRoutes>
-              }/>
+              <Route element={<ProtectedRouteAuditor />}>
+                <Route path="/auditorPage" element={<AuditorPage />} />
+              </Route>
 
-             <Route element={<ProtectedRouteDoctor />}>
+              <Route element={<ProtectedRouteDoctor />}>
                 <Route
                   path="/appointmentsDoctor"
                   element={<PagesDoctorAppointmentManagement />}
@@ -60,9 +56,9 @@ const App = () => {
 
               <Route element={<ProtectedRouteUser />}>
                 <Route
-                   path="/appointmentsUser"
-                   element={<PagesUserAppointmentManagement />}
-                />   
+                  path="/appointmentsUser"
+                  element={<PagesUserAppointmentManagement />}
+                />
                 <Route
                   path="/createappointmentsUser"
                   element={<AppointmentFormPage />}
@@ -73,7 +69,6 @@ const App = () => {
               <Route path="/appointmentsUser" element={<AppointmentFormPage />   
               } />
               </ProtectedRouteUser> */}
-              
 
               {/* <Route
                   path="/appointmentsUser"
@@ -126,15 +121,4 @@ const App = () => {
   );
 };
 
-
 export default App;
-
-
-
-
-
-
-
-
-
-
