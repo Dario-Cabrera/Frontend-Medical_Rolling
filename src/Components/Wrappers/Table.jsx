@@ -15,7 +15,7 @@ const Table = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [doctores, setDoctores] = useState([]);
   const [citas, setCitas] = useState([]);
-  
+
   const [filteredCitas, setFilteredCitas] = useState([]);
   const [nombresApellidosDoctores, setNombresApellidosDoctores] = useState({});
   const [nombresApellidosUsuarios, setNombresApellidosUsuarios] = useState({});
@@ -107,7 +107,7 @@ const Table = () => {
   useEffect(() => {
     obtenerCitasDesdeBackend();
   }, [busqueda]);
-  
+
   async function obtenerCitasDesdeBackend() {
     try {
       const response = await axios.get("http://localhost:3001/api/gettingappointments");
@@ -121,43 +121,41 @@ const Table = () => {
       console.error("Error al obtener las citas desde el backend:", error);
     }
   }
-  
+
   async function obtenerValorDoctor(citas) {
-    const idsDoctores = citas.map(cita => cita.doctor);
-    const idsUsuarios = citas.map(cita => cita.user);
-    const responseDoctores = await Promise.all(idsDoctores.map(idDoctor => axios.get(`http://localhost:3001/api/getonedoctor/${idDoctor}`)));
-    const responseUsuarios = await Promise.all(idsUsuarios.map(idUsuario => axios.get(`http://localhost:3001/api/getoneuser/${idUsuario}`)));
-  
+    const idsDoctores = citas.map((cita) => cita.doctor);
+    const idsUsuarios = citas.map((cita) => cita.user);
+    const responseDoctores = await Promise.all(idsDoctores.map((idDoctor) => axios.get(`http://localhost:3001/api/getonedoctor/${idDoctor}`)));
+    const responseUsuarios = await Promise.all(idsUsuarios.map((idUsuario) => axios.get(`http://localhost:3001/api/getoneuser/${idUsuario}`)));
+
     const nombresApellidosDoctores = responseDoctores.reduce((acc, response) => {
       const doctor = response.data;
       if (doctor) {
-        acc[doctor._id] = `${doctor.name ?? ''} ${doctor.lastname ?? ''}`;
+        acc[doctor._id] = `${doctor.name ?? ""} ${doctor.lastname ?? ""}`;
       }
       return acc;
     }, {});
-  
+
     const nombresApellidosUsuarios = responseUsuarios.reduce((acc, response) => {
       const usuario = response.data;
       if (usuario) {
-        acc[usuario._id] = `${usuario.name ?? ''} ${usuario.lastname ?? ''}`;
+        acc[usuario._id] = `${usuario.name ?? ""} ${usuario.lastname ?? ""}`;
       }
       return acc;
     }, {});
-  
-  
 
-    const filteredCitas = citas.filter(cita => {
+    const filteredCitas = citas.filter((cita) => {
       const searchString = busqueda.toLowerCase();
-      const nombreCompletoDoctor = (nombresApellidosDoctores[cita.doctor] ?? '').toLowerCase();
-      const nombreCompletoUsuario = (nombresApellidosUsuarios[cita.user] ?? '').toLowerCase();
-      const estado = typeof cita.state === 'boolean' ? (cita.state ? 'activa' : 'inactiva') : cita.state.toLowerCase();
-    
+      const nombreCompletoDoctor = (nombresApellidosDoctores[cita.doctor] ?? "").toLowerCase();
+      const nombreCompletoUsuario = (nombresApellidosUsuarios[cita.user] ?? "").toLowerCase();
+      const estado = typeof cita.state === "boolean" ? (cita.state ? "activa" : "inactiva") : cita.state.toLowerCase();
+
       // Obtener partes de la fecha para búsqueda
       const selectedDate = moment(cita.appointmentDate); // Obtener la fecha seleccionada del formulario
 
       // Obtener la fecha formateada para enviarla al backend
       const formattedDate = selectedDate.format("YYYY-MM-DD");
-    
+
       return (
         cita._id.toLowerCase().includes(searchString) ||
         cita.user.toLowerCase().includes(searchString) ||
@@ -167,11 +165,10 @@ const Table = () => {
         estado.includes(searchString)
       );
     });
-    
-  
+
     console.log("Valor de búsqueda:", busqueda); // Agregamos un console.log para depurar
     console.log("Citas filtradas:", filteredCitas); // Agregamos un console.log para depurar
-  
+
     return { nombresApellidosDoctores, nombresApellidosUsuarios, filteredCitas };
   }
 
@@ -1029,7 +1026,7 @@ const Table = () => {
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{cita.doctor}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{nombresApellidosDoctores[cita.doctor]}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">
-                          {cita.appointmentDate} {/* Fecha */}
+                            {cita.appointmentDate} {/* Fecha */}
                           </td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{cita.appointmentTime}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{typeof cita.state === "string" ? cita.state.toLowerCase() : cita.state ? "Activa" : "Inactiva"}</td>
@@ -1425,14 +1422,35 @@ const Table = () => {
                 ) => (
                   <form onSubmit={handleSubmit}>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="usuario" placeholder="Usuario" />
+                      <label htmlFor="hora" className="mr-2">
+                        User ID:
+                      </label>
+                      <Field type="text" className="input-field" name="usuario" placeholder="Usuario" readOnly />
                       <ErrorMessage name="usuario" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="Doctor" placeholder="Doctor" />
+                      <label htmlFor="hora" className="mr-2">
+                        Nombre Usuario:
+                      </label>
+                      {nombresApellidosUsuarios[values.usuario]}
+                    </div>
+                    <div className="mb-4">
+                      <label htmlFor="hora" className="mr-2">
+                        Doctor ID:
+                      </label>
+                      <Field type="text" className="input-field" name="Doctor" placeholder="Doctor" readOnly />
                       <ErrorMessage name="Doctor" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
+                      <label htmlFor="hora" className="mr-2">
+                        Nombre Doctor:
+                      </label>
+                      {nombresApellidosDoctores[values.Doctor]}
+                    </div>
+                    <div className="mb-4">
+                      <label htmlFor="hora" className="mr-2">
+                        Fecha:
+                      </label>
                       <DatePicker
                         className="input-field"
                         selected={values.fecha}
