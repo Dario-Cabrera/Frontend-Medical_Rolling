@@ -7,95 +7,27 @@ import { useNavigate } from "react-router-dom";
 
 export const LoginPagesUser = () => {
   
-  //---------------Pruebas--------------------//
-
   const [email, setEmail] = useState('')
   const [pass, setPass] = useState('')
 
-  // const user = 
-  //   {
-  //   email: 'admin@gmail.com',
-  //   pass: '12345678',
-  //   isAuditor: true,
-  //   isDoctor: true,
-  //   isUser: false
-  // }
-  // {
-  //   email: 'doctor@gmail.com',
-  //   pass: '12345678',
-  //   isAuditor: false,
-  //   isDoctor: true,
-  //   isUser: false
-  // }
-//   {
-//     email: 'user@gmail.com',
-//     pass: '12345678',
-//     isAuditor: false,
-//     isDoctor: false,
-//     isUser: true
-//   },
-
-// ]
-
-//---------------Pruebas--------------------//
- 
-  
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const { signin, errors: signinErrors,isAuthenticatedUser } = userAuth();
+  const { signin, errors: signinErrors,isAuthenticatedUser, isAuthenticatedDoctor, isAuthenticatedAuditor } = userAuth();
   const navigate = useNavigate()
 
   const onSubmit = handleSubmit((data) => {
     console.log(data);
-    // signin(data);
-  
-//---------------Pruebas--------------------//
-
-  
-//   if (user.email === email && user.pass === pass) {
-//     if (user.isAuditor) {
-//       console.log("Inicio de sesión correcta");
-//       localStorage.setItem('email', JSON.stringify(user.email));
-//       localStorage.setItem('admin', JSON.stringify(user.isAuditor));
-//       localStorage.setItem('doctor', JSON.stringify(user.isDoctor));
-//       localStorage.setItem('user', JSON.stringify(user.isUser));
-//       // navigate('/auditorPage');
-//     } else if (user.isDoctor) {
-//       console.log("Inicio de sesión correcta");
-//       localStorage.setItem('email', JSON.stringify(user.email));
-//       localStorage.setItem('admin', JSON.stringify(user.isAuditor));
-//       localStorage.setItem('doctor', JSON.stringify(user.isDoctor));
-//       localStorage.setItem('user', JSON.stringify(user.isUser));
-//       // navigate('/appointmentsDoctor');
-//     } else if (user.isUser) {
-//       console.log("Inicio de sesión correcta");
-//       localStorage.setItem('email', JSON.stringify(user.email));
-//       localStorage.setItem('admin', JSON.stringify(user.isAuditor));
-//       localStorage.setItem('doctor', JSON.stringify(user.isDoctor));
-//       localStorage.setItem('user', JSON.stringify(user.isUser));
-//       // navigate('/appointmentsUser');
-//     } else {
-//       alert('Acceso denegado. Rol no válido.'); 
-//     }
-//   } else {
-//     alert('Correo o contraseña incorrecta');
-//   };
-
+    signin(data);
  });
   
-
-
-//--------------------------------------//
 
   useEffect(() => {
     if (isAuthenticatedUser) navigate("/appointmentsUser")
   }, [isAuthenticatedUser])
   
-
-
 
   return (
     <div className="flex h-[calc(100vh-100px)] items-center justify-center">
@@ -131,7 +63,7 @@ export const LoginPagesUser = () => {
             Login</button>
         </form>
         <p className="flex gap-x-2 py-3 justify-between">
-          Don´t have an account?{" "}
+          Don't have an account?{" "}
           <Link to="/register/" className="text-sky-500">
             Go Register
           </Link>{" "}

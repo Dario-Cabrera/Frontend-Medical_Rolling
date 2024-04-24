@@ -1,16 +1,13 @@
-
-
-import React, { useState } from "react";
+// import React, { useState } from "react";
 import Logo_MR from "../../assets/img/Logo_MR.png";
 import { Link, NavLink, Navigate } from "react-router-dom";
 import { userAuth } from "../../Context/UserContext";
+import { useNavigate } from "react-router-dom"; 
 
-import { doctorAuth } from "../../Context/DoctorContext";
-import {ProtectedRoutes} from "../../Routes/ProtectedRoutes";
+// import { doctorAuth } from "../../Context/DoctorContext";
+// import {ProtectedRoutes} from "../../Routes/ProtectedRoutes";
 
 // import { NavLink } from 'react-router-dom';
-
-
 
 export const Navbar = () => {
   const {
@@ -22,25 +19,30 @@ export const Navbar = () => {
     doctor,
     auditor,
   } = userAuth();
+
+  //user/doctor/auditor ==> Tiene los datos de user. 
+
   console.log(user);
   // const { isAuthenticatedUser, logoutUser, user } = userAuth();
   // const { isAuthenticatedDoctor, logoutDoctor, doctor } = doctorAuth();
  // console.log(user);
   
- const isAuthenticatedAuditor = false
- const isAuthenticatedDoctor = false
- const isAuthenticatedUser = false
- 
-  const LogOut = () => {
-    alert('Sesión cerrada')
-  
-    logoutUser()
-    logoutDoctor()
-  
-  }
-  const LogIn = () => {
-   <Navigate to='/loginUser/'/> 
+//  const isAuthenticatedAuditor = false
+//  const isAuthenticatedDoctor = false
+//  const isAuthenticatedUser = true
 
+
+  const LogOut = () => {
+
+    alert('Sesión cerrada')
+    logoutUser()
+    window.location.href = '/';
+    
+  }
+
+
+  const LogIn = () => {
+    <Navigate to='/loginUser/'/> 
   }
  
   
@@ -130,6 +132,14 @@ export const Navbar = () => {
                 Mis Turnos
                 </Link>
             </li>)}
+            {isAuthenticatedUser && (<li>
+              <Link
+                to="/createappointmentsUser"
+                className="btn btn-xs mt-3 btn-info bg-hb text-w hover:text-c"
+                >
+                Crear Turno
+                </Link>
+            </li>)}
             {!(isAuthenticatedAuditor || isAuthenticatedDoctor ||isAuthenticatedUser) && (
               <li>
               <Link
@@ -142,8 +152,10 @@ export const Navbar = () => {
             )}
                 <li>
                   <Link
-                    to="/loginUser"
+                     to={(!isAuthenticatedAuditor && !isAuthenticatedDoctor && !isAuthenticatedUser)? "/loginUser/" : null}
                     className="btn btn-xs mt-3 btn-info bg-hb text-w hover:text-c"
+                    onClick={() => (isAuthenticatedAuditor || isAuthenticatedDoctor || isAuthenticatedUser)?
+                      LogOut() : LogIn()}
                   >
                     {(isAuthenticatedAuditor || isAuthenticatedDoctor || isAuthenticatedUser) ?
                     'LogOut':'LogIn'}
@@ -230,7 +242,14 @@ export const Navbar = () => {
               Mis Turnos
               </NavLink>
             )}
-            
+             {isAuthenticatedUser && (
+              <NavLink
+                to="/createappointmentsUser"
+                className="btn mr-4 btn-info bg-hb text-w hover:text-c"
+                >
+                Crear Turno
+                </NavLink>
+            )}            
            {(!isAuthenticatedAuditor && !isAuthenticatedDoctor && !isAuthenticatedUser) && (
            <Link
               to="/registerUser"
@@ -241,7 +260,7 @@ export const Navbar = () => {
             
             
             <Link
-              to={(!isAuthenticatedAuditor && !isAuthenticatedDoctor && !isAuthenticatedUser)? "/loginUser/" : null}
+              to={(!isAuthenticatedAuditor && !isAuthenticatedDoctor && !isAuthenticatedUser)? "/loginUser/" : "/"}
               className="btn mr-4 btn-info bg-hb text-w hover:text-c"
               onClick={() => (isAuthenticatedAuditor || isAuthenticatedDoctor || isAuthenticatedUser)?
                 LogOut() : LogIn()
