@@ -65,6 +65,24 @@ const Table = () => {
     );
   });
 
+  // ---Get appointments by user---
+
+  const [userAppointments, setUserAppointments] = useState([]);
+  const [error, setError] = useState(null);
+
+  const fetchAppointmentsByUser = async (userId) => {
+    try {
+      // Realiza una solicitud GET al endpoint del backend para obtener las citas del usuario
+      const response = await axios.get(`http://localhost:3001/api/getappointmentbyuser/${userId}`);
+      // Establece el estado con los datos de las citas del usuario
+      setUserAppointments(response.data);
+      console.log("Citas del usuario:", response.data); // Agrega este console.log para ver las citas en la consola
+    } catch (error) {
+      // Maneja cualquier error que ocurra durante la solicitud
+      setError(error.response.data.message);
+    }
+  };
+
   // ----GET DOCTORS----
 
   useEffect(() => {
@@ -838,7 +856,12 @@ const Table = () => {
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{usuario.address}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{usuario.isDoctor === false && usuario.isAuditor === false ? "User" : ""}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">
-                            <button onClick={openAppointmentByIdUserModal} className="px-2 py-1 text-w bg-hb hover:bg-ts hover:text-c  rounded-lg">
+                            <button
+                              onClick={() => {
+                                openAppointmentByIdUserModal(usuario._id);
+                                fetchAppointmentsByUser(usuario._id);
+                              }}
+                              className="px-2 py-1 text-w bg-hb hover:bg-ts hover:text-c  rounded-lg">
                               Ver citas
                             </button>
                           </td>
@@ -1895,29 +1918,44 @@ const Table = () => {
         {/* Modal de appoinments By Id User */}
         {showAppointmentbyIdUserModal && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={closeAppointmentByIdUserModal}>
-            <div className="bg-white rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
-              <div className="citas-contenedor max-h-80 overflow-y-auto bg-w">
-                {/* Contenedor de citas */}
-                <div className="cita-tarjeta m-2">
-                  <h3>Cita 1</h3>
-                  <p>Detalles de la cita 1...</p>
-                </div>
-                <div className="cita-tarjeta m-2">
-                  <h3>Cita 2</h3>
-                  <p>Detalles de la cita 2...</p>
-                </div>
-                <div className="cita-tarjeta m-2">
-                  <h3>Cita 3</h3>
-                  <p>Detalles de la cita 3...</p>
-                </div>
-                {/* Agrega más divs de citas según sea necesario */}
+            <div className="bg-c rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
+              <div className="citas-contenedor max-h-80 overflow-y-auto bg-c">
+                <h1 className="text-center mb-3 font-medium">Citas del Usuario</h1>
+                {/* Verificar si el usuario tiene citas */}
+                {userAppointments.length === 0 ? (
+                  <p className="text-center text-w">El usuario no tiene citas registradas.</p>
+                ) : (
+                  // Ordenar las citas por fecha de forma descendente
+                  userAppointments
+                    .sort((a, b) => new Date(b.appointmentDate) - new Date(a.appointmentDate))
+                    .map((appointment, index) => (
+                      <div key={index} className="cita-contenedor bg-w rounded-lg m-1 p-1">
+                        <div className="cita-tarjeta m-1 text-c">
+                          <h2 className="font-medium">{`Cita el ${appointment.appointmentDate} a las ${appointment.appointmentTime}`}</h2>
+                          <p>
+                            <strong className="text-hb"> ID de usuario:</strong> {appointment.user}
+                          </p>
+                          <p>
+                            <strong className="text-hb">Nombre de usuario:</strong> {nombresApellidosUsuarios[appointment.user]}
+                          </p>
+                          <p>
+                            <strong className="text-hb">ID de médico:</strong> {appointment.doctor}
+                          </p>
+                          <p>
+                            <strong className="text-hb">Nombre de médico:</strong> {nombresApellidosDoctores[appointment.doctor]}
+                          </p>
+                          {/* Mostrar más detalles de la cita según sea necesario */}
+                        </div>
+                      </div>
+                    ))
+                )}
               </div>
-              <div className="flex justify-center mt-4">
+              <div className="flex justify-center mt-4 ">
                 <button
                   onClick={() => {
                     closeAppointmentByIdUserModal();
                   }}
-                  className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
+                  className="px-4 py-2 rounded hover:bg-ts hover:text-c text-w bg-hb"
                   // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
@@ -1926,10 +1964,11 @@ const Table = () => {
             </div>
           </div>
         )}
+
         {/* Modal de appoinments By Id Doctor */}
         {showAppointmentbyIdDoctorModal && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={closeAppointmentByIdDoctorModal}>
-            <div className="bg-white rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-c rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
               <div className="citas-contenedor max-h-80 overflow-y-auto bg-w">
                 {/* Contenedor de citas */}
                 <div className="cita-tarjeta m-2">
