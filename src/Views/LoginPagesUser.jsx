@@ -1,33 +1,41 @@
 import { useForm } from "react-hook-form";
 import { userAuth } from "../Context/UserContext";
-import {Link} from "react-router-dom"
+import { Link } from "react-router-dom";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { useNavigate } from "react-router-dom";
 
-
 export const LoginPagesUser = () => {
-  
-  const [email, setEmail] = useState('')
-  const [pass, setPass] = useState('')
+  const [email, setEmail] = useState("");
+  const [pass, setPass] = useState("");
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const { signin, errors: signinErrors,isAuthenticatedUser, isAuthenticatedDoctor, isAuthenticatedAuditor } = userAuth();
-  const navigate = useNavigate()
+  const {
+    signin,
+    errors: signinErrors,
+    isAuthenticatedUser,
+    isAuthenticatedDoctor,
+    isAuthenticatedAuditor,
+  } = userAuth();
+  const navigate = useNavigate();
 
   const onSubmit = handleSubmit((data) => {
     console.log(data);
     signin(data);
- });
-  
+  });
 
   useEffect(() => {
-    if (isAuthenticatedUser) navigate("/appointmentsUser")
-  }, [isAuthenticatedUser])
-  
+    if (isAuthenticatedUser) navigate("/appointmentsUser");
+  }, [isAuthenticatedUser]);
+  useEffect(() => {
+    if (isAuthenticatedDoctor) navigate("/appointmentsDoctor");
+  }, [isAuthenticatedDoctor]);
+  useEffect(() => {
+    if (isAuthenticatedAuditor) navigate("/auditorPage");
+  }, [isAuthenticatedAuditor]);
 
   return (
     <div className="flex h-[calc(100vh-100px)] items-center justify-center">
@@ -45,7 +53,7 @@ export const LoginPagesUser = () => {
             className="w-full bg-zinc-700 text-white px-4 py-2 my-2 rounded-md"
             placeholder="Email"
             value={email}
-            onChange={(e)=>setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
           />
           {errors.email && <p className="text-red-500">Email is required</p>}
           <input
@@ -54,13 +62,11 @@ export const LoginPagesUser = () => {
             className="w-full bg-zinc-700 text-white px-4 py-2 my-2 rounded-md"
             placeholder="Password"
             value={pass}
-            onChange={(e)=>setPass(e.target.value)}
+            onChange={(e) => setPass(e.target.value)}
           />
           {errors.pass && <p className="text-red-500">Password is required</p>}
 
-          <button type="submit"
-          >
-            Login</button>
+          <button type="submit">Login</button>
         </form>
         <p className="flex gap-x-2 py-3 justify-between">
           Don't have an account?{" "}

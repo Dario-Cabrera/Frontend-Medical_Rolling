@@ -20,7 +20,6 @@ export const userAuth = () => {
 };
 
 export const UserProvider = ({ children }) => {
-
   const [user, setUser] = useState(null);
   const [doctor, setDoctor] = useState(null);
   const [auditor, setAuditor] = useState(null);
@@ -80,12 +79,15 @@ export const UserProvider = ({ children }) => {
     }
   };
 
-const logoutUser =()=>{
-  localStorage.removeItem("token");
-  setUser(null);
-  setIsAuthenticatedUser(false);
-}
-
+  const logoutUser = () => {
+    localStorage.removeItem("token");
+    setUser(null);
+    setDoctor(null);
+    setAuditor(null);
+    setIsAuthenticatedUser(false);
+    setIsAuthenticatedDoctor(false);
+    setIsAuthenticatedAuditor(false);
+  };
 
   useEffect(() => {
     if (errors.length > 0) {
@@ -101,28 +103,48 @@ const logoutUser =()=>{
       const token = localStorage.getItem("token");
       if (!token) {
         setIsAuthenticatedUser(false);
+        setUser(null);
+        setIsAuthenticatedUser(false);
         setLoadingUser(false);
-        return setUser(null);
+        setDoctor(null); // Reinicia el estado del doctor
+        setAuditor(null); // Reinicia el estado del auditor
+        return;
       }
       try {
-        console.log(token);
         const res = await varityTokenRequest({ token });
-        console.log("Estoy debajo del await", res);
-        console.log(res);
+        const { isDoctor, isAuditor } = res;
         if (!res) {
           setIsAuthenticatedUser(false);
           setLoadingUser(false);
+          setDoctor(null); // Reinicia el estado del doctor
+          setAuditor(null); // Reinicia el estado del auditor
           return;
         }
-        setIsAuthenticatedUser(true);
-        setUser(res);
-        setLoadingUser(false);
+        // Determinar el tipo de usuario y actualizar los estados correspondientes
+        if (!isDoctor && !isAuditor) {
+          // Usuario normal
+          setIsAuthenticatedUser(true);
+          setUser(res);
+        } else if (isDoctor && !isAuditor) {
+          // Doctor
+          setIsAuthenticatedDoctor(true);
+          setDoctor(res);
+        } else {
+          // Auditor
+          setIsAuthenticatedAuditor(true);
+          setAuditor(res);
+        }
 
+        setLoadingUser(false);
       } catch (error) {
         console.log(error);
         setIsAuthenticatedUser(false);
+        setIsAuthenticatedDoctor(false);
+        setIsAuthenticatedAuditor(false);
         setUser(null);
-        setLoadingUser(false)
+        setDoctor(null); // Reinicia el estado del doctor
+        setAuditor(null); // Reinicia el estado del auditor
+        setLoadingUser(false);
       }
     }
     checkLogin();
@@ -130,7 +152,19 @@ const logoutUser =()=>{
 
   return (
     <UserContext.Provider
-      value={{ signup, signin,logoutUser, loadingUser, user, isAuthenticatedUser, errors }}
+      value={{
+        signup,
+        signin,
+        logoutUser,
+        loadingUser,
+        user,
+        doctor,
+        auditor,
+        isAuthenticatedUser,
+        isAuthenticatedDoctor,
+        isAuthenticatedAuditor,
+        errors,
+      }}
     >
       {children}
     </UserContext.Provider>

@@ -1,11 +1,10 @@
 import { useAppointment } from "../Context/AppointmentContext";
 import { useEffect } from "react";
-import { doctorAuth } from "../Context/DoctorContext";
-
+import { userAuth } from "../Context/UserContext";
 
 export const PagesDoctorAppointmentManagement = () => {
-  const { getAppointments, appointments  } = useAppointment();
-  const {doctor}= doctorAuth()
+  const { getAppointments, appointments } = useAppointment();
+  const { doctor } = userAuth();
 
   useEffect(() => {
     getAppointments();
@@ -13,10 +12,11 @@ export const PagesDoctorAppointmentManagement = () => {
 
   if (appointments.length === 0) return <h1>No appointments</h1>;
 
-
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Wellcome {doctor.name}</h1>
+      <h1 className="text-2xl font-bold mb-4">
+        Wellcome{doctor ? doctor.name : "Sin nombre"}
+      </h1>
       <h2 className="text-2xl font-bold mb-4">GESTIÓN DE TURNOS</h2>
 
       {/* Contenedor para turnos activos y historial */}
