@@ -14,30 +14,12 @@ export const Navbar = () => {
     <div className="navbar bg-w text-c">
       <div className="navbar-start">
         <div className="dropdown">
-          <div
-            tabIndex={0}
-            role="button"
-            className="btn btn-ghost lg:hidde bg-w"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 6h16M4 12h8m-8 6h16"
-              />
+          <div tabIndex={0} role="button" className="btn btn-ghost lg:hidde bg-w">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" />
             </svg>
           </div>
-          <ul
-            tabIndex={0}
-            className="bg-w menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow rounded-box w-52"
-          >
+          <ul tabIndex={0} className="bg-w menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow rounded-box w-52">
             <li>
               <Link to="/AboutUs">Quienes Somos</Link>
             </li>
@@ -68,10 +50,7 @@ export const Navbar = () => {
             {isAuthenticatedUser == true && isAuthenticatedDoctor == false ? (
               <>
                 <li>
-                  <Link
-                    to="/add-appointmentsUser/"
-                    className="btn btn-xs mt-3 btn-info bg-hb text-w hover:text-c"
-                  >
+                  <Link to="/add-appointmentsUser/" className="btn btn-xs mt-3 btn-info bg-hb text-w hover:text-c">
                     Crear Turno
                   </Link>
                 </li>
@@ -81,20 +60,15 @@ export const Navbar = () => {
                     onClick={() => {
                       logoutUser();
                     }}
-                    className="btn btn-xs mt-3 btn-info bg-hb text-w hover:text-c"
-                  >
+                    className="btn btn-xs mt-3 btn-info bg-hb text-w hover:text-c">
                     Cerrar sesion
                   </Link>
                 </li>
               </>
-            ) : isAuthenticatedDoctor == true &&
-              isAuthenticatedUser == false ? (
+            ) : isAuthenticatedDoctor == true && isAuthenticatedUser == false ? (
               <>
                 <li>
-                  <Link
-                    to="/appointmentsDoctor/"
-                    className="btn btn-xs mt-3 btn-info bg-hb text-w hover:text-c"
-                  >
+                  <Link to="/appointmentsDoctor/" className="btn btn-xs mt-3 btn-info bg-hb text-w hover:text-c">
                     Mis citas
                   </Link>
                 </li>
@@ -103,8 +77,7 @@ export const Navbar = () => {
                     to="/"
                     onClick={() => {
                       logoutDoctor();
-                    }}
-                  >
+                    }}>
                     Cerrar sesion
                   </Link>
                 </li>
@@ -112,26 +85,17 @@ export const Navbar = () => {
             ) : (
               <>
                 <li>
-                  <Link
-                    to="/loginDoctor/"
-                    className="btn btn-xs mt-3 btn-info bg-hb text-w hover:text-c"
-                  >
+                  <Link to="/pageAuditor" className="btn btn-xs mt-3 btn-info bg-hb text-w hover:text-c">
                     Admin
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    to="/registerUser/"
-                    className="btn btn-xs mt-3 btn-info bg-hb text-w hover:text-c"
-                  >
+                  <Link to="/registerUser/" className="btn btn-xs mt-3 btn-info bg-hb text-w hover:text-c">
                     Registrar
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    to="/loginUser/"
-                    className="btn btn-xs mt-3 btn-info bg-hb text-w hover:text-c"
-                  >
+                  <Link to="/loginUser/" className="btn btn-xs mt-3 btn-info bg-hb text-w hover:text-c">
                     LogIn
                   </Link>
                 </li>
@@ -140,8 +104,8 @@ export const Navbar = () => {
           </ul>
         </div>
         <Link to="/" className="w-16 cursor-pointer">
-            <img src={Logo_MR} alt="logo" />
-          </Link>
+          <img src={Logo_MR} alt="logo" />
+        </Link>
         {/* <img className="w-16 cursor-pointer" src={Logo_MR} alt="logo" /> */}
         {/* <Link className="btn btn-ghost text-xl">daisyUI</Link> */}
       </div>
@@ -181,10 +145,7 @@ export const Navbar = () => {
       <div className="navbar-end hidden lg:flex">
         {isAuthenticatedUser == true && isAuthenticatedDoctor == false ? (
           <>
-            <Link
-              to="/add-appointmentsUser/"
-              className="btn mr-4 btn-info bg-hb text-w hover:text-c"
-            >
+            <Link to="/add-appointmentsUser/" className="btn mr-4 btn-info bg-hb text-w hover:text-c">
               Crear Turno
             </Link>
 
@@ -193,17 +154,13 @@ export const Navbar = () => {
               onClick={() => {
                 logoutUser();
               }}
-              className="btn mr-4 btn-info bg-hb text-w hover:text-c"
-            >
+              className="btn mr-4 btn-info bg-hb text-w hover:text-c">
               Cerrar sesion
             </Link>
           </>
         ) : isAuthenticatedDoctor == true && isAuthenticatedUser == false ? (
           <>
-            <Link
-              to="/appointmentsDoctor/"
-              className="btn mr-4 btn-info bg-hb text-w hover:text-c"
-            >
+            <Link to="/appointmentsDoctor/" className="btn mr-4 btn-info bg-hb text-w hover:text-c">
               Mis citas
             </Link>
 
@@ -212,31 +169,21 @@ export const Navbar = () => {
               onClick={() => {
                 logoutDoctor;
               }}
-              className="btn mr-4 btn-info bg-hb text-w hover:text-c"
-            >
+              className="btn mr-4 btn-info bg-hb text-w hover:text-c">
               Cerrar sesion
             </Link>
           </>
         ) : (
           <>
-            <Link
-              to="/loginDoctor/"
-              className="btn mr-4 btn-info bg-hb text-w hover:text-c"
-            >
+            <Link to="/pageAuditor" className="btn mr-4 btn-info bg-hb text-w hover:text-c">
               Admin
             </Link>
 
-            <Link
-              to="/registerUser/"
-              className="btn mr-4 btn-info bg-hb text-w hover:text-c"
-            >
+            <Link to="/registerUser/" className="btn mr-4 btn-info bg-hb text-w hover:text-c">
               Registrar
             </Link>
 
-            <Link
-              to="/loginUser/"
-              className="btn mr-4 btn-info bg-hb text-w hover:text-c"
-            >
+            <Link to="/loginUser/" className="btn mr-4 btn-info bg-hb text-w hover:text-c">
               LogIn
             </Link>
           </>
