@@ -22,6 +22,35 @@ const Table = () => {
   // Estado para la búsqueda global
   const [busqueda, setBusqueda] = useState("");
 
+  const especialidadesMedicas = [
+    "Anestesiología",
+    "Cardiología",
+    "Dermatología",
+    "Endocrinología",
+    "Gastroenterología",
+    "Geriatría",
+    "Ginecología",
+    "Hematología",
+    "Infectología",
+    "Medicina Familiar",
+    "Medicina Interna",
+    "Nefrología",
+    "Neumología",
+    "Neurología",
+    "Obstetricia",
+    "Odontología",
+    "Oncología",
+    "Oftalmología",
+    "Ortopedia",
+    "Otorrinolaringología",
+    "Pediatría",
+    "Psiquiatría",
+    "Radiología",
+    "Reumatología",
+    "Traumatología",
+    "Urología",
+  ];
+
   // ----CRUD----
   // ----GET USERS----
   useEffect(() => {
@@ -76,6 +105,23 @@ const Table = () => {
       const response = await axios.get(`http://localhost:3001/api/getappointmentbyuser/${userId}`);
       // Establece el estado con los datos de las citas del usuario
       setUserAppointments(response.data);
+      console.log("Citas del usuario:", response.data); // Agrega este console.log para ver las citas en la consola
+    } catch (error) {
+      // Maneja cualquier error que ocurra durante la solicitud
+      setError(error.response.data.message);
+    }
+  };
+
+  // ---Get appointments by user---
+
+  const [doctorAppointments, setDoctorAppointments] = useState([]);
+
+  const fetchAppointmentsByDoctor = async (doctorId) => {
+    try {
+      // Realiza una solicitud GET al endpoint del backend para obtener las citas del usuario
+      const response = await axios.get(`http://localhost:3001/api/getappointmentbydoctor/${doctorId}`);
+      // Establece el estado con los datos de las citas del usuario
+      setDoctorAppointments(response.data);
       console.log("Citas del usuario:", response.data); // Agrega este console.log para ver las citas en la consola
     } catch (error) {
       // Maneja cualquier error que ocurra durante la solicitud
@@ -955,7 +1001,12 @@ const Table = () => {
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{doctor.licenceNumber}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{doctor.isDoctor === true && doctor.isAuditor === true ? "Auditor" : "Doctor"}</td>
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">
-                            <button onClick={openAppointmentByIdDoctorModal} className="px-2 py-1 text-w bg-hb hover:bg-ts hover:text-c  rounded-lg">
+                            <button
+                              onClick={() => {
+                                openAppointmentByIdDoctorModal(doctor._id);
+                                fetchAppointmentsByDoctor(doctor._id);
+                              }}
+                              className="px-2 py-1 text-w bg-hb hover:bg-ts hover:text-c  rounded-lg">
                               Ver citas
                             </button>
                           </td>
@@ -1217,42 +1268,66 @@ const Table = () => {
                 {({ handleSubmit }) => (
                   <form onSubmit={handleSubmit}>
                     <div className="mb-4">
-                      <Field type="number" className="input-field" name="DNI" placeholder="DNI/LC/LE/PASSPORT" />
+                      <label htmlFor="rol" className="mr-6">
+                        DNI:
+                      </label>
+                      <Field type="number" className="input-field bg-w text-c rounded" name="DNI" placeholder="DNI/LC/LE/PASSPORT" />
                       <ErrorMessage name="DNI" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="nombre" placeholder="Nombre" />
+                      <label htmlFor="rol" className="mr-6">
+                        Nombre:
+                      </label>
+                      <Field type="text" className="input-field bg-w text-c rounded" name="nombre" placeholder="Nombre" />
                       <ErrorMessage name="nombre" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="apellido" placeholder="Apellido" />
+                      <label htmlFor="rol" className="mr-6">
+                        Apellido:
+                      </label>
+                      <Field type="text" className="input-field bg-w text-c rounded" name="apellido" placeholder="Apellido" />
                       <ErrorMessage name="apellido" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="email" className="input-field" name="email" placeholder="Correo electrónico" />
+                      <label htmlFor="rol" className="mr-6">
+                        Email:
+                      </label>
+                      <Field type="email" className="input-field bg-w text-c rounded" name="email" placeholder="Correo electrónico" />
                       <ErrorMessage name="email" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="provincia" placeholder="Provincia" />
+                      <label htmlFor="rol" className="mr-6">
+                        Provincia:
+                      </label>
+                      <Field type="text" className="input-field bg-w text-c rounded" name="provincia" placeholder="Provincia" />
                       <ErrorMessage name="provincia" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="direccion" placeholder="Dirección" />
+                      <label htmlFor="rol" className="mr-6">
+                        Dirección:
+                      </label>
+                      <Field type="text" className="input-field bg-w text-c rounded" name="direccion" placeholder="Dirección" />
                       <ErrorMessage name="direccion" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="number" className="input-field" name="area" placeholder="Área" />
+                      <label htmlFor="rol" className="mr-6">
+                        Area:
+                      </label>
+                      <Field type="number" className="input-field bg-w text-c rounded" name="area" placeholder="Área" />
                       <ErrorMessage name="area" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="number" className="input-field" name="telefono" placeholder="Teléfono" />
+                      <label htmlFor="rol" className="mr-6">
+                        Teléfono:
+                      </label>
+                      <Field type="number" className="input-field bg-w text-c rounded" name="telefono" placeholder="Teléfono" />
                       <ErrorMessage name="telefono" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
                       <label htmlFor="rol" className="mr-6">
                         Rol:
                       </label>
-                      <Field as="select" className="input-field" name="rol">
+                      <Field as="select" className="input-field bg-w text-c rounded" name="rol">
                         <option value="">Selecciona un rol</option>
                         <option value="User">User</option> {/* Cambia el valor de esta opción a "User" */}
                         <option value="Doctor">Doctor</option>
@@ -1328,34 +1403,59 @@ const Table = () => {
                 {({ handleSubmit }) => (
                   <form onSubmit={handleSubmit}>
                     <div className="mb-4">
-                      <Field type="number" className="input-field" name="DNI" placeholder="DNI/LC/LE/PASSPORT" />
+                      <label htmlFor="rol" className="mr-6">
+                        DNI:
+                      </label>
+                      <Field type="number" className="input-field bg-w text-c rounded" name="DNI" placeholder="DNI/LC/LE/PASSPORT" />
                       <ErrorMessage name="DNI" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="nombre" placeholder="Nombre" />
+                      <label htmlFor="rol" className="mr-6">
+                        Nombre:
+                      </label>
+                      <Field type="text" className="input-field bg-w text-c rounded" name="nombre" placeholder="Nombre" />
                       <ErrorMessage name="nombre" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="apellido" placeholder="Apellido" />
+                      <label htmlFor="rol" className="mr-6">
+                        Apellido:
+                      </label>
+                      <Field type="text" className="input-field bg-w text-c rounded" name="apellido" placeholder="Apellido" />
                       <ErrorMessage name="apellido" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="email" className="input-field" name="email" placeholder="Correo electrónico" />
+                      <label htmlFor="rol" className="mr-6">
+                        Email:
+                      </label>
+                      <Field type="email" className="input-field bg-w text-c rounded" name="email" placeholder="Correo electrónico" />
                       <ErrorMessage name="email" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="especialidad" placeholder="Especialidad" />
+                      <label htmlFor="especialidad" className="mr-6">
+                        Especialidad:
+                      </label>
+                      <Field as="select" className="input-field bg-w text-c rounded" name="especialidad">
+                        <option value="">Selecciona una especialidad</option>
+                        {especialidadesMedicas.map((especialidad, index) => (
+                          <option key={index} value={especialidad}>
+                            {especialidad}
+                          </option>
+                        ))}
+                      </Field>
                       <ErrorMessage name="especialidad" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="number" className="input-field" name="numLicencia" placeholder="Numero de Licencia" />
+                      <label htmlFor="rol" className="mr-6">
+                        Licencia:
+                      </label>
+                      <Field type="number" className="input-field bg-w text-c rounded" name="numLicencia" placeholder="Numero de Licencia" />
                       <ErrorMessage name="numLicencia" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
                       <label htmlFor="rol" className="mr-6">
                         Rol:
                       </label>
-                      <Field as="select" className="input-field" name="rol">
+                      <Field as="select" className="input-field bg-w text-c rounded" name="rol">
                         <option value="">Selecciona un rol</option>
                         <option value="Doctor">Doctor</option>
                         <option value="Auditor">Auditor</option>
@@ -1448,7 +1548,7 @@ const Table = () => {
                       <label htmlFor="hora" className="mr-2">
                         User ID:
                       </label>
-                      <Field type="text" className="input-field" name="usuario" placeholder="Usuario" readOnly />
+                      <Field type="text" className="input-field bg-w text-c rounded" name="usuario" placeholder="Usuario" readOnly />
                       <ErrorMessage name="usuario" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
@@ -1461,7 +1561,7 @@ const Table = () => {
                       <label htmlFor="hora" className="mr-2">
                         Doctor ID:
                       </label>
-                      <Field type="text" className="input-field" name="Doctor" placeholder="Doctor" readOnly />
+                      <Field type="text" className="input-field bg-w text-c rounded" name="Doctor" placeholder="Doctor" readOnly />
                       <ErrorMessage name="Doctor" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
@@ -1475,7 +1575,7 @@ const Table = () => {
                         Fecha:
                       </label>
                       <DatePicker
-                        className="input-field"
+                        className="input-field bg-w text-c rounded"
                         selected={values.fecha}
                         onChange={(date) => {
                           setFieldValue("fecha", date);
@@ -1497,7 +1597,7 @@ const Table = () => {
                       <label htmlFor="hora" className="mr-2">
                         Hora:
                       </label>
-                      <Field as="select" className="input-field" name="hora">
+                      <Field as="select" className="input-field bg-w text-c rounded" name="hora">
                         <option value="">Selecciona una hora</option>
                         {generateTimeOptions()}
                       </Field>
@@ -1507,7 +1607,7 @@ const Table = () => {
                       <label htmlFor="estado" className="mr-2">
                         Estado:
                       </label>
-                      <Field as="select" className="input-field" name="estado">
+                      <Field as="select" className="input-field bg-w text-c rounded" name="estado">
                         <option value="Activa">Activa</option>
                         <option value="Inactiva">Inactiva</option>
                       </Field>
@@ -1532,11 +1632,11 @@ const Table = () => {
         {showSuccessModalUser && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={handleCerrarDeleteUserSucess}>
             <div className="bg-white rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
-              <p>Usuario eliminado correctamente.</p>
+              <p className="text-c font-medium">Usuario eliminado correctamente.</p>
               <div className="flex justify-center mt-4">
                 <button
                   onClick={handleCerrarDeleteUserSucess}
-                  className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
+                  className="px-4 py-2 bg-ts text-c rounded hover:bg-hb hover:text-w"
                   // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
@@ -1549,11 +1649,11 @@ const Table = () => {
         {showSuccessModalDoctor && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={handleCerrarDeleteDoctorSucess}>
             <div className="bg-white rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
-              <p>Doctor eliminado correctamente.</p>
+              <p className="text-c font-medium">Doctor eliminado correctamente.</p>
               <div className="flex justify-center mt-4">
                 <button
                   onClick={handleCerrarDeleteDoctorSucess}
-                  className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
+                  className="px-4 py-2 bg-ts text-c rounded hover:bg-hb hover:text-w"
                   // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
@@ -1566,11 +1666,11 @@ const Table = () => {
         {showSuccessModalAppoinment && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={handleCerrarDeleteAppoinmentSucess}>
             <div className="bg-white rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
-              <p>Doctor eliminado correctamente.</p>
+              <p className="text-c font-medium">Doctor eliminado correctamente.</p>
               <div className="flex justify-center mt-4">
                 <button
                   onClick={handleCerrarDeleteAppoinmentSucess}
-                  className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
+                  className="px-4 py-2 bg-ts text-c rounded hover:bg-hb hover:text-w"
                   // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
@@ -1583,14 +1683,14 @@ const Table = () => {
         {showSaveChangesModalUser && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={handleCerrarSaveChangesUserSuccess}>
             <div className="bg-white rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
-              <p>Cambios guardados correctamente.</p>
+              <p className="text-c font-medium">Cambios guardados correctamente.</p>
               <div className="flex justify-center mt-4">
                 <button
                   onClick={() => {
                     handleCerrarSaveChangesUserSuccess();
                     closeEditModalUser();
                   }}
-                  className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
+                  className="px-4 py-2 bg-ts text-c rounded hover:bg-hb hover:text-w"
                   // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
@@ -1602,14 +1702,14 @@ const Table = () => {
         {showSaveChangesModalDoctor && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={handleCerrarSaveChangesDoctorSuccess}>
             <div className="bg-white rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
-              <p>Cambios guardados correctamente.</p>
+              <p className="text-c font-medium">Cambios guardados correctamente.</p>
               <div className="flex justify-center mt-4">
                 <button
                   onClick={() => {
                     handleCerrarSaveChangesDoctorSuccess();
                     closeEditModalDoctor();
                   }}
-                  className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
+                  className="px-4 py-2 bg-ts text-c rounded hover:bg-hb hover:text-w"
                   // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
@@ -1622,14 +1722,14 @@ const Table = () => {
         {showSaveChangesModalAppoinment && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={handleCerrarSaveChangesAppoinmentSuccess}>
             <div className="bg-white rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
-              <p>Cambios guardados correctamente.</p>
+              <p className="text-c font-medium">Cambios guardados correctamente.</p>
               <div className="flex justify-center mt-4">
                 <button
                   onClick={() => {
                     handleCerrarSaveChangesAppoinmentSuccess();
                     closeEditModalAppointment();
                   }}
-                  className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
+                  className="px-4 py-2 bg-ts text-c rounded hover:bg-hb hover:text-w"
                   // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
@@ -1955,7 +2055,7 @@ const Table = () => {
                   onClick={() => {
                     closeAppointmentByIdUserModal();
                   }}
-                  className="px-4 py-2 rounded hover:bg-ts hover:text-c text-w bg-hb"
+                  className="px-4 py-2 rounded hover:bg-hb hover:text-w text-c bg-ts"
                   // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
@@ -1969,28 +2069,43 @@ const Table = () => {
         {showAppointmentbyIdDoctorModal && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={closeAppointmentByIdDoctorModal}>
             <div className="bg-c rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
-              <div className="citas-contenedor max-h-80 overflow-y-auto bg-w">
-                {/* Contenedor de citas */}
-                <div className="cita-tarjeta m-2">
-                  <h3>Cita 1</h3>
-                  <p>Detalles de la cita 1...</p>
-                </div>
-                <div className="cita-tarjeta m-2">
-                  <h3>Cita 2</h3>
-                  <p>Detalles de la cita 2...</p>
-                </div>
-                <div className="cita-tarjeta m-2">
-                  <h3>Cita 3</h3>
-                  <p>Detalles de la cita 3...</p>
-                </div>
-                {/* Agrega más divs de citas según sea necesario */}
+              <div className="citas-contenedor max-h-80 overflow-y-auto bg-c">
+                <h1 className="text-center mb-3 font-medium">Citas del Doctor</h1>
+                {/* Verificar si el usuario tiene citas */}
+                {doctorAppointments.length === 0 ? (
+                  <p className="text-center text-w">El doctor no tiene citas registradas.</p>
+                ) : (
+                  // Ordenar las citas por fecha de forma descendente
+                  doctorAppointments
+                    .sort((a, b) => new Date(b.appointmentDate) - new Date(a.appointmentDate))
+                    .map((appointment, index) => (
+                      <div key={index} className="cita-contenedor bg-w rounded-lg m-1 p-1">
+                        <div className="cita-tarjeta m-1 text-c">
+                          <h2 className="font-medium">{`Cita el ${appointment.appointmentDate} a las ${appointment.appointmentTime}`}</h2>
+                          <p>
+                            <strong className="text-hb"> ID de usuario:</strong> {appointment.user}
+                          </p>
+                          <p>
+                            <strong className="text-hb">Nombre de usuario:</strong> {nombresApellidosUsuarios[appointment.user]}
+                          </p>
+                          <p>
+                            <strong className="text-hb">ID de médico:</strong> {appointment.doctor}
+                          </p>
+                          <p>
+                            <strong className="text-hb">Nombre de médico:</strong> {nombresApellidosDoctores[appointment.doctor]}
+                          </p>
+                          {/* Mostrar más detalles de la cita según sea necesario */}
+                        </div>
+                      </div>
+                    ))
+                )}
               </div>
-              <div className="flex justify-center mt-4">
+              <div className="flex justify-center mt-4 ">
                 <button
                   onClick={() => {
                     closeAppointmentByIdDoctorModal();
                   }}
-                  className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
+                  className="px-4 py-2 rounded hover:bg-hb hover:text-w text-c bg-ts"
                   // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
