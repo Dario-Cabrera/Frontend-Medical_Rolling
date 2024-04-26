@@ -7,6 +7,7 @@ import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import moment from "moment-timezone";
+import { userAuth } from "../../Context/UserContext";
 
 // Establecer la zona horaria por defecto
 moment.tz.setDefault("America/Argentina/Buenos_Aires");
@@ -21,6 +22,8 @@ const Table = () => {
   const [nombresApellidosUsuarios, setNombresApellidosUsuarios] = useState({});
   // Estado para la búsqueda global
   const [busqueda, setBusqueda] = useState("");
+
+  const { signup } = userAuth();
 
   const especialidadesMedicas = [
     "Anestesiología",
@@ -52,6 +55,9 @@ const Table = () => {
   ];
 
   // ----CRUD----
+
+  // ----POST USERS----
+
   // ----GET USERS----
   useEffect(() => {
     // Llamar a la función para obtener los usuarios cuando el componente se monta
@@ -509,6 +515,18 @@ const Table = () => {
 
   const [showAppointmentbyIdUserModal, setShowAppointmentbyIdUserModal] = useState(false); // Estado para controlar la visibilidad de la modal de citas del User
   const [showAppointmentbyIdDoctorModal, setShowAppointmentbyIdDoctorModal] = useState(false); // Estado para controlar la visibilidad de la modal de citas del Doctor
+
+  const createUserValidationSchema = Yup.object().shape({
+    dni: Yup.number().required("El DNI es requerido"),
+    name: Yup.string().required("El nombre es requerido").min(3, "El nombre debe tener al menos 3 caracteres").max(50, "El nombre no debe exceder los 50 caracteres"),
+    lastname: Yup.string().required("El apellido es requerido").min(3, "El apellido debe tener al menos 3 caracteres").max(50, "El apellido no debe exceder los 50 caracteres"),
+    email: Yup.string().email("Formato de correo electrónico inválido").required("El correo electrónico es requerido"),
+    pass: Yup.string().required("La contraseña es requerida").min(8, "La contraseña debe tener al menos 8 caracteres").max(80, "La contraseña no debe exceder los 80 caracteres"),
+    province: Yup.string().required("La provincia es requerida"),
+    address: Yup.string().required("La dirección es requerida"),
+    area: Yup.number().required("El área es requerida"),
+    phone: Yup.number().required("El teléfono es requerido"),
+  });
 
   const userValidationSchema = Yup.object().shape({
     email: Yup.string().email("Correo electrónico inválido").required("El correo electrónico es requerido"),
@@ -1746,70 +1764,69 @@ const Table = () => {
               <Formik
                 initialValues={{
                   dni: "",
-                  nombre: "",
-                  apellido: "",
+                  name: "",
+                  lastname: "",
                   email: "",
-                  password: "",
-                  provincia: "",
-                  direccion: "",
+                  pass: "",
+                  province: "",
+                  address: "",
                   area: "",
-                  telefono: "",
-                  rol: "",
+                  phone: "",
                 }}
-                validationSchema={userValidationSchema}
-                onSubmit={(values) => {
-                  console.log(values); // Aquí puedes manejar la lógica para enviar los datos del formulario
-                  closeCreateNewModalUser();
-                  handleCreateNewUserConfirm();
+                validationSchema={createUserValidationSchema}
+                onSubmit={async (values, { setSubmitting }) => {
+                  try {
+                    const response = await signup(values);
+                    console.log("Esta es la respuesta", response);
+                    if (response && response.status === 400) {
+                      console.error("Error al registrar el usuario:", response.data);
+                    } else {
+                      handleCreateNewUserConfirm();
+                      closeCreateNewModalUser();
+                    }
+                  } catch (error) {
+                    console.error("Error al registrar el usuario:", error);
+                  } finally {
+                    setSubmitting(false);
+                  }
                 }}>
                 {({ handleSubmit }) => (
                   <form onSubmit={handleSubmit}>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="dni" placeholder="DNI/LC/LE/PASSPORT" />
+                      <Field type="number" className="input-field" name="dni" placeholder="DNI/LC/LE/PASSPORT" />
                       <ErrorMessage name="dni" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="nombre" placeholder="Nombre" />
-                      <ErrorMessage name="nombre" component="div" className="text-red-300" />
+                      <Field type="text" className="input-field" name="name" placeholder="Nombre" />
+                      <ErrorMessage name="name" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="apellido" placeholder="Apellido" />
-                      <ErrorMessage name="apellido" component="div" className="text-red-300" />
+                      <Field type="text" className="input-field" name="lastname" placeholder="Apellido" />
+                      <ErrorMessage name="lastname" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
                       <Field type="email" className="input-field" name="email" placeholder="Correo electrónico" />
                       <ErrorMessage name="email" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="password" className="input-field" name="password" placeholder="Contraseña" />
-                      <ErrorMessage name="password" component="div" className="text-red-300" />
+                      <Field type="password" className="input-field" name="pass" placeholder="Contraseña" />
+                      <ErrorMessage name="pass" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="provincia" placeholder="Provincia" />
-                      <ErrorMessage name="provincia" component="div" className="text-red-300" />
+                      <Field type="text" className="input-field" name="province" placeholder="Provincia" />
+                      <ErrorMessage name="province" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="direccion" placeholder="Dirección" />
-                      <ErrorMessage name="direccion" component="div" className="text-red-300" />
+                      <Field type="text" className="input-field" name="address" placeholder="Dirección" />
+                      <ErrorMessage name="address" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
                       <Field type="number" className="input-field" name="area" placeholder="Área" />
                       <ErrorMessage name="area" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="number" className="input-field" name="telefono" placeholder="Teléfono" />
-                      <ErrorMessage name="telefono" component="div" className="text-red-300" />
-                    </div>
-                    <div className="mb-4">
-                      <label htmlFor="rol" className="mr-6">
-                        Rol:
-                      </label>
-                      <Field as="select" className="input-field" name="rol">
-                        <option value="">Selecciona un rol</option>
-                        <option value="Doctor">User</option>
-                        <option value="Auditor">Doctor</option>
-                      </Field>
-                      <ErrorMessage name="rol" component="div" className="text-red-300" />
+                      <Field type="number" className="input-field" name="phone" placeholder="Teléfono" />
+                      <ErrorMessage name="phone" component="div" className="text-red-300" />
                     </div>
                     <div className="flex justify-between">
                       <button type="submit" className="btn text-black  bg-ts hover:bg-hb hover:text-w">
