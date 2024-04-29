@@ -516,16 +516,50 @@ const Table = () => {
   const [showAppointmentbyIdUserModal, setShowAppointmentbyIdUserModal] = useState(false); // Estado para controlar la visibilidad de la modal de citas del User
   const [showAppointmentbyIdDoctorModal, setShowAppointmentbyIdDoctorModal] = useState(false); // Estado para controlar la visibilidad de la modal de citas del Doctor
 
+  const checkDniUserAvailability = async (dni) => {
+    try {
+      const response = await axios.get(`http://localhost:3001/api/checkDniUser/${dni}`);
+      return response.data.message === "The DNI is available";
+    } catch (error) {
+      console.error("Error checking DNI availability:", error);
+      return false;
+    }
+  };
+
+  const checkEmailUserAvailability = async (email) => {
+    try {
+      const response = await axios.get(`http://localhost:3001/api/checkEmailUser/${email}`);
+      return response.data.message === "The email is available";
+    } catch (error) {
+      console.error("Error checking Email availability:", error);
+      return false;
+    }
+  };
+
+  // Esquema de validación de Yup con validación personalizada para el campo 'dni'
   const createUserValidationSchema = Yup.object().shape({
-    dni: Yup.number().required("El DNI es requerido"),
+    dni: Yup.number()
+      .required("El DNI es requerido")
+      .test("checkDniAvailability", "El DNI ya está en uso", async function (value) {
+        if (!value) return true; // Si no hay valor, se omite la validación
+        return await checkDniUserAvailability(value);
+      }),
     name: Yup.string().required("El nombre es requerido").min(3, "El nombre debe tener al menos 3 caracteres").max(50, "El nombre no debe exceder los 50 caracteres"),
     lastname: Yup.string().required("El apellido es requerido").min(3, "El apellido debe tener al menos 3 caracteres").max(50, "El apellido no debe exceder los 50 caracteres"),
-    email: Yup.string().email("Formato de correo electrónico inválido").required("El correo electrónico es requerido"),
+    email: Yup.string()
+      .email("Formato de correo electrónico inválido")
+      .required("El correo electrónico es requerido")
+      .test("checkEmailAvailability", "El email ya está en uso", async function (value) {
+        if (!value) return true; // Si no hay valor, se omite la validación
+        return await checkEmailUserAvailability(value);
+      }),
     pass: Yup.string().required("La contraseña es requerida").min(8, "La contraseña debe tener al menos 8 caracteres").max(80, "La contraseña no debe exceder los 80 caracteres"),
     province: Yup.string().required("La provincia es requerida"),
     address: Yup.string().required("La dirección es requerida"),
     area: Yup.number().required("El área es requerida"),
-    phone: Yup.number().required("El teléfono es requerido"),
+    phone: Yup.number()
+      .required("El teléfono es requerido")
+      .test("len", "El teléfono debe tener 9 dígitos", (val) => val && val.toString().length === 9),
   });
 
   const userValidationSchema = Yup.object().shape({
@@ -1787,6 +1821,7 @@ const Table = () => {
                   } catch (error) {
                     console.error("Error al registrar el usuario:", error);
                   } finally {
+                    obtenerUsuariosDesdeBackend();
                     setSubmitting(false);
                   }
                 }}>
