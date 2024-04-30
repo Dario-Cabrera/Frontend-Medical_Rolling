@@ -58,7 +58,48 @@ const Table = () => {
 
   // ----CRUD----
 
-  // ----POST USERS----
+  // ----POST APPOINTMENTS----
+
+  const [doctorId, setDoctorId] = useState("");
+  const [availableTimesCreate, setAvailableTimesCreate] = useState([]);
+
+  const handleDoctorChangeCreate = (event) => {
+    const selectedDoctorId = event.target.value;
+    console.log("Valor seleccionado del campo de doctor:", selectedDoctorId);
+    setDoctorId(selectedDoctorId);
+  };
+
+  const handleDateChangeCreate = async (date) => {
+    try {
+      const response = await axios.get("http://localhost:3001/api/availableTimes", {
+        params: {
+          doctorId: doctorId,
+          date: moment(date).format("YYYY-MM-DD"),
+        },
+      });
+      setAvailableTimesCreate(response.data.availableTimes);
+    } catch (error) {
+      console.error("Error fetching available times:", error);
+    }
+  };
+
+  const generateTimeOptionsCreate = () => {
+    return availableTimesCreate.map((time) => (
+      <option key={time} value={time}>
+        {time}
+      </option>
+    ));
+  };
+
+  const postAppointment = async (formData) => {
+    try {
+      const response = await axios.post("http://localhost:3001/api/createappointment/", formData);
+      return response.data; // Devuelve los datos de la cita creada si la solicitud es exitosa
+    } catch (error) {
+      console.error("Error al crear la cita:", error);
+      throw new Error("Error al crear la cita");
+    }
+  };
 
   // ----GET USERS----
   useEffect(() => {
@@ -604,6 +645,14 @@ const Table = () => {
     specialty: Yup.string().required("La especialidad es requerida"),
     licenceNumber: Yup.number().required("El número de licencia es requerido"),
     rol: Yup.string().required("El rol es requerido"),
+  });
+
+  const appointmentCreateValidationSchema = Yup.object().shape({
+    // user: Yup.string().required("El usuario es requerido"),
+    // doctor: Yup.string().required("El doctor es requerido"),
+    appointmentDate: Yup.string().required("La fecha es requerida"),
+    appointmentTime: Yup.string().required("La hora es requerida"),
+    // state: Yup.string().required("El estado es requerido"),
   });
 
   const userValidationSchema = Yup.object().shape({
@@ -2052,45 +2101,85 @@ const Table = () => {
               <h1 className="text-3xl font-bold mb-6">Crear Cita</h1>
               <Formik
                 initialValues={{
-                  usuario: "",
+                  user: "",
                   doctor: "",
-                  fecha: "",
-                  hora: "",
-                  estado: "",
+                  appointmentDate: "",
+                  appointmentTime: "",
+                  state: true,
                 }}
-                validationSchema={appointmentValidationSchema}
-                onSubmit={(values) => {
-                  console.log(values);
-                  closeCreateNewModalAppointment();
-                  handleCreateNewAppoinmentConfirm(); // Aquí puedes manejar la lógica para enviar los datos del formulario
+                onSubmit={async (values) => {
+                  try {
+                    const selectedDate = moment(values.appointmentDate); // Obtener la fecha seleccionada del formulario
+
+                    // Obtener la fecha formateada para enviarla al backend
+                    const formattedDate = selectedDate.format("YYYY-MM-DD");
+                    // Actualizar el valor de 'doctor' en 'values' con el valor actual de 'doctorId'
+                    values.doctor = doctorId;
+                    values.appointmentDate = formattedDate;
+                    console.log("Datos de la cita:", values);
+                    const response = await postAppointment(values);
+                    console.log("Cita creada:", response);
+                    // Resto del código...
+                    handleCreateNewAppoinmentConfirm();
+                    closeCreateNewModalAppointment();
+                    obtenerCitasDesdeBackend();
+                  } catch (error) {
+                    console.error("Error al crear la cita:", error);
+                  }
                 }}>
-                {({ handleSubmit }) => (
+                {({ handleSubmit, values, setFieldValue }) => (
                   <form onSubmit={handleSubmit}>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="usuario" placeholder="Usuario" />
-                      <ErrorMessage name="usuario" component="div" className="text-red-300" />
+                      <label htmlFor="user" className="mr-2">
+                        User ID:
+                      </label>
+                      <Field type="text" className="input-field bg-w text-c rounded" name="user" placeholder="User ID" />
+                      <ErrorMessage name="user" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="doctor" placeholder="Doctor" />
+                      <label htmlFor="doctor" className="mr-2">
+                        Doctor ID:
+                      </label>
+                      <Field type="text" className="input-field bg-w text-c rounded" name="doctor" placeholder="Doctor ID" value={doctorId} onChange={handleDoctorChangeCreate} />
                       <ErrorMessage name="doctor" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="fecha" placeholder="Fecha" />
-                      <ErrorMessage name="fecha" component="div" className="text-red-300" />
+                      <label htmlFor="appointmentDate" className="mr-2">
+                        Fecha:
+                      </label>
+                      <DatePicker
+                        className="input-field bg-w text-c rounded"
+                        selected={values.appointmentDate}
+                        onChange={(date) => {
+                          setFieldValue("appointmentDate", date);
+                          handleDateChangeCreate(date);
+                        }}
+                        dateFormat="yyyy-MM-dd"
+                        placeholderText="Selecciona una fecha"
+                        name="appointmentDate"
+                        filterDate={(date) => {
+                          const day = date.getDay();
+                          const today = new Date();
+                          return day !== 0 && day !== 6 && date >= today;
+                        }}
+                      />
+                      <ErrorMessage name="appointmentDate" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="hora" placeholder="Hora" />
-                      <ErrorMessage name="hora" component="div" className="text-red-300" />
-                    </div>
-                    <div className="mb-4">
-                      <Field type="text" className="input-field" name="estado" placeholder="Estado" />
-                      <ErrorMessage name="estado" component="div" className="text-red-300" />
+                      <label htmlFor="appointmentTime" className="mr-2">
+                        Hora:
+                      </label>
+                      <Field as="select" className="input-field bg-w text-c rounded" name="appointmentTime">
+                        <option value="">Selecciona una hora</option>
+                        {generateTimeOptionsCreate()}
+                      </Field>
+                      <ErrorMessage name="appointmentTime" component="div" className="text-red-300" />
                     </div>
                     <div className="flex justify-between">
-                      <button type="submit" className="btn text-black  bg-ts hover:bg-hb hover:text-w">
+                      <button type="submit" className="btn text-black bg-ts hover:bg-hb hover:text-w">
                         Crear cita
                       </button>
-                      <button onClick={closeCreateNewModalAppointment} className="btn text-black bg-ts hover:bg-hb hover:text-w">
+                      <button type="button" className="btn text-black bg-ts hover:bg-hb hover:text-w">
                         Cancelar
                       </button>
                     </div>
@@ -2100,6 +2189,7 @@ const Table = () => {
             </div>
           </div>
         )}
+
         {showCreateNewModalUserConfirm && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={handleCerrarCreateNewUserSuccess}>
             <div className="bg-white rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
