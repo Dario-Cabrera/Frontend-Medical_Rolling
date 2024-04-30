@@ -603,6 +603,7 @@ const Table = () => {
     pass: Yup.string().required("La contraseña es requerida").min(8, "La contraseña debe tener al menos 8 caracteres").max(80, "La contraseña no debe exceder los 80 caracteres"),
     specialty: Yup.string().required("La especialidad es requerida"),
     licenceNumber: Yup.number().required("El número de licencia es requerido"),
+    rol: Yup.string().required("El rol es requerido"),
   });
 
   const userValidationSchema = Yup.object().shape({
@@ -1934,11 +1935,42 @@ const Table = () => {
                   pass: "",
                   specialty: "",
                   licenceNumber: "",
+                  rol: "",
                 }}
                 validationSchema={createDoctorValidationSchema}
                 onSubmit={async (values, { setSubmitting }) => {
                   try {
-                    const response = await signupDoctor(values);
+                    let isDoctorValue = true;
+                    let isAuditorValue = false;
+
+                    // Verificar el valor del rol y actualizar isDoctor e isAuditor en consecuencia
+                    if (values.rol === "User") {
+                      isDoctorValue = false;
+                      isAuditorValue = false;
+                    } else if (values.rol === "Doctor") {
+                      isDoctorValue = true;
+                      isAuditorValue = false;
+                    } else if (values.rol === "Auditor") {
+                      isDoctorValue = true;
+                      isAuditorValue = true;
+                    }
+
+                    // Crear un objeto con los valores del formulario incluyendo isDoctor e isAuditor
+                    const formDataDoctor = {
+                      dni: values.dni,
+                      name: values.name,
+                      lastname: values.lastname,
+                      email: values.email,
+                      pass: values.pass,
+                      specialty: values.specialty,
+                      licenceNumber: values.licenceNumber,
+                      isDoctor: isDoctorValue,
+                      isAuditor: isAuditorValue,
+                    };
+
+                    // Llamar a la función signupDoctor con formDataDoctor
+                    const response = await signupDoctor(formDataDoctor);
+
                     console.log("Esta es la respuesta", response);
                     if (response && response.status === 400) {
                       console.error("Error al registrar el usuario:", response.data);
@@ -1949,6 +1981,7 @@ const Table = () => {
                   } catch (error) {
                     console.error("Error al registrar el usuario:", error);
                   } finally {
+                    // Realizar cualquier acción adicional necesaria después del envío del formulario
                     obtenerDoctoresDesdeBackend();
                     setSubmitting(false);
                   }
@@ -1976,12 +2009,27 @@ const Table = () => {
                       <ErrorMessage name="pass" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="specialty" placeholder="Especialidad" />
+                      <Field as="select" className="input-field bg-w text-c rounded" name="specialty">
+                        <option value="">Selecciona una especialidad</option>
+                        {especialidadesMedicas.map((especialidad, index) => (
+                          <option key={index} value={especialidad}>
+                            {especialidad}
+                          </option>
+                        ))}
+                      </Field>
                       <ErrorMessage name="specialty" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
                       <Field type="number" className="input-field" name="licenceNumber" placeholder="Número de Licencia" />
                       <ErrorMessage name="licenceNumber" component="div" className="text-red-300" />
+                    </div>
+                    <div className="mb-4">
+                      <Field as="select" className="input-field" name="rol">
+                        <option value="Doctor">Doctor</option>
+                        <option value="Auditor">Auditor</option>
+                        {/* Agregar otras opciones si es necesario */}
+                      </Field>
+                      <ErrorMessage name="rol" component="div" className="text-red-300" />
                     </div>
                     <div className="flex justify-between">
                       <button type="submit" className="btn text-black  bg-ts hover:bg-hb hover:text-w">
