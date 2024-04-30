@@ -3,12 +3,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/rules-of-hooks */
 import { useContext, createContext, useState, useEffect } from "react";
-import {
-  registerRequestDoctor,
-  loginRequestDoctor,
-  varityDoctorRequest,
-  varityDoctorRequest2,
-} from "../api/doctor.auth";
+import { registerRequestDoctor, loginRequestDoctor, varityDoctorRequest, varityDoctorRequest2 } from "../api/doctor.auth";
 
 export const DoctorContext = createContext();
 
@@ -27,7 +22,7 @@ export const DoctorProvider = ({ children }) => {
   const [loadingDoctor, setLoadingDoctor] = useState(true);
   const signup = async (doctor) => {
     try {
-      doctor.LicenceNumber = parseInt(doctor.LicenceNumber);
+      // doctor.licenceNumber = parseInt(doctor.licenceNumber);
 
       const res = await registerRequestDoctor(doctor);
       /* console.log(res.data); */
@@ -57,13 +52,11 @@ export const DoctorProvider = ({ children }) => {
       setErrors([error.response.data.message]);
     }
   };
- const logoutDoctor = ()=>{
-   localStorage.removeItem("Id_doctor");
-   setDoctor(null);
-   setIsAuthenticatedDoctor(false);
- }
-
-
+  const logoutDoctor = () => {
+    localStorage.removeItem("Id_doctor");
+    setDoctor(null);
+    setIsAuthenticatedDoctor(false);
+  };
 
   useEffect(() => {
     async function checkLogin() {
@@ -83,7 +76,7 @@ export const DoctorProvider = ({ children }) => {
           setLoadingDoctor(false);
           return;
         }
-        setIsAuthenticatedDoctor(true)
+        setIsAuthenticatedDoctor(true);
         setDoctor(res);
         setLoadingDoctor(false);
       } catch (error) {
@@ -105,7 +98,6 @@ export const DoctorProvider = ({ children }) => {
     }
   }, [errors]);
 
-
   return (
     <DoctorContext.Provider
       value={{
@@ -116,8 +108,7 @@ export const DoctorProvider = ({ children }) => {
         doctor,
         isAuthenticatedDoctor,
         errors,
-      }}
-    >
+      }}>
       {children}
     </DoctorContext.Provider>
   );

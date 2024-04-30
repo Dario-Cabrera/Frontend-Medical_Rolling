@@ -8,6 +8,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import moment from "moment-timezone";
 import { userAuth } from "../../Context/UserContext";
+import { doctorAuth } from "../../Context/DoctorContext";
 
 // Establecer la zona horaria por defecto
 moment.tz.setDefault("America/Argentina/Buenos_Aires");
@@ -23,7 +24,8 @@ const Table = () => {
   // Estado para la búsqueda global
   const [busqueda, setBusqueda] = useState("");
 
-  const { signup } = userAuth();
+  const { signup: signupUser } = userAuth();
+  const { signup: signupDoctor } = doctorAuth();
 
   const especialidadesMedicas = [
     "Anestesiología",
@@ -536,6 +538,26 @@ const Table = () => {
     }
   };
 
+  const checkDniDoctorAvailability = async (dni) => {
+    try {
+      const response = await axios.get(`http://localhost:3001/api/checkDniDoctor/${dni}`);
+      return response.data.message === "The DNI is available";
+    } catch (error) {
+      console.error("Error checking DNI availability:", error);
+      return false;
+    }
+  };
+
+  const checkEmailDoctorAvailability = async (email) => {
+    try {
+      const response = await axios.get(`http://localhost:3001/api/checkEmailDoctor/${email}`);
+      return response.data.message === "The email is available";
+    } catch (error) {
+      console.error("Error checking Email availability:", error);
+      return false;
+    }
+  };
+
   // Esquema de validación de Yup con validación personalizada para el campo 'dni'
   const createUserValidationSchema = Yup.object().shape({
     dni: Yup.number()
@@ -560,6 +582,27 @@ const Table = () => {
     phone: Yup.number()
       .required("El teléfono es requerido")
       .test("len", "El teléfono debe tener 9 dígitos", (val) => val && val.toString().length === 9),
+  });
+
+  const createDoctorValidationSchema = Yup.object().shape({
+    dni: Yup.number()
+      .required("El DNI es requerido")
+      .test("checkDniAvailability", "El DNI ya está en uso", async function (value) {
+        if (!value) return true; // Si no hay valor, se omite la validación
+        return await checkDniDoctorAvailability(value);
+      }),
+    name: Yup.string().required("El nombre es requerido").min(3, "El nombre debe tener al menos 3 caracteres").max(50, "El nombre no debe exceder los 50 caracteres"),
+    lastname: Yup.string().required("El apellido es requerido").min(3, "El apellido debe tener al menos 3 caracteres").max(50, "El apellido no debe exceder los 50 caracteres"),
+    email: Yup.string()
+      .email("Formato de correo electrónico inválido")
+      .required("El correo electrónico es requerido")
+      .test("checkEmailAvailability", "El email ya está en uso", async function (value) {
+        if (!value) return true; // Si no hay valor, se omite la validación
+        return await checkEmailDoctorAvailability(value);
+      }),
+    pass: Yup.string().required("La contraseña es requerida").min(8, "La contraseña debe tener al menos 8 caracteres").max(80, "La contraseña no debe exceder los 80 caracteres"),
+    specialty: Yup.string().required("La especialidad es requerida"),
+    licenceNumber: Yup.number().required("El número de licencia es requerido"),
   });
 
   const userValidationSchema = Yup.object().shape({
@@ -1810,7 +1853,7 @@ const Table = () => {
                 validationSchema={createUserValidationSchema}
                 onSubmit={async (values, { setSubmitting }) => {
                   try {
-                    const response = await signup(values);
+                    const response = await signupUser(values);
                     console.log("Esta es la respuesta", response);
                     if (response && response.status === 400) {
                       console.error("Error al registrar el usuario:", response.data);
@@ -1885,64 +1928,64 @@ const Table = () => {
               <Formik
                 initialValues={{
                   dni: "",
-                  nombre: "",
-                  apellido: "",
+                  name: "",
+                  lastname: "",
                   email: "",
-                  password: "",
-                  especialidad: "",
-                  numLicencia: "",
-                  rol: "",
+                  pass: "",
+                  specialty: "",
+                  licenceNumber: "",
                 }}
-                validationSchema={doctorValidationSchema}
-                onSubmit={(values) => {
-                  console.log(values); // Aquí puedes manejar la lógica para enviar los datos del formulario
-                  closeCreateNewModalDoctor();
-                  handleCreateNewDoctorConfirm();
+                validationSchema={createDoctorValidationSchema}
+                onSubmit={async (values, { setSubmitting }) => {
+                  try {
+                    const response = await signupDoctor(values);
+                    console.log("Esta es la respuesta", response);
+                    if (response && response.status === 400) {
+                      console.error("Error al registrar el usuario:", response.data);
+                    } else {
+                      handleCreateNewDoctorConfirm();
+                      closeCreateNewModalDoctor();
+                    }
+                  } catch (error) {
+                    console.error("Error al registrar el usuario:", error);
+                  } finally {
+                    obtenerDoctoresDesdeBackend();
+                    setSubmitting(false);
+                  }
                 }}>
                 {({ handleSubmit }) => (
                   <form onSubmit={handleSubmit}>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="dni" placeholder="DNI/LC/LE/PASSPORT" />
+                      <Field type="number" className="input-field" name="dni" placeholder="DNI/LC/LE/PASSPORT" />
                       <ErrorMessage name="dni" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="nombre" placeholder="Nombre" />
-                      <ErrorMessage name="nombre" component="div" className="text-red-300" />
+                      <Field type="text" className="input-field" name="name" placeholder="Nombre" />
+                      <ErrorMessage name="name" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="apellido" placeholder="Apellido" />
-                      <ErrorMessage name="apellido" component="div" className="text-red-300" />
+                      <Field type="text" className="input-field" name="lastname" placeholder="Apellido" />
+                      <ErrorMessage name="lastname" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
                       <Field type="email" className="input-field" name="email" placeholder="Correo electrónico" />
                       <ErrorMessage name="email" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="password" className="input-field" name="password" placeholder="Contraseña" />
-                      <ErrorMessage name="password" component="div" className="text-red-300" />
+                      <Field type="password" className="input-field" name="pass" placeholder="Contraseña" />
+                      <ErrorMessage name="pass" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="especialidad" placeholder="Especialidad" />
-                      <ErrorMessage name="especialidad" component="div" className="text-red-300" />
+                      <Field type="text" className="input-field" name="specialty" placeholder="Especialidad" />
+                      <ErrorMessage name="specialty" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="numLicencia" placeholder="Numero de Licencia" />
-                      <ErrorMessage name="numLicencia" component="div" className="text-red-300" />
-                    </div>
-                    <div className="mb-4">
-                      <label htmlFor="rol" className="mr-6">
-                        Rol:
-                      </label>
-                      <Field as="select" className="input-field" name="rol">
-                        <option value="">Selecciona un rol</option>
-                        <option value="Doctor">Doctor</option>
-                        <option value="Auditor">Auditor</option>
-                      </Field>
-                      <ErrorMessage name="rol" component="div" className="text-red-300" />
+                      <Field type="number" className="input-field" name="licenceNumber" placeholder="Número de Licencia" />
+                      <ErrorMessage name="licenceNumber" component="div" className="text-red-300" />
                     </div>
                     <div className="flex justify-between">
                       <button type="submit" className="btn text-black  bg-ts hover:bg-hb hover:text-w">
-                        Crear doctor
+                        Crear usuario
                       </button>
                       <button onClick={closeCreateNewModalDoctor} className="btn text-black bg-ts hover:bg-hb hover:text-w">
                         Cancelar
