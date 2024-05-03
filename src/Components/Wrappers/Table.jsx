@@ -16,6 +16,7 @@ moment.tz.setDefault("America/Argentina/Buenos_Aires");
 const Table = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [doctores, setDoctores] = useState([]);
+  const [doctoresCreate, setDoctoresCreate] = useState([]);
   const [citas, setCitas] = useState([]);
 
   const [filteredCitas, setFilteredCitas] = useState([]);
@@ -62,6 +63,7 @@ const Table = () => {
 
   const [doctorId, setDoctorId] = useState("");
   const [availableTimesCreate, setAvailableTimesCreate] = useState([]);
+  const [especialidadSeleccionada, setEspecialidadSeleccionada] = useState("");
 
   const handleDoctorChangeCreate = (event) => {
     const selectedDoctorId = event.target.value;
@@ -90,6 +92,28 @@ const Table = () => {
       </option>
     ));
   };
+
+  const handleEspecialidadChange = (event) => {
+    const selectedEspecialidad = event.target.value;
+    console.log("Especialidad seleccionada:", selectedEspecialidad);
+    setEspecialidadSeleccionada(selectedEspecialidad);
+  };
+
+  useEffect(() => {
+    console.log("Especialidad seleccionada:", especialidadSeleccionada);
+
+    if (especialidadSeleccionada) {
+      axios
+        .get(`http://localhost:3001/api/doctorsbyspecialty/${especialidadSeleccionada}`)
+        .then((response) => {
+          console.log("Datos de doctores recibidos:", response.data);
+          setDoctoresCreate(response.data);
+        })
+        .catch((error) => {
+          console.error("Error al obtener los doctores:", error);
+        });
+    }
+  }, [especialidadSeleccionada]);
 
   const postAppointment = async (formData) => {
     try {
@@ -2106,7 +2130,9 @@ const Table = () => {
                   appointmentDate: "",
                   appointmentTime: "",
                   state: true,
+                  especialidad: "", // Agrega la especialidad al estado inicial
                 }}
+                validationSchema={appointmentCreateValidationSchema}
                 onSubmit={async (values) => {
                   try {
                     const selectedDate = moment(values.appointmentDate); // Obtener la fecha seleccionada del formulario
@@ -2137,10 +2163,39 @@ const Table = () => {
                       <ErrorMessage name="user" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
+                      <label htmlFor="especialidad" className="mr-6">
+                        Especialidad:
+                      </label>
+                      <Field
+                        as="select"
+                        className="input-field bg-w text-c rounded"
+                        name="especialidad"
+                        onChange={(e) => {
+                          handleEspecialidadChange(e); // Llama a la función handleEspecialidadChange
+                          setFieldValue("especialidad", e.target.value);
+                          setDoctorId(""); // Resetear el doctor seleccionado cuando se cambia la especialidad
+                        }}>
+                        <option value="">Selecciona una especialidad</option>
+                        {especialidadesMedicas.map((especialidad, index) => (
+                          <option key={index} value={especialidad}>
+                            {especialidad}
+                          </option>
+                        ))}
+                      </Field>
+                      <ErrorMessage name="especialidad" component="div" className="text-red-300" />
+                    </div>
+                    <div className="mb-4">
                       <label htmlFor="doctor" className="mr-2">
                         Doctor ID:
                       </label>
-                      <Field type="text" className="input-field bg-w text-c rounded" name="doctor" placeholder="Doctor ID" value={doctorId} onChange={handleDoctorChangeCreate} />
+                      <select className="input-field bg-w text-c rounded" name="doctor" value={doctorId} onChange={handleDoctorChangeCreate}>
+                        <option value="">Selecciona un doctor</option>
+                        {doctoresCreate.map((doctor) => (
+                          <option key={doctor._id} value={doctor._id}>
+                            {doctor.name}
+                          </option>
+                        ))}
+                      </select>
                       <ErrorMessage name="doctor" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
@@ -2175,11 +2230,13 @@ const Table = () => {
                       </Field>
                       <ErrorMessage name="appointmentTime" component="div" className="text-red-300" />
                     </div>
+                    {/* Agregar console.log aquí para verificar la lista de doctores */}
+                    {console.log("Lista de doctores:", doctores)}
                     <div className="flex justify-between">
                       <button type="submit" className="btn text-black bg-ts hover:bg-hb hover:text-w">
                         Crear cita
                       </button>
-                      <button type="button" className="btn text-black bg-ts hover:bg-hb hover:text-w">
+                      <button onClick={closeCreateNewModalAppointment} type="button" className="btn text-black bg-ts hover:bg-hb hover:text-w">
                         Cancelar
                       </button>
                     </div>
