@@ -61,6 +61,32 @@ const Table = () => {
 
   // ----POST APPOINTMENTS----
 
+  const [dni, setDni] = useState("");
+  const [userId, setUserId] = useState(""); // Cambiar el valor inicial a una cadena vacía
+
+  const handleDniChange = async (event) => {
+    const enteredDni = event.target.value;
+    setDni(enteredDni);
+
+    try {
+      const response = await axios.get(`http://localhost:3001/api/getUserByDNI/${enteredDni}`);
+      if (response.status === 200) {
+        const user = response.data;
+        if (user) {
+          setUserId(user._id);
+        } else {
+          setUserId(""); // Si no se encuentra un usuario con el DNI especificado, reiniciar el ID del usuario a una cadena vacía
+        }
+      } else {
+        console.error("Error fetching user by DNI:", response.data.message);
+        setUserId(""); // En caso de error, reiniciar el ID del usuario a una cadena vacía
+      }
+    } catch (error) {
+      console.error("Error fetching user by DNI:", error);
+      setUserId(""); // En caso de error, reiniciar el ID del usuario a una cadena vacía
+    }
+  };
+
   const [doctorId, setDoctorId] = useState("");
   const [availableTimesCreate, setAvailableTimesCreate] = useState([]);
   const [especialidadSeleccionada, setEspecialidadSeleccionada] = useState("");
@@ -1435,77 +1461,68 @@ const Table = () => {
                   closeEditModalUser();
                 }}>
                 {({ handleSubmit }) => (
-                  <form onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                      <label htmlFor="rol" className="mr-6">
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="DNI" className="mr-2 w-24">
                         DNI:
                       </label>
-                      <Field type="number" className="input-field bg-w text-c rounded" name="DNI" placeholder="DNI/LC/LE/PASSPORT" />
-                      <ErrorMessage name="DNI" component="div" className="text-red-300" />
+                      <Field type="number" className="input-field bg-w text-c rounded w-44" name="DNI" placeholder="DNI/LC/LE/PASSPORT" />
                     </div>
-                    <div className="mb-4">
-                      <label htmlFor="rol" className="mr-6">
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="nombre" className="mr-2 w-24">
                         Nombre:
                       </label>
-                      <Field type="text" className="input-field bg-w text-c rounded" name="nombre" placeholder="Nombre" />
-                      <ErrorMessage name="nombre" component="div" className="text-red-300" />
+                      <Field type="text" className="input-field bg-w text-c rounded w-44" name="nombre" placeholder="Nombre" />
                     </div>
-                    <div className="mb-4">
-                      <label htmlFor="rol" className="mr-6">
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="apellido" className="mr-2 w-24">
                         Apellido:
                       </label>
-                      <Field type="text" className="input-field bg-w text-c rounded" name="apellido" placeholder="Apellido" />
-                      <ErrorMessage name="apellido" component="div" className="text-red-300" />
+                      <Field type="text" className="input-field bg-w text-c rounded w-44" name="apellido" placeholder="Apellido" />
                     </div>
-                    <div className="mb-4">
-                      <label htmlFor="rol" className="mr-6">
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="email" className="mr-2 w-24">
                         Email:
                       </label>
-                      <Field type="email" className="input-field bg-w text-c rounded" name="email" placeholder="Correo electrónico" />
-                      <ErrorMessage name="email" component="div" className="text-red-300" />
+                      <Field type="email" className="input-field bg-w text-c rounded w-44" name="email" placeholder="Correo electrónico" />
                     </div>
-                    <div className="mb-4">
-                      <label htmlFor="rol" className="mr-6">
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="provincia" className="mr-2 w-24">
                         Provincia:
                       </label>
-                      <Field type="text" className="input-field bg-w text-c rounded" name="provincia" placeholder="Provincia" />
-                      <ErrorMessage name="provincia" component="div" className="text-red-300" />
+                      <Field type="text" className="input-field bg-w text-c rounded w-44" name="provincia" placeholder="Provincia" />
                     </div>
-                    <div className="mb-4">
-                      <label htmlFor="rol" className="mr-6">
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="direccion" className="mr-2 w-24">
                         Dirección:
                       </label>
-                      <Field type="text" className="input-field bg-w text-c rounded" name="direccion" placeholder="Dirección" />
-                      <ErrorMessage name="direccion" component="div" className="text-red-300" />
+                      <Field type="text" className="input-field bg-w text-c rounded w-44" name="direccion" placeholder="Dirección" />
                     </div>
-                    <div className="mb-4">
-                      <label htmlFor="rol" className="mr-6">
-                        Area:
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="area" className="mr-2 w-24">
+                        Área:
                       </label>
-                      <Field type="number" className="input-field bg-w text-c rounded" name="area" placeholder="Área" />
-                      <ErrorMessage name="area" component="div" className="text-red-300" />
+                      <Field type="number" className="input-field bg-w text-c rounded w-44" name="area" placeholder="Área" />
                     </div>
-                    <div className="mb-4">
-                      <label htmlFor="rol" className="mr-6">
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="telefono" className="mr-2 w-24">
                         Teléfono:
                       </label>
-                      <Field type="number" className="input-field bg-w text-c rounded" name="telefono" placeholder="Teléfono" />
-                      <ErrorMessage name="telefono" component="div" className="text-red-300" />
+                      <Field type="number" className="input-field bg-w text-c rounded w-44" name="telefono" placeholder="Teléfono" />
                     </div>
-                    <div className="mb-4">
-                      <label htmlFor="rol" className="mr-6">
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="rol" className="mr-2 w-24">
                         Rol:
                       </label>
-                      <Field as="select" className="input-field bg-w text-c rounded" name="rol">
+                      <Field as="select" className="input-field bg-w text-c rounded w-44" name="rol">
                         <option value="">Selecciona un rol</option>
-                        <option value="User">User</option> {/* Cambia el valor de esta opción a "User" */}
+                        <option value="User">User</option>
                         <option value="Doctor">Doctor</option>
                         <option value="Auditor">Auditor</option>
                       </Field>
-                      <ErrorMessage name="rol" component="div" className="text-red-300" />
                     </div>
                     <div className="flex justify-between">
-                      <button onClick={handleSaveChangesUserConfirm} type="submit" className="btn text-black  bg-ts hover:bg-hb hover:text-w">
+                      <button onClick={handleSaveChangesUserConfirm} type="submit" className="btn text-black bg-ts hover:bg-hb hover:text-w">
                         Guardar Cambios
                       </button>
                       <button onClick={closeEditModalUser} className="btn text-black bg-ts hover:bg-hb hover:text-w">
@@ -1518,6 +1535,7 @@ const Table = () => {
             </div>
           </div>
         )}
+
         {/* Modal para editar Doctors */}
         {showEditModalDoctor && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={closeEditModalDoctor}>
@@ -1570,40 +1588,36 @@ const Table = () => {
                   closeEditModalDoctor();
                 }}>
                 {({ handleSubmit }) => (
-                  <form onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                      <label htmlFor="rol" className="mr-6">
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="DNI" className="mr-2 w-24">
                         DNI:
                       </label>
-                      <Field type="number" className="input-field bg-w text-c rounded" name="DNI" placeholder="DNI/LC/LE/PASSPORT" />
-                      <ErrorMessage name="DNI" component="div" className="text-red-300" />
+                      <Field type="number" className="input-field bg-w text-c rounded w-44" name="DNI" placeholder="DNI/LC/LE/PASSPORT" />
                     </div>
-                    <div className="mb-4">
-                      <label htmlFor="rol" className="mr-6">
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="nombre" className="mr-2 w-24">
                         Nombre:
                       </label>
-                      <Field type="text" className="input-field bg-w text-c rounded" name="nombre" placeholder="Nombre" />
-                      <ErrorMessage name="nombre" component="div" className="text-red-300" />
+                      <Field type="text" className="input-field bg-w text-c rounded w-44" name="nombre" placeholder="Nombre" />
                     </div>
-                    <div className="mb-4">
-                      <label htmlFor="rol" className="mr-6">
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="apellido" className="mr-2 w-24">
                         Apellido:
                       </label>
-                      <Field type="text" className="input-field bg-w text-c rounded" name="apellido" placeholder="Apellido" />
-                      <ErrorMessage name="apellido" component="div" className="text-red-300" />
+                      <Field type="text" className="input-field bg-w text-c rounded w-44" name="apellido" placeholder="Apellido" />
                     </div>
-                    <div className="mb-4">
-                      <label htmlFor="rol" className="mr-6">
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="email" className="mr-2 w-24">
                         Email:
                       </label>
-                      <Field type="email" className="input-field bg-w text-c rounded" name="email" placeholder="Correo electrónico" />
-                      <ErrorMessage name="email" component="div" className="text-red-300" />
+                      <Field type="email" className="input-field bg-w text-c rounded w-44" name="email" placeholder="Correo electrónico" />
                     </div>
-                    <div className="mb-4">
-                      <label htmlFor="especialidad" className="mr-6">
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="especialidad" className="mr-2 w-24">
                         Especialidad:
                       </label>
-                      <Field as="select" className="input-field bg-w text-c rounded" name="especialidad">
+                      <Field as="select" className="input-field bg-w text-c rounded w-44" name="especialidad">
                         <option value="">Selecciona una especialidad</option>
                         {especialidadesMedicas.map((especialidad, index) => (
                           <option key={index} value={especialidad}>
@@ -1611,28 +1625,25 @@ const Table = () => {
                           </option>
                         ))}
                       </Field>
-                      <ErrorMessage name="especialidad" component="div" className="text-red-300" />
                     </div>
-                    <div className="mb-4">
-                      <label htmlFor="rol" className="mr-6">
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="numLicencia" className="mr-2 w-24">
                         Licencia:
                       </label>
-                      <Field type="number" className="input-field bg-w text-c rounded" name="numLicencia" placeholder="Numero de Licencia" />
-                      <ErrorMessage name="numLicencia" component="div" className="text-red-300" />
+                      <Field type="number" className="input-field bg-w text-c rounded w-44" name="numLicencia" placeholder="Número de Licencia" />
                     </div>
-                    <div className="mb-4">
-                      <label htmlFor="rol" className="mr-6">
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="rol" className="mr-2 w-24">
                         Rol:
                       </label>
-                      <Field as="select" className="input-field bg-w text-c rounded" name="rol">
+                      <Field as="select" className="input-field bg-w text-c rounded w-44" name="rol">
                         <option value="">Selecciona un rol</option>
                         <option value="Doctor">Doctor</option>
                         <option value="Auditor">Auditor</option>
                       </Field>
-                      <ErrorMessage name="rol" component="div" className="text-red-300" />
                     </div>
                     <div className="flex justify-between">
-                      <button onClick={handleSaveChangesDoctorConfirm} type="submit" className="btn text-black  bg-ts hover:bg-hb hover:text-w">
+                      <button onClick={handleSaveChangesDoctorConfirm} type="submit" className="btn text-black bg-ts hover:bg-hb hover:text-w">
                         Guardar Cambios
                       </button>
                       <button onClick={closeEditModalDoctor} className="btn text-black bg-ts hover:bg-hb hover:text-w">
@@ -1712,39 +1723,39 @@ const Table = () => {
                 {(
                   { handleSubmit, values, setFieldValue } // Asegúrate de incluir values aquí
                 ) => (
-                  <form onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                      <label htmlFor="hora" className="mr-2">
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="usuario" className="mr-2 w-24">
                         User ID:
                       </label>
-                      <Field type="text" className="input-field bg-w text-c rounded" name="usuario" placeholder="Usuario" readOnly />
+                      <Field type="text" className="input-field bg-w text-c rounded w-44" name="usuario" placeholder="Usuario" readOnly />
                       <ErrorMessage name="usuario" component="div" className="text-red-300" />
                     </div>
-                    <div className="mb-4">
-                      <label htmlFor="hora" className="mr-2">
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="nombreUsuario" className="mr-2 w-24">
                         Nombre Usuario:
                       </label>
                       {nombresApellidosUsuarios[values.usuario]}
                     </div>
-                    <div className="mb-4">
-                      <label htmlFor="hora" className="mr-2">
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="Doctor" className="mr-2 w-24">
                         Doctor ID:
                       </label>
-                      <Field type="text" className="input-field bg-w text-c rounded" name="Doctor" placeholder="Doctor" readOnly />
+                      <Field type="text" className="input-field bg-w text-c rounded w-44" name="Doctor" placeholder="Doctor" readOnly />
                       <ErrorMessage name="Doctor" component="div" className="text-red-300" />
                     </div>
-                    <div className="mb-4">
-                      <label htmlFor="hora" className="mr-2">
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="nombreDoctor" className="mr-2 w-24">
                         Nombre Doctor:
                       </label>
                       {nombresApellidosDoctores[values.Doctor]}
                     </div>
-                    <div className="mb-4">
-                      <label htmlFor="hora" className="mr-2">
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="fecha" className="mr-2 w-24">
                         Fecha:
                       </label>
                       <DatePicker
-                        className="input-field bg-w text-c rounded"
+                        className="input-field bg-w text-c rounded w-44"
                         selected={values.fecha}
                         onChange={(date) => {
                           setFieldValue("fecha", date);
@@ -1762,28 +1773,28 @@ const Table = () => {
                       />
                       <ErrorMessage name="fecha" component="div" className="text-red-300" />
                     </div>
-                    <div className="mb-4">
-                      <label htmlFor="hora" className="mr-2">
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="hora" className="mr-2 w-24">
                         Hora:
                       </label>
-                      <Field as="select" className="input-field bg-w text-c rounded" name="hora">
+                      <Field as="select" className="input-field bg-w text-c rounded w-44" name="hora">
                         <option value="">Selecciona una hora</option>
                         {generateTimeOptions()}
                       </Field>
                       <ErrorMessage name="hora" component="div" className="text-red-300" />
                     </div>
-                    <div className="mb-4">
-                      <label htmlFor="estado" className="mr-2">
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="estado" className="mr-2 w-24">
                         Estado:
                       </label>
-                      <Field as="select" className="input-field bg-w text-c rounded" name="estado">
+                      <Field as="select" className="input-field bg-w text-c rounded w-44" name="estado">
                         <option value="Activa">Activa</option>
                         <option value="Inactiva">Inactiva</option>
                       </Field>
                       <ErrorMessage name="estado" component="div" className="text-red-300" />
                     </div>
                     <div className="flex justify-between">
-                      <button onClick={handleSaveChangesAppoinmentConfirm} type="submit" className="btn text-black  bg-ts hover:bg-hb hover:text-w">
+                      <button onClick={handleSaveChangesAppoinmentConfirm} type="submit" className="btn text-black bg-ts hover:bg-hb hover:text-w">
                         Guardar Cambios
                       </button>
                       <button onClick={closeEditModalAppointment} className="btn text-black bg-ts hover:bg-hb hover:text-w">
@@ -1945,39 +1956,65 @@ const Table = () => {
                 {({ handleSubmit }) => (
                   <form onSubmit={handleSubmit}>
                     <div className="mb-4">
-                      <Field type="number" className="input-field" name="dni" placeholder="DNI/LC/LE/PASSPORT" />
+                      <Field type="number" className="input-field bg-w text-c rounded w-56" name="dni" placeholder="DNI/LC/LE/PASSPORT" />
                       <ErrorMessage name="dni" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="name" placeholder="Nombre" />
+                      <Field type="text" className="input-field bg-w text-c rounded w-56" name="name" placeholder="Nombre" />
                       <ErrorMessage name="name" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="lastname" placeholder="Apellido" />
+                      <Field type="text" className="input-field bg-w text-c rounded w-56" name="lastname" placeholder="Apellido" />
                       <ErrorMessage name="lastname" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="email" className="input-field" name="email" placeholder="Correo electrónico" />
+                      <Field type="email" className="input-field bg-w text-c rounded w-56" name="email" placeholder="Correo electrónico" />
                       <ErrorMessage name="email" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="password" className="input-field" name="pass" placeholder="Contraseña" />
+                      <Field type="password" className="input-field bg-w text-c rounded w-56" name="pass" placeholder="Contraseña" />
                       <ErrorMessage name="pass" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="province" placeholder="Provincia" />
+                      <Field as="select" className="input-field bg-w text-c rounded w-56" name="province">
+                        <option value="">Selecciona una provincia</option>
+                        <option value="Buenos Aires">Buenos Aires</option>
+                        <option value="Catamarca">Catamarca</option>
+                        <option value="Chaco">Chaco</option>
+                        <option value="Chubut">Chubut</option>
+                        <option value="Córdoba">Córdoba</option>
+                        <option value="Corrientes">Corrientes</option>
+                        <option value="Entre Ríos">Entre Ríos</option>
+                        <option value="Formosa">Formosa</option>
+                        <option value="Jujuy">Jujuy</option>
+                        <option value="La Pampa">La Pampa</option>
+                        <option value="La Rioja">La Rioja</option>
+                        <option value="Mendoza">Mendoza</option>
+                        <option value="Misiones">Misiones</option>
+                        <option value="Neuquén">Neuquén</option>
+                        <option value="Río Negro">Río Negro</option>
+                        <option value="Salta">Salta</option>
+                        <option value="San Juan">San Juan</option>
+                        <option value="San Luis">San Luis</option>
+                        <option value="Santa Cruz">Santa Cruz</option>
+                        <option value="Santa Fe">Santa Fe</option>
+                        <option value="Santiago del Estero">Santiago del Estero</option>
+                        <option value="Tierra del Fuego">Tierra del Fuego</option>
+                        <option value="Tucumán">Tucumán</option>
+                      </Field>
                       <ErrorMessage name="province" component="div" className="text-red-300" />
                     </div>
+
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="address" placeholder="Dirección" />
+                      <Field type="text" className="input-field bg-w text-c rounded w-56" name="address" placeholder="Dirección" />
                       <ErrorMessage name="address" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="number" className="input-field" name="area" placeholder="Área" />
+                      <Field type="number" className="input-field bg-w text-c rounded w-56" name="area" placeholder="Área" />
                       <ErrorMessage name="area" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="number" className="input-field" name="phone" placeholder="Teléfono" />
+                      <Field type="number" className="input-field bg-w text-c rounded w-56" name="phone" placeholder="Teléfono" />
                       <ErrorMessage name="phone" component="div" className="text-red-300" />
                     </div>
                     <div className="flex justify-between">
@@ -2062,27 +2099,27 @@ const Table = () => {
                 {({ handleSubmit }) => (
                   <form onSubmit={handleSubmit}>
                     <div className="mb-4">
-                      <Field type="number" className="input-field" name="dni" placeholder="DNI/LC/LE/PASSPORT" />
+                      <Field type="number" className="input-field bg-w text-c rounded w-56" name="dni" placeholder="DNI/LC/LE/PASSPORT" />
                       <ErrorMessage name="dni" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="name" placeholder="Nombre" />
+                      <Field type="text" className="input-field bg-w text-c rounded w-56" name="name" placeholder="Nombre" />
                       <ErrorMessage name="name" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="text" className="input-field" name="lastname" placeholder="Apellido" />
+                      <Field type="text" className="input-field bg-w text-c rounded w-56" name="lastname" placeholder="Apellido" />
                       <ErrorMessage name="lastname" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="email" className="input-field" name="email" placeholder="Correo electrónico" />
+                      <Field type="email" className="input-field bg-w text-c rounded w-56" name="email" placeholder="Correo electrónico" />
                       <ErrorMessage name="email" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="password" className="input-field" name="pass" placeholder="Contraseña" />
+                      <Field type="password" className="input-field bg-w text-c rounded w-56" name="pass" placeholder="Contraseña" />
                       <ErrorMessage name="pass" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field as="select" className="input-field bg-w text-c rounded" name="specialty">
+                      <Field as="select" className="input-field bg-w text-c rounded w-56" name="specialty">
                         <option value="">Selecciona una especialidad</option>
                         {especialidadesMedicas.map((especialidad, index) => (
                           <option key={index} value={especialidad}>
@@ -2093,11 +2130,12 @@ const Table = () => {
                       <ErrorMessage name="specialty" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field type="number" className="input-field" name="licenceNumber" placeholder="Número de Licencia" />
+                      <Field type="number" className="input-field bg-w text-c rounded w-56" name="licenceNumber" placeholder="Número de Licencia" />
                       <ErrorMessage name="licenceNumber" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <Field as="select" className="input-field" name="rol">
+                      <Field as="select" className="input-field bg-w text-c rounded w-56" name="rol">
+                        <option value="Doctor">Selecciona un rol</option>
                         <option value="Doctor">Doctor</option>
                         <option value="Auditor">Auditor</option>
                         {/* Agregar otras opciones si es necesario */}
@@ -2142,6 +2180,7 @@ const Table = () => {
                     // Actualizar el valor de 'doctor' en 'values' con el valor actual de 'doctorId'
                     values.doctor = doctorId;
                     values.appointmentDate = formattedDate;
+                    values.user = userId;
                     console.log("Datos de la cita:", values);
                     const response = await postAppointment(values);
                     console.log("Cita creada:", response);
@@ -2156,19 +2195,19 @@ const Table = () => {
                 {({ handleSubmit, values, setFieldValue }) => (
                   <form onSubmit={handleSubmit}>
                     <div className="mb-4">
-                      <label htmlFor="user" className="mr-2">
-                        User ID:
-                      </label>
-                      <Field type="text" className="input-field bg-w text-c rounded" name="user" placeholder="User ID" />
-                      <ErrorMessage name="user" component="div" className="text-red-300" />
+                      <input
+                        type="text"
+                        className="input-field bg-w text-c rounded w-56"
+                        name="dni"
+                        placeholder="DNI/LC/LE/PASSPORT"
+                        value={dni}
+                        onChange={(e) => handleDniChange(e)} // Manejar cambios en el DNI
+                      />
                     </div>
                     <div className="mb-4">
-                      <label htmlFor="especialidad" className="mr-6">
-                        Especialidad:
-                      </label>
                       <Field
                         as="select"
-                        className="input-field bg-w text-c rounded"
+                        className="input-field bg-w text-c rounded w-56"
                         name="especialidad"
                         onChange={(e) => {
                           handleEspecialidadChange(e); // Llama a la función handleEspecialidadChange
@@ -2185,10 +2224,7 @@ const Table = () => {
                       <ErrorMessage name="especialidad" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <label htmlFor="doctor" className="mr-2">
-                        Doctor ID:
-                      </label>
-                      <select className="input-field bg-w text-c rounded" name="doctor" value={doctorId} onChange={handleDoctorChangeCreate}>
+                      <select className="input-field bg-w text-c rounded w-56" name="doctor" value={doctorId} onChange={handleDoctorChangeCreate}>
                         <option value="">Selecciona un doctor</option>
                         {doctoresCreate.map((doctor) => (
                           <option key={doctor._id} value={doctor._id}>
@@ -2199,11 +2235,8 @@ const Table = () => {
                       <ErrorMessage name="doctor" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <label htmlFor="appointmentDate" className="mr-2">
-                        Fecha:
-                      </label>
                       <DatePicker
-                        className="input-field bg-w text-c rounded"
+                        className="input-field bg-w text-c rounded w-56"
                         selected={values.appointmentDate}
                         onChange={(date) => {
                           setFieldValue("appointmentDate", date);
@@ -2221,10 +2254,7 @@ const Table = () => {
                       <ErrorMessage name="appointmentDate" component="div" className="text-red-300" />
                     </div>
                     <div className="mb-4">
-                      <label htmlFor="appointmentTime" className="mr-2">
-                        Hora:
-                      </label>
-                      <Field as="select" className="input-field bg-w text-c rounded" name="appointmentTime">
+                      <Field as="select" className="input-field bg-w text-c rounded w-56" name="appointmentTime">
                         <option value="">Selecciona una hora</option>
                         {generateTimeOptionsCreate()}
                       </Field>
