@@ -9,6 +9,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import moment from "moment-timezone";
 import { userAuth } from "../../Context/UserContext";
 import { doctorAuth } from "../../Context/DoctorContext";
+import { CSVLink } from "react-csv";
+import { saveAs } from "file-saver";
 
 // Establecer la zona horaria por defecto
 moment.tz.setDefault("America/Argentina/Buenos_Aires");
@@ -936,6 +938,72 @@ const Table = () => {
     setIsOpen(false);
   };
 
+  // export tablas
+
+  const [csvData, setCsvData] = useState([]);
+
+  const handleExportCSV = () => {
+    const dataToExport = getTableData();
+    const csvData = [
+      Object.keys(dataToExport[0]), // Encabezados
+      ...dataToExport.map((item) => Object.values(item)),
+    ];
+
+    // Convertir los datos CSV a texto CSV
+    const csvText = csvData.map((row) => row.join(",")).join("\n");
+
+    // Crear un Blob que contiene el texto CSV
+    const blob = new Blob([csvText], { type: "text/csv;charset=utf-8" });
+
+    // Utilizar file-saver para descargar el archivo CSV
+    saveAs(blob, "datos.csv");
+
+    // Actualizar el estado de csvData si es necesario
+    setCsvData(csvData);
+  };
+  // Función para obtener los datos de la tabla actual
+  const getTableData = () => {
+    switch (activeTab) {
+      case "Users":
+        return filteredUsuarios.map((usuario) => ({
+          ID: usuario._id,
+          DNI: usuario.dni,
+          NombreCompleto: `${usuario.name} ${usuario.lastname}`,
+          Email: usuario.email,
+          Provincia: usuario.province,
+          Area: usuario.area,
+          Telefono: usuario.phone,
+          Address: usuario.address,
+          Rol: usuario.isDoctor === false && usuario.isAuditor === false ? "User" : "",
+        }));
+      case "Doctors":
+        return filteredDoctors.map((doctor) => ({
+          ID: doctor._id,
+          DNI: doctor.dni,
+          NombreCompleto: `${doctor.name} ${doctor.lastname}`,
+          Email: doctor.email,
+          Especialidad: doctor.specialty,
+          Licencia: doctor.licenceNumber,
+          Rol: doctor.isDoctor === true && doctor.isAuditor === true ? "Auditor" : "Doctor",
+        }));
+      case "Appointments":
+        return filteredCitas.map((cita) => ({
+          ID: cita._id,
+          User: cita.user,
+          NombreUsuario: nombresApellidosUsuarios[cita.user],
+          Doctor: cita.doctor,
+          NombreDoctor: nombresApellidosDoctores[cita.doctor],
+          Fecha: cita.appointmentDate,
+          Hora: cita.appointmentTime,
+          Estado: typeof cita.state === "string" ? cita.state.toLowerCase() : cita.state ? "Activa" : "Inactiva",
+        }));
+      default:
+        return [];
+    }
+  };
+
+  // export tablas
+
   return (
     <div className="bg-w">
       {/* component */}
@@ -965,12 +1033,15 @@ const Table = () => {
           {/* ---Botones Users, Doctors y Appoinments--- */}
           {/* ---Boton Export y Create New--- */}
           <div className="flex items-center mt-4 gap-x-3">
-            <button className="inline-flex justify-center items-center w-1/2 px-5 py-2 text-sm transition-colors duration-200 bg-hb border rounded-lg gap-x-2 sm:w-auto hover:bg-ts  text-w hover:text-c border-c">
+            <button
+              onClick={handleExportCSV}
+              className="inline-flex justify-center items-center w-1/2 px-5 py-2 text-sm transition-colors duration-200 bg-hb border rounded-lg gap-x-2 sm:w-auto hover:bg-ts text-w hover:text-c border-c">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-5 h-5">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
               </svg>
-              <span className="font-medium">Export</span>
+              <span className="font-medium">Exportar</span>
             </button>
+
             <div className="dropdown items-center">
               <div tabIndex={0} role="button" onClick={toggleDropdown}>
                 <summary className="m-2 btn inline-flex justify-center items-center w-full sm:w-auto px-3 py-3 text-sm transition-colors duration-200 bg-ts border rounded-lg gap-x-2 sm:inline-block hover:bg-ts text-c border-c">
