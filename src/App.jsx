@@ -43,7 +43,6 @@ const App = () => {
               <Route path="/contactForm" element={<ContactForm />} />
               <Route element={<ProtectedRouteUser />}>
                 <Route path="/appointmentsUser" element={<PagesUserAppointmentManagement />} />
-
                 <Route path="/add-appointmentsUser" element={<AppointmentFormPage />} />
                 <Route path="/appointments/:id" element={<AppointmentFormPage />} />
                 <Route path="/users/:id" element={<RegisterPageUser />} />

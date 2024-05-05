@@ -9,7 +9,6 @@ import "react-datepicker/dist/react-datepicker.css";
 import moment from "moment-timezone";
 import { userAuth } from "../../Context/UserContext";
 import { doctorAuth } from "../../Context/DoctorContext";
-import { CSVLink } from "react-csv";
 import { saveAs } from "file-saver";
 
 // Establecer la zona horaria por defecto
@@ -1084,9 +1083,9 @@ const Table = () => {
           </div>
           {/* ---Input Search--- */}
           {/* ---Span Mostrando resultados--- */}
-          <div className="flex items-center gap-x-3">
+          {/* <div className="flex items-center gap-x-3">
             <span className="px-3 py-1 text-xs text-hb bg-w rounded-full">Mostrando 1-10 de 1000 resultados</span>
-          </div>
+          </div> */}
         </div>
         {/* ---Span Mostrando resultados--- */}
         <div className="flex flex-col mt-6  max-w-full">
@@ -2351,14 +2350,14 @@ const Table = () => {
         {showCreateNewModalUserConfirm && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={handleCerrarCreateNewUserSuccess}>
             <div className="bg-white rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
-              <p>Usuario creado correctamente.</p>
+              <p className="text-c font-medium">Usuario creado correctamente.</p>
               <div className="flex justify-center mt-4">
                 <button
                   onClick={() => {
                     handleCerrarCreateNewUserSuccess();
                     closeCreateNewModalUser();
                   }}
-                  className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
+                  className="px-4 py-2 bg-ts text-c rounded hover:bg-hb hover:text-w"
                   // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
@@ -2370,14 +2369,14 @@ const Table = () => {
         {showCreateNewModalDoctorConfirm && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={handleCerrarCreateNewDoctorSuccess}>
             <div className="bg-white rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
-              <p>Doctor creado correctamente.</p>
+              <p className="text-c font-medium">Doctor creado correctamente.</p>
               <div className="flex justify-center mt-4">
                 <button
                   onClick={() => {
                     handleCerrarCreateNewDoctorSuccess();
                     closeCreateNewModalDoctor();
                   }}
-                  className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
+                  className="px-4 py-2 bg-ts text-c rounded hover:bg-hb hover:text-w"
                   // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
@@ -2390,14 +2389,14 @@ const Table = () => {
         {showCreateNewModalAppoinmentConfirm && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={handleCerrarCreateNewAppoinmentSuccess}>
             <div className="bg-white rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
-              <p>Cita creada correctamente.</p>
+              <p className="text-c font-medium">Cita creada correctamente.</p>
               <div className="flex justify-center mt-4">
                 <button
                   onClick={() => {
                     handleCerrarCreateNewAppoinmentSuccess();
                     closeCreateNewModalAppointment();
                   }}
-                  className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
+                  className="px-4 py-2 bg-ts text-c rounded hover:bg-hb hover:text-w"
                   // Llamar a la función para cerrar la modal de confirmación
                 >
                   Cerrar
