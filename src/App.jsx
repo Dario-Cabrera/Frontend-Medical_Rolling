@@ -38,6 +38,7 @@ const App = () => {
               <Route path="/AboutUs" element={<AboutUs />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/error" element={<Error404 />} />
+              
 
               <Route element={<ProtectedRouteAuditor />}>
                 <Route path="/auditorPage" element={<AuditorPage />} />

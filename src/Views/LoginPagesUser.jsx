@@ -39,18 +39,18 @@ export const LoginPagesUser = () => {
 
   return (
     <div className="flex h-[calc(100vh-100px)] items-center justify-center">
-      <div className="bg-zinc-800 max-w-md w-full p-10 rounded-md">
+      <div className="bg-w max-w-md w-full p-10 rounded-md">
         {signinErrors.map((error, i) => (
           <div className="bg-red-500 p-2 text-white" key={i}>
             {error}
           </div>
         ))}
-        <h1 className="text-3xl font-bold my-2">Login</h1>
+        <h1 className="text-3xl font-bold my-2 text-c">Login</h1>
         <form onSubmit={onSubmit}>
           <input
             type="email"
             {...register("email", { required: true })}
-            className="w-full bg-zinc-700 text-white px-4 py-2 my-2 rounded-md"
+            className="w-full bg-white border-ts border-2 solid text-c px-4 py-2 my-2 rounded-md"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -59,16 +59,16 @@ export const LoginPagesUser = () => {
           <input
             type="password"
             {...register("pass", { required: true })}
-            className="w-full bg-zinc-700 text-white px-4 py-2 my-2 rounded-md"
+            className="w-full bg-white border-ts border-2 solid text-c px-4 py-2 my-2 rounded-md"
             placeholder="Password"
             value={pass}
             onChange={(e) => setPass(e.target.value)}
           />
           {errors.pass && <p className="text-red-500">Password is required</p>}
 
-          <button type="submit">Login</button>
+          <button type="submit" className="text-hb">Login</button>
         </form>
-        <p className="flex gap-x-2 py-3 justify-between">
+        <p className="flex gap-x-2 py-3 justify-between text-c">
           Don't have an account?{" "}
           <Link to="/register/" className="text-sky-500">
             Go Register

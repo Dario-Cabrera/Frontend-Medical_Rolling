@@ -34,32 +34,33 @@ export const AppointmentCard = ({ appointment }) => {
     <div className="bg-white p-4 rounded-lg my-2 shadow-md">
       <header className="flex justify-between">
         <div>
-          <p className="font-medium">
+          <p className="font-medium text-c">
             MÉDICO: {doctor.name} {doctor.lastname}
           </p>
-          <p>ESPECIALIDAD: {doctor.specialty}</p>
+          <p className="font-medium text-c">
+            ESPECIALIDAD: {doctor.specialty}</p>
         </div>
-        <div className="flex gap-x-2 items-center">
+        <div className="flex gap-x-2 items-center text-c">
           <button
             onClick={() => {
               deleteAppointment(appointment._id);
             }}
-            className="bg-red-500 text-white px-4 py-2 mt-2 rounded-md"
+            className="btn-info bg-ts hover:bg-hb hover:text-w hover:border-none text-c px-4 py-2 mt-2 rounded-md"
           >
             Cancelar
           </button>
           <Link
             to={`/appointments/${appointment._id}`}
-            className="bg-red-500 text-white px-4 py-2 mt-2 rounded-md"
+            className="btn-info bg-ts hover:bg-hb hover:text-w hover:border-none text-c px-4 py-2 mt-2 rounded-md"
           >
-            Reubicar
+            Modificar
           </Link>
         </div>
       </header>
 
-      <p>DÍA: {new Date(appointment.appointmentDate).toLocaleDateString()}</p>
-      <p>HORA: {new Date(appointment.appointmentTime).toLocaleTimeString()}</p>
-      <p>CONSULTORIO: 305</p>
+      <p className="font-medium text-c">DÍA: {new Date(appointment.appointmentDate).toLocaleDateString()}</p>
+      <p className="font-medium text-c">HORA: {new Date(appointment.appointmentTime).toLocaleTimeString()}</p>
+      <p className="font-medium text-c">CONSULTORIO: 305</p>
     </div>
   );
 };
