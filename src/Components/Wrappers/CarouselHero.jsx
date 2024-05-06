@@ -31,13 +31,13 @@ const Carousel = () => {
       {images.map((image, index) => (
         <div key={index}>
           <div className="hero min-h-screen font-sans" style={{ backgroundImage: `url(${image})` }}>
-            <div className="hero-overlay bg-opacity-20"></div>
+            <div className="hero-overlay bg-opacity-50"></div>
             <div className="hero-content text-center text-neutral-content">
               <div className="max-w-md">
-                <h1 className="mb-5 text-5xl font-bold text-w text-opacity-90 shadow-24g" style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.8)" }}>
+                <h1 className="mb-5 text-5xl font-bold text-ts text-opacity-90 shadow-24g" style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.8)" }}>
                   Medical Rolling
                 </h1>
-                <Link to="/contact"><button   className="btn btn-info bg-ts hover:bg-hb hover:text-w">¡SOLICITA AHORA!</button></Link>
+                <Link to="/contact"><button   className="btn btn-info bg-ts hover:bg-hb hover:text-w hover:border-none">¡SOLICITA AHORA!</button></Link>
               </div>
             </div>
           </div>

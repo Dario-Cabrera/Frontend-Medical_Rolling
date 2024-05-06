@@ -69,7 +69,7 @@ export const AboutUs = () => {
         <p className="text-lg text-w mb-8 text-center font-medium">{mission}</p>
         <p className="text-lg text-w mb-8 text-center font-medium">{vision}</p>
         <p className="text-lg text-w mb-8 text-center font-medium">{commitment}</p>
-        <h2 className="text-2xl font-bold mb-4 text-center">Métricas</h2>
+        <h2 className="text-2xl font-bold mb-4 text-center text-w">Métricas</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {metrics.map(metric => (
             <div
