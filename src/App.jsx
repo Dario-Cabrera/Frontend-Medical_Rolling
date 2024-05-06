@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import {Homepage } from "../src/Views/Homepage"
+import { Homepage } from "../src/Views/Homepage";
 import { RegisterPageUser } from "../src/Views/RegisterPageUser";
 import { RegisterPageDoctor } from "../src/Views/RegisterPageDoctor";
 import { UserProvider } from "../src/Context/UserContext";
@@ -18,6 +18,11 @@ import { AppointmentProvider } from "./Context/AppointmentContext";
 import { Navbar } from "./Components/Wrappers/Navbar";
 import { Footer } from "./Components/Wrappers/Footer";
 import { Error404 } from "./Views/ERROR404";
+import { ContactForm } from "./Views/ContactUs";
+import moment from "moment-timezone";
+
+// Establecer la zona horaria por defecto
+moment.tz.setDefault("America/Argentina/Buenos_Aires");
 
 const App = () => {
   return (
@@ -27,45 +32,26 @@ const App = () => {
           <BrowserRouter>
             <Navbar />
             <Routes>
-              <Route path="/" element={ <Homepage/> } />
+              <Route path="/" element={<Homepage />} />
               <Route path="/registerUser/" element={<RegisterPageUser />} />
               <Route path="/loginUser/" element={<LoginPagesUser />} />
               <Route path="/loginDoctor/" element={<LoginPagesDoctor />} />
               <Route path="/AboutUs" element={<AboutUs />} />
-              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/contactPlan" element={<ContactPage />} />
               <Route path="/error" element={<Error404 />} />
-
+              <Route path="/pageAuditor" element={<AuditorPage />} />
+              <Route path="/contactForm" element={<ContactForm />} />
               <Route element={<ProtectedRouteUser />}>
-                <Route
-                  path="/appointmentsUser"
-                  element={<PagesUserAppointmentManagement />}
-                />
-
-                <Route
-                  path="/add-appointmentsUser"
-                  element={<AppointmentFormPage />}
-                />
-                <Route
-                  path="/appointments/:id"
-                  element={<AppointmentFormPage />}
-                />
+                <Route path="/appointmentsUser" element={<PagesUserAppointmentManagement />} />
+                <Route path="/add-appointmentsUser" element={<AppointmentFormPage />} />
+                <Route path="/appointments/:id" element={<AppointmentFormPage />} />
                 <Route path="/users/:id" element={<RegisterPageUser />} />
               </Route>
               <Route element={<ProtectedRouteDoctor />}>
-                <Route path="/pageAuditor" element={<AuditorPage />} />
                 <Route path="/registerDoctor/" element={<RegisterPageDoctor />} />
-                <Route
-                  path="/appointmentsDoctor"
-                  element={<PagesDoctorAppointmentManagement />}
-                />
-                <Route
-                  path="/add-appointments"
-                  element={<AppointmentFormPage />}
-                />
-                <Route
-                  path="/appointments/:id"
-                  element={<AppointmentFormPage />}
-                />
+                <Route path="/appointmentsDoctor" element={<PagesDoctorAppointmentManagement />} />
+                <Route path="/add-appointments" element={<AppointmentFormPage />} />
+                <Route path="/appointments/:id" element={<AppointmentFormPage />} />
                 <Route path="/doctors/:id" element={<RegisterPageDoctor />} />
               </Route>
             </Routes>
@@ -76,6 +62,5 @@ const App = () => {
     </UserProvider>
   );
 };
-
 
 export default App;

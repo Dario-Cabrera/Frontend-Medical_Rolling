@@ -1,194 +1,302 @@
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useAppointment } from "../Context/AppointmentContext";
-import { useNavigate, useParams } from "react-router-dom";
-import { getDoctorsRequest } from "../api/doctor.auth.js";
-import { createRequestAppointment } from "../api/appointment.auth";
+import { useState, useEffect } from "react";
+import { Formik, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import axios from "axios";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import moment from "moment-timezone";
+import { userAuth } from "../Context/UserContext";
+
+// Establecer la zona horaria por defecto
+moment.tz.setDefault("America/Argentina/Buenos_Aires");
 
 export const AppointmentFormPage = () => {
-  const { register, handleSubmit, setValue, watch } = useForm();
-  const { getAppointment, updateAppointment } = useAppointment();
-  const navigate = useNavigate();
-  const params = useParams();
-  const [doctors, setDoctors] = useState([]);
-  const [selectedDate, setSelectedDate] = useState("");
-  const [selectedTime, setSelectedTime] = useState("");
-  const token = localStorage.getItem("token");
+  const especialidadesMedicas = [
+    "Anestesiología",
+    "Cardiología",
+    "Dermatología",
+    "Endocrinología",
+    "Gastroenterología",
+    "Geriatría",
+    "Ginecología",
+    "Hematología",
+    "Infectología",
+    "Medicina Familiar",
+    "Medicina Interna",
+    "Nefrología",
+    "Neumología",
+    "Neurología",
+    "Obstetricia",
+    "Odontología",
+    "Oncología",
+    "Oftalmología",
+    "Ortopedia",
+    "Otorrinolaringología",
+    "Pediatría",
+    "Psiquiatría",
+    "Radiología",
+    "Reumatología",
+    "Traumatología",
+    "Urología",
+  ];
 
-  useEffect(() => {
-    const loadAppointment = async () => {
-      if (params.id) {
-        const appointment = await getAppointment(params.id);
-        if (appointment) {
-          setValue("specialty", appointment.specialty);
-          setValue("doctor", appointment.doctor);
-          setValue("dateTime", appointment.dateTime);
-          // Parsear la fecha y hora para establecer los valores iniciales
-          const [date, time] = appointment.dateTime.split("T");
-          setSelectedDate(date);
-          setSelectedTime(time);
-          console.log("Estoy en loadAppointment")
-        }
-      }
-    };
-    loadAppointment();
-  }, [params.id, getAppointment, setValue]);
+  // ----POST APPOINTMENTS----
 
-  useEffect(() => {
-    const fetchDoctors = async () => {
-      try {
-        const res = await getDoctorsRequest();
-        setDoctors(res.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchDoctors();
-  }, []);
+  const [doctores, setDoctores] = useState([]);
+  const { user } = userAuth(); // Mover la obtención del usuario logueado dentro del componente
+  console.log("Datos del usuario logueado:", user, typeof user); // Mostrar los datos del usuario y su tipo
+  const [dni, setDni] = useState(user.dni || ""); // Inicializar con el DNI del usuario logueado si está disponible
+  const [userId, setUserId] = useState(user.id || ""); // Inicializar con el ID del usuario logueado si está disponible
+  const [doctoresCreate, setDoctoresCreate] = useState([]);
+  const [showAppointmentCreated, setShowAppointmentCreated] = useState(false);
 
-  const onSubmit = async (data) => {
-    console.log("Soy la data:",data)
- // Verifica los valores de selectedDate y selectedTime
- console.log("selectedDate:", selectedDate);
- console.log("selectedTime:", selectedTime);
+  const handleDniChange = async (event) => {
+    const enteredDni = event.target.value;
+    setDni(enteredDni);
 
-    const appointmentDate = `${selectedDate}T00:00:00Z`;
-    const appointmentTime = `${selectedDate}T${selectedTime}:00Z`;
-
-    if (params.id) {
-      const updateDate = await updateAppointment(params.id, {
-        ...data,
-        appointmentDate,
-        appointmentTime,
-      });
-      navigate("/appointmentsUser");
-    }  else {
-      const selectedDoctor = doctors.find(
-        (doctor) => doctor.name === data.doctor
-      );
-
-      if (!selectedDoctor) {
-        console.error("No se encontró el doctor seleccionado");
-        return;
-      }
-
-      const doctorId = selectedDoctor._id; // Obtener el ID del doctor seleccionado
-
-      const appointmentData = {
-        ...data,
-        appointmentDate,
-        appointmentTime,
-      };
-
-      try {
-        const response = await createRequestAppointment(
-          appointmentData,
-          token,
-          doctorId
-        );
-        if (response && response.data && response.data.appointmentSaved) {
-          navigate("/appointmentsUser");
+    try {
+      const response = await axios.get(`http://localhost:3001/api/getUserByDNI/${enteredDni}`);
+      if (response.status === 200) {
+        const user = response.data;
+        if (user) {
+          setUserId(user._id);
         } else {
-          console.error("Error al crear el turno:", response.data.message);
+          setUserId(""); // Si no se encuentra un usuario con el DNI especificado, reiniciar el ID del usuario a una cadena vacía
         }
-      } catch (error) {
-        console.error("Error al crear el turno:", error);
+      } else {
+        console.error("Error fetching user by DNI:", response.data.message);
+        setUserId(""); // En caso de error, reiniciar el ID del usuario a una cadena vacía
       }
+    } catch (error) {
+      console.error("Error fetching user by DNI:", error);
+      setUserId(""); // En caso de error, reiniciar el ID del usuario a una cadena vacía
     }
   };
 
+  const [doctorId, setDoctorId] = useState("");
+  const [availableTimesCreate, setAvailableTimesCreate] = useState([]);
+  const [especialidadSeleccionada, setEspecialidadSeleccionada] = useState("");
+
+  const handleDoctorChangeCreate = (event) => {
+    const selectedDoctorId = event.target.value;
+    console.log("Valor seleccionado del campo de doctor:", selectedDoctorId);
+    setDoctorId(selectedDoctorId);
+  };
+
+  const handleDateChangeCreate = async (date) => {
+    try {
+      const response = await axios.get("http://localhost:3001/api/availableTimes", {
+        params: {
+          doctorId: doctorId,
+          date: moment(date).format("YYYY-MM-DD"),
+        },
+      });
+      setAvailableTimesCreate(response.data.availableTimes);
+    } catch (error) {
+      console.error("Error fetching available times:", error);
+    }
+  };
+
+  const generateTimeOptionsCreate = () => {
+    return availableTimesCreate.map((time) => (
+      <option key={time} value={time}>
+        {time}
+      </option>
+    ));
+  };
+
+  const handleEspecialidadChange = (event) => {
+    const selectedEspecialidad = event.target.value;
+    console.log("Especialidad seleccionada:", selectedEspecialidad);
+    setEspecialidadSeleccionada(selectedEspecialidad);
+  };
+
+  useEffect(() => {
+    console.log("Especialidad seleccionada:", especialidadSeleccionada);
+
+    if (especialidadSeleccionada) {
+      axios
+        .get(`http://localhost:3001/api/doctorsbyspecialty/${especialidadSeleccionada}`)
+        .then((response) => {
+          console.log("Datos de doctores recibidos:", response.data);
+          setDoctoresCreate(response.data);
+        })
+        .catch((error) => {
+          console.error("Error al obtener los doctores:", error);
+        });
+    }
+  }, [especialidadSeleccionada]);
+
+  const postAppointment = async (formData) => {
+    try {
+      const response = await axios.post("http://localhost:3001/api/createappointment/", formData);
+      return response.data; // Devuelve los datos de la cita creada si la solicitud es exitosa
+    } catch (error) {
+      console.error("Error al crear la cita:", error);
+      throw new Error("Error al crear la cita");
+    }
+  };
+
+  const appointmentCreateValidationSchema = Yup.object().shape({
+    // user: Yup.string().required("El usuario es requerido"),
+    // doctor: Yup.string().required("El doctor es requerido"),
+    appointmentDate: Yup.string().required("La fecha es requerida"),
+    appointmentTime: Yup.string().required("La hora es requerida"),
+    // state: Yup.string().required("El estado es requerido"),
+  });
+
+  const openAppointmentCreated = () => {
+    setShowAppointmentCreated(true);
+  };
+
+  const closeAppointmentCreated = () => {
+    setShowAppointmentCreated(false);
+  };
+
   return (
-    <div className="container mx-auto mt-8">
-      <h2 className="text-2xl font-bold mb-4">Crear un turno médico</h2>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="mb-4">
-          <label
-            htmlFor="specialty"
-            className="block text-sm font-medium text-gray-600"
-          >
-            Especialidad Médica
-          </label>
-          <select
-            id="specialty"
-            {...register("specialty")}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          >
-            <option value="">Seleccionar especialidad</option>
-            {Array.from(new Set(doctors.map((doctor) => doctor.specialty))).map(
-              (specialty) => (
-                <option key={specialty} value={specialty}>
-                  {specialty}
-                </option>
-              )
-            )}
-          </select>
-        </div>
+    <div className="flex justify-center items-center p-40">
+      <div className="bg-c text-w rounded-lg p-8 max-w-md text-center">
+        <h1 className="text-3xl font-bold mb-6">Crear Turno</h1>
+        <Formik
+          initialValues={{
+            user: userId, // Inicializar con el ID del usuario logueado
+            doctor: "",
+            appointmentDate: "",
+            appointmentTime: "",
+            state: true,
+            especialidad: "", // Agrega la especialidad al estado inicial
+          }}
+          validationSchema={appointmentCreateValidationSchema}
+          onSubmit={async (values, { resetForm, setFieldValue }) => {
+            try {
+              const selectedDate = moment(values.appointmentDate); // Obtener la fecha seleccionada del formulario
 
-        {watch("specialty") && (
-          <div className="mb-4">
-            <label
-              htmlFor="doctor"
-              className="block text-sm font-medium text-gray-600"
-            >
-              Médico
-            </label>
-            <select
-              id="doctor"
-              {...register("doctor")}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            >
-              <option value="">Seleccionar médico</option>
-              {doctors
-                .filter((doctor) => doctor.specialty === watch("specialty"))
-                .map((doctor) => (
-                  <option key={doctor._id} value={doctor.name}>
-                    {doctor.name}
-                  </option>
-                ))}
-            </select>
+              // Obtener la fecha formateada para enviarla al backend
+              const formattedDate = selectedDate.format("YYYY-MM-DD");
+              // Actualizar el valor de 'doctor' en 'values' con el valor actual de 'doctorId'
+              values.doctor = doctorId;
+              values.appointmentDate = formattedDate;
+              values.user = userId;
+              console.log("Datos de la cita:", values);
+              const response = await postAppointment(values);
+              console.log("Cita creada:", response);
+              // Resto del código...
+              openAppointmentCreated();
+              resetForm(); // Esta línea reiniciará el formulario
+              setFieldValue("doctor", ""); // Reiniciar el valor del campo doctor en Formik
+              setDoctorId(""); // Reiniciar el valor del doctor en el estado del componente
+            } catch (error) {
+              console.error("Error al crear la cita:", error);
+            }
+          }}>
+          {({ handleSubmit, values, setFieldValue, resetForm }) => (
+            <form onSubmit={handleSubmit}>
+              <div className="mb-4">
+                <input
+                  type="text"
+                  className="input-field bg-w text-c rounded w-56"
+                  name="dni"
+                  placeholder="DNI/LC/LE/PASSPORT"
+                  value={dni}
+                  readOnly
+                  onChange={(e) => handleDniChange(e)} // Manejar cambios en el DNI
+                />
+              </div>
+              <div className="mb-4">
+                <Field
+                  as="select"
+                  className="input-field bg-w text-c rounded w-56"
+                  name="especialidad"
+                  onChange={(e) => {
+                    handleEspecialidadChange(e); // Llama a la función handleEspecialidadChange
+                    setFieldValue("especialidad", e.target.value);
+                    setDoctorId(""); // Resetear el doctor seleccionado cuando se cambia la especialidad
+                  }}>
+                  <option value="">Selecciona una especialidad</option>
+                  {especialidadesMedicas.map((especialidad, index) => (
+                    <option key={index} value={especialidad}>
+                      {especialidad}
+                    </option>
+                  ))}
+                </Field>
+                <ErrorMessage name="especialidad" component="div" className="text-red-300" />
+              </div>
+              <div className="mb-4">
+                <select className="input-field bg-w text-c rounded w-56" name="doctor" value={doctorId} onChange={handleDoctorChangeCreate}>
+                  <option value="">Selecciona un doctor</option>
+                  {doctoresCreate.map((doctor) => (
+                    <option key={doctor._id} value={doctor._id}>
+                      {doctor.name}
+                    </option>
+                  ))}
+                </select>
+                <ErrorMessage name="doctor" component="div" className="text-red-300" />
+              </div>
+              <div className="mb-4">
+                <DatePicker
+                  className="input-field bg-w text-c rounded w-56"
+                  selected={values.appointmentDate}
+                  onChange={(date) => {
+                    setFieldValue("appointmentDate", date);
+                    handleDateChangeCreate(date);
+                  }}
+                  dateFormat="yyyy-MM-dd"
+                  placeholderText="Selecciona una fecha"
+                  name="appointmentDate"
+                  filterDate={(date) => {
+                    const day = date.getDay();
+                    const today = new Date();
+                    return day !== 0 && day !== 6 && date >= today;
+                  }}
+                />
+                <ErrorMessage name="appointmentDate" component="div" className="text-red-300" />
+              </div>
+              <div className="mb-4">
+                <Field as="select" className="input-field bg-w text-c rounded w-56" name="appointmentTime">
+                  <option value="">Selecciona una hora</option>
+                  {generateTimeOptionsCreate()}
+                </Field>
+                <ErrorMessage name="appointmentTime" component="div" className="text-red-300" />
+              </div>
+              {/* Agregar console.log aquí para verificar la lista de doctores */}
+              {console.log("Lista de doctores:", doctores)}
+              <div className="flex justify-between">
+                <button type="submit" className="btn text-black bg-ts hover:bg-hb hover:text-w w-24">
+                  Crear cita
+                </button>
+                <button
+                  type="button"
+                  className="btn text-black bg-ts hover:bg-hb hover:text-w w-24"
+                  onClick={() => {
+                    setFieldValue("doctor", ""); // Reiniciar el valor del campo doctor en Formik
+                    setDoctorId(""); // Reiniciar el valor del doctor en el estado del componente
+                    resetForm(); // Reiniciar el formulario a los valores iniciales
+                  }}>
+                  Borrar
+                </button>
+              </div>
+            </form>
+          )}
+        </Formik>
+      </div>
+      {showAppointmentCreated && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={closeAppointmentCreated}>
+          <div className="bg-white rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
+            <p className="text-c font-medium">Turno creado correctamente.</p>
+            <div className="flex justify-center mt-4">
+              <button
+                onClick={() => {
+                  closeAppointmentCreated();
+                }}
+                className="px-4 py-2 bg-ts text-c rounded hover:bg-hb hover:text-w"
+                // Llamar a la función para cerrar la modal de confirmación
+              >
+                Cerrar
+              </button>
+            </div>
           </div>
-        )}
-
-        <div className="mb-4">
-          <label
-            htmlFor="date"
-            className="block text-sm font-medium text-gray-600"
-          >
-            Fecha del Turno
-          </label>
-          <input
-            type="date"
-            id="date"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          />
         </div>
-
-        <div className="mb-4">
-          <label
-            htmlFor="time"
-            className="block text-sm font-medium text-gray-600"
-          >
-            Hora del Turno
-          </label>
-          <input
-            type="time"
-            id="time"
-            value={selectedTime}
-            onChange={(e) => setSelectedTime(e.target.value)}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition duration-300"
-          disabled={!selectedDate || !selectedTime}
-        >
-          Confirmar Turno
-        </button>
-      </form>
+      )}
     </div>
   );
 };
