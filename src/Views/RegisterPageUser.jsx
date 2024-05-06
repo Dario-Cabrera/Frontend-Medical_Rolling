@@ -11,15 +11,11 @@ export const RegisterPageUser = () => {
     register,
     handleSubmit,
   } = useForm();
-  const {
-    signup,
-    isAuthenticatedUser,
-    errors: registerUserErrors,
-  } = userAuth();
+  const { signup, isAuthenticatedUser, errors: registerUserErrors } = userAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (isAuthenticatedUser) navigate("/appointmentsUser");
+    if (isAuthenticatedUser) navigate("/loginUser/");
   }, [isAuthenticatedUser]);
 
   const onSubmit = handleSubmit(async (values) => {
@@ -35,67 +31,21 @@ export const RegisterPageUser = () => {
           </div>
         ))}
         <form onSubmit={onSubmit}>
-          <input
-            type="text"
-            {...register("name", { required: true })}
-            className="w-full bg-zinc-700 text-white px-4 py-2 my-2 rounded-md"
-            placeholder="Name"
-          />
+          <input type="text" {...register("name", { required: true })} className="w-full bg-zinc-700 text-white px-4 py-2 my-2 rounded-md" placeholder="Name" />
           {errors.name && <p className="text-red-500">Name is required</p>}
-          <input
-            type="text"
-            {...register("lastname", { required: true })}
-            className="w-full bg-zinc-700 text-white px-4 py-2 my-2 rounded-md"
-            placeholder="Lastname"
-          />
-          {errors.lastname && (
-            <p className="text-red-500">Lastname is required</p>
-          )}
-          <input
-            type="email"
-            {...register("email", { required: true })}
-            className="w-full bg-zinc-700 text-white px-4 py-2 my-2 rounded-md"
-            placeholder="Email"
-          />
+          <input type="text" {...register("lastname", { required: true })} className="w-full bg-zinc-700 text-white px-4 py-2 my-2 rounded-md" placeholder="Lastname" />
+          {errors.lastname && <p className="text-red-500">Lastname is required</p>}
+          <input type="email" {...register("email", { required: true })} className="w-full bg-zinc-700 text-white px-4 py-2 my-2 rounded-md" placeholder="Email" />
           {errors.email && <p className="text-red-500">Email is required</p>}
-          <input
-            type="password"
-            {...register("pass", { required: true })}
-            className="w-full bg-zinc-700 text-white px-4 py-2 my-2 rounded-md"
-            placeholder="Password"
-          />
+          <input type="password" {...register("pass", { required: true })} className="w-full bg-zinc-700 text-white px-4 py-2 my-2 rounded-md" placeholder="Password" />
           {errors.pass && <p className="text-red-500">Password is required</p>}
-          <input
-            type="text"
-            {...register("province", { required: true })}
-            className="w-full bg-zinc-700 text-white px-4 py-2 my-2 rounded-md"
-            placeholder="Province"
-          />
-          {errors.province && (
-            <p className="text-red-500">Province is required</p>
-          )}
-          <input
-            type="text"
-            {...register("address", { required: true })}
-            className="w-full bg-zinc-700 text-white px-4 py-2 my-2 rounded-md"
-            placeholder="Address"
-          />
-          {errors.address && (
-            <p className="text-red-500">Address is required</p>
-          )}
-          <input
-            type="number"
-            {...register("area", { required: true })}
-            className="w-full bg-zinc-700 text-white px-4 py-2 my-2 rounded-md"
-            placeholder="Area"
-          />
+          <input type="text" {...register("province", { required: true })} className="w-full bg-zinc-700 text-white px-4 py-2 my-2 rounded-md" placeholder="Province" />
+          {errors.province && <p className="text-red-500">Province is required</p>}
+          <input type="text" {...register("address", { required: true })} className="w-full bg-zinc-700 text-white px-4 py-2 my-2 rounded-md" placeholder="Address" />
+          {errors.address && <p className="text-red-500">Address is required</p>}
+          <input type="number" {...register("area", { required: true })} className="w-full bg-zinc-700 text-white px-4 py-2 my-2 rounded-md" placeholder="Area" />
           {errors.area && <p className="text-red-500">Area is required</p>}
-          <input
-            type="number"
-            {...register("phone", { required: true })}
-            className="w-full bg-zinc-700 text-white px-4 py-2 my-2 rounded-md"
-            placeholder="Phone"
-          />
+          <input type="number" {...register("phone", { required: true })} className="w-full bg-zinc-700 text-white px-4 py-2 my-2 rounded-md" placeholder="Phone" />
           {errors.phone && <p className="text-red-500">Phone is required</p>}
           <button type="submit">Register</button>
         </form>

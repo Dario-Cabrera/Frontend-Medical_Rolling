@@ -3,11 +3,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/rules-of-hooks */
 import { createContext, useState, useContext, useEffect } from "react";
-import {
-  registerRequestUser,
-  loginRequestUser,
-  varityTokenRequest,
-} from "../api/user.auth";
+import { registerRequestUser, loginRequestUser, varityTokenRequest } from "../api/user.auth";
 export const UserContext = createContext();
 
 export const userAuth = () => {
@@ -28,9 +24,9 @@ export const UserProvider = ({ children }) => {
       user.area = parseInt(user.area);
       user.phone = parseInt(user.phone);
       const res = await registerRequestUser(user);
-      const token = res.data;
-      localStorage.setItem("token", token);
-      console.log(token);
+      // const token = res.data;
+      // localStorage.setItem("token", token);
+      // console.log(token);
       console.log(res.data);
       setUser(res.data);
       setIsAuthenticatedUser(true);
@@ -44,10 +40,10 @@ export const UserProvider = ({ children }) => {
     try {
       const res = await loginRequestUser(user);
       const token = res.data; // Suponiendo que el token está devuelto en res.data
-      console.log(res.data)
+      console.log(res.data);
       localStorage.setItem("token", token);
       const resUser = await varityTokenRequest({ token });
-      setUser(resUser)
+      setUser(resUser);
       setIsAuthenticatedUser(true);
     } catch (error) {
       if (Array.isArray(error.response.data)) {
@@ -57,12 +53,11 @@ export const UserProvider = ({ children }) => {
     }
   };
 
-const logoutUser =()=>{
-  localStorage.removeItem("token");
-  setUser(null);
-  setIsAuthenticatedUser(false);
-}
-
+  const logoutUser = () => {
+    localStorage.removeItem("token");
+    setUser(null);
+    setIsAuthenticatedUser(false);
+  };
 
   useEffect(() => {
     if (errors.length > 0) {
@@ -94,22 +89,15 @@ const logoutUser =()=>{
         setIsAuthenticatedUser(true);
         setUser(res);
         setLoadingUser(false);
-
       } catch (error) {
         console.log(error);
         setIsAuthenticatedUser(false);
         setUser(null);
-        setLoadingUser(false)
+        setLoadingUser(false);
       }
     }
     checkLogin();
   }, []);
 
-  return (
-    <UserContext.Provider
-      value={{ signup, signin,logoutUser, loadingUser, user, isAuthenticatedUser, errors }}
-    >
-      {children}
-    </UserContext.Provider>
-  );
+  return <UserContext.Provider value={{ signup, signin, logoutUser, loadingUser, user, isAuthenticatedUser, errors }}>{children}</UserContext.Provider>;
 };
