@@ -34,7 +34,6 @@ export const Navbar = () => {
 
   const LogOut = () => {
 
-    alert('Sesión cerrada')
     logoutUser()
     window.location.href = '/';
     
@@ -86,13 +85,13 @@ export const Navbar = () => {
               <a>Planes</a>
               <ul className="p-2 ">
                 <li>
-                  <Link to="/contact">Plan Familiar</Link>
+                  <Link to="/contactPlan">Plan Familiar</Link>
                 </li>
                 <li>
-                  <Link to="/contact">Plan Joven</Link>
+                  <Link to="/contactPlan">Plan Joven</Link>
                 </li>
                 <li>
-                  <Link to="/contact">Plan Senior</Link>
+                  <Link to="/contactPlan">Plan Senior</Link>
                 </li>
               </ul>
             </li>
@@ -194,13 +193,13 @@ export const Navbar = () => {
               <summary role="button">Planes</summary>
               <ul className="p-2 bg-white rounded-box mt-3 z-[1] shadow">
                 <li>
-                  <Link to="/contact">Plan Familiar</Link>
+                  <Link to="/contactPlan">Plan Familiar</Link>
                 </li>
                 <li>
-                  <Link to="/contact">Plan Joven</Link>
+                  <Link to="/contactPlan">Plan Joven</Link>
                 </li>
                 <li>
-                  <Link to="/contact">Plan Senior</Link>
+                  <Link to="/contactPlan">Plan Senior</Link>
                 </li>
               </ul>
             </details>

@@ -1157,16 +1157,16 @@ const Table = () => {
                       {/* Renderizar las filas filtradas */}
                       {filteredUsuarios.map((usuario) => (
                         <tr key={usuario._id}>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{usuario._id}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{usuario.dni}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{`${usuario.name} ${usuario.lastname}`}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{usuario.email}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{usuario.province}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{usuario.area}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{usuario.phone}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{usuario.address}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{usuario.isDoctor === false && usuario.isAuditor === false ? "User" : ""}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">
+                          <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">{usuario._id}</td>
+                          <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">{usuario.dni}</td>
+                          <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">{`${usuario.name} ${usuario.lastname}`}</td>
+                          <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">{usuario.email}</td>
+                          <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">{usuario.province}</td>
+                          <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">{usuario.area}</td>
+                          <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">{usuario.phone}</td>
+                          <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">{usuario.address}</td>
+                          <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">{usuario.isDoctor === false && usuario.isAuditor === false ? "User" : ""}</td>
+                          <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">
                             <button
                               onClick={() => {
                                 openAppointmentByIdUserModal(usuario._id);
@@ -1258,14 +1258,14 @@ const Table = () => {
                     <tbody className="bg-white divide-y divide-c">
                       {filteredDoctors.map((doctor) => (
                         <tr key={doctor._id}>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{doctor._id}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{doctor.dni}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{`${doctor.name} ${doctor.lastname}`}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{doctor.email}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{doctor.specialty}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{doctor.licenceNumber}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{doctor.isDoctor === true && doctor.isAuditor === true ? "Auditor" : "Doctor"}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">
+                          <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">{doctor._id}</td>
+                          <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">{doctor.dni}</td>
+                          <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">{`${doctor.name} ${doctor.lastname}`}</td>
+                          <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">{doctor.email}</td>
+                          <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">{doctor.specialty}</td>
+                          <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">{doctor.licenceNumber}</td>
+                          <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">{doctor.isDoctor === true && doctor.isAuditor === true ? "Auditor" : "Doctor"}</td>
+                          <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">
                             <button
                               onClick={() => {
                                 openAppointmentByIdDoctorModal(doctor._id);
@@ -1359,16 +1359,16 @@ const Table = () => {
                     <tbody className="bg-white divide-y divide-c">
                       {filteredCitas.map((cita) => (
                         <tr key={cita._id}>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{cita._id}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{cita.user}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{nombresApellidosUsuarios[cita.user]}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{cita.doctor}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{nombresApellidosDoctores[cita.doctor]}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">
+                          <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">{cita._id}</td>
+                          <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">{cita.user}</td>
+                          <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">{nombresApellidosUsuarios[cita.user]}</td>
+                          <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">{cita.doctor}</td>
+                          <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">{nombresApellidosDoctores[cita.doctor]}</td>
+                          <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">
                             {cita.appointmentDate} {/* Fecha */}
                           </td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{cita.appointmentTime}</td>
-                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">{typeof cita.state === "string" ? cita.state.toLowerCase() : cita.state ? "Activa" : "Inactiva"}</td>
+                          <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">{cita.appointmentTime}</td>
+                          <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">{typeof cita.state === "string" ? cita.state.toLowerCase() : cita.state ? "Activa" : "Inactiva"}</td>
                           <td>
                             <div className="flex justify-center gap-4">
                               <button

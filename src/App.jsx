@@ -41,6 +41,7 @@ const App = () => {
               <Route path="/loginDoctor/" element={<LoginPagesDoctor />} />
               <Route path="/AboutUs" element={<AboutUs />} />
               <Route path="/contactPlan" element={<ContactPage />} />
+              <Route path="/contact" element={<ContactForm />} />
               <Route path="/error" element={<Error404 />} />
            
 

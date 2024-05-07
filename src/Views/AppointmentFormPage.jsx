@@ -155,7 +155,7 @@ export const AppointmentFormPage = () => {
 
   return (
     <div className="flex justify-center items-center p-40">
-      <div className="bg-c text-w rounded-lg p-8 max-w-md text-center">
+      <div className="bg-w text-c rounded-lg p-8 max-w-md text-center">
         <h1 className="text-3xl font-bold mb-6">Crear Turno</h1>
         <Formik
           initialValues={{
@@ -194,7 +194,7 @@ export const AppointmentFormPage = () => {
               <div className="mb-4">
                 <input
                   type="text"
-                  className="input-field bg-w text-c rounded w-56"
+                  className="input-field bg-w text-c border-ts border rounded w-56"
                   name="dni"
                   placeholder="DNI/LC/LE/PASSPORT"
                   value={dni}
@@ -205,7 +205,7 @@ export const AppointmentFormPage = () => {
               <div className="mb-4">
                 <Field
                   as="select"
-                  className="input-field bg-w text-c rounded w-56"
+                  className="input-field bg-w text-c border-ts border rounded w-56"
                   name="especialidad"
                   onChange={(e) => {
                     handleEspecialidadChange(e); // Llama a la función handleEspecialidadChange
@@ -222,7 +222,7 @@ export const AppointmentFormPage = () => {
                 <ErrorMessage name="especialidad" component="div" className="text-red-300" />
               </div>
               <div className="mb-4">
-                <select className="input-field bg-w text-c rounded w-56" name="doctor" value={doctorId} onChange={handleDoctorChangeCreate}>
+                <select className="input-field bg-w text-c border-ts border rounded w-56" name="doctor" value={doctorId} onChange={handleDoctorChangeCreate}>
                   <option value="">Selecciona un doctor</option>
                   {doctoresCreate.map((doctor) => (
                     <option key={doctor._id} value={doctor._id}>
@@ -234,7 +234,7 @@ export const AppointmentFormPage = () => {
               </div>
               <div className="mb-4">
                 <DatePicker
-                  className="input-field bg-w text-c rounded w-56"
+                  className="input-field bg-w text-c border border-ts rounded w-56"
                   selected={values.appointmentDate}
                   onChange={(date) => {
                     setFieldValue("appointmentDate", date);
@@ -252,7 +252,7 @@ export const AppointmentFormPage = () => {
                 <ErrorMessage name="appointmentDate" component="div" className="text-red-300" />
               </div>
               <div className="mb-4">
-                <Field as="select" className="input-field bg-w text-c rounded w-56" name="appointmentTime">
+                <Field as="select" className="input-field bg-w text-c border border-ts rounded w-56" name="appointmentTime">
                   <option value="">Selecciona una hora</option>
                   {generateTimeOptionsCreate()}
                 </Field>

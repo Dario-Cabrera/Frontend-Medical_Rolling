@@ -37,7 +37,7 @@ const Carousel = () => {
                 <h1 className="mb-5 text-5xl font-bold text-ts text-opacity-90 shadow-24g" style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.8)" }}>
                   Medical Rolling
                 </h1>
-                <Link to="/contact"><button   className="btn btn-info bg-ts hover:bg-hb hover:text-w hover:border-none">¡SOLICITA AHORA!</button></Link>
+                <Link to="/contactPlan"><button   className="btn btn-info bg-ts hover:bg-hb hover:text-w hover:border-none">¡SOLICITA AHORA!</button></Link>
               </div>
             </div>
           </div>
