@@ -11,15 +11,11 @@ export const RegisterPageUser = () => {
     register,
     handleSubmit,
   } = useForm();
-  const {
-    signup,
-    isAuthenticatedUser,
-    errors: registerUserErrors,
-  } = userAuth();
+  const { signup, isAuthenticatedUser, errors: registerUserErrors } = userAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (isAuthenticatedUser) navigate("/appointmentsUser");
+    if (isAuthenticatedUser) navigate("/loginUser/");
   }, [isAuthenticatedUser]);
 
   const onSubmit = handleSubmit(async (values) => {
@@ -103,6 +99,7 @@ export const RegisterPageUser = () => {
             className="w-full  bg-white border-ts border-2 solid text-c px-4 py-2 my-2 rounded-md"
             placeholder="Phone"
           />
+
           {errors.phone && <p className="text-red-500">Phone is required</p>}
           <button type="submit" className="text-hb">Register</button>
         </form>

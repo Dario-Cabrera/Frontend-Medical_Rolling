@@ -51,6 +51,7 @@ export const Navbar = () => {
     <div className="navbar bg-w text-c">
       <div className="navbar-start">
         <div className="dropdown">
+
           <div
             tabIndex={0}
             role="button"
@@ -77,6 +78,7 @@ export const Navbar = () => {
           >
             {!(isAuthenticatedAuditor || isAuthenticatedDoctor) && (
               <>
+
             <li>
               <Link to="/AboutUs">Quienes Somos</Link>
             </li>
@@ -105,6 +107,7 @@ export const Navbar = () => {
             </li>
             </>
           )}
+
 
 {/* ----------------Botones Dropdown ----------------- */}
 
@@ -159,6 +162,7 @@ export const Navbar = () => {
                   >
                     {(isAuthenticatedAuditor || isAuthenticatedDoctor || isAuthenticatedUser) ?
                     'LogOut':'LogIn'}
+
                   </Link>
                 </li>
           </ul>
@@ -167,6 +171,8 @@ export const Navbar = () => {
         </div>
 
         <Link to="/" className="w-16 cursor-pointer">
+
+
 
           <img src={Logo_MR} alt="logo" />
         </Link>
@@ -268,6 +274,7 @@ export const Navbar = () => {
             >
                {(isAuthenticatedAuditor || isAuthenticatedDoctor || isAuthenticatedUser) ?
                'LogOut':'LogIn'}
+
             </Link>
             
       </div>

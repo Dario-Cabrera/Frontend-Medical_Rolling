@@ -3,6 +3,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/rules-of-hooks */
 import { createContext, useState, useContext, useEffect } from "react";
+
 import {
   registerRequestUser,
   loginRequestUser,
@@ -40,6 +41,7 @@ export const UserProvider = ({ children }) => {
       const token = res.data;
       localStorage.setItem("token", token);
 
+
       setUser(res.data);
       setIsAuthenticatedUser(true);
     } catch (error) {
@@ -53,6 +55,7 @@ export const UserProvider = ({ children }) => {
       const res = await loginRequestUser(user);
 
       const token = res.data; // Suponiendo que el token está devuelto en res.data
+
       localStorage.setItem("token", token);
 
       const resUser = await varityTokenRequest({ token }); //De lo que llegue tendra que jugar con validaciones para que se actualice una data determinada user, doctor o auditor
@@ -71,6 +74,7 @@ export const UserProvider = ({ children }) => {
         setAuditor(resUser);
         setIsAuthenticatedAuditor(true);
       }
+
     } catch (error) {
       if (Array.isArray(error.response.data)) {
         return setErrors(error.response.data);
@@ -82,11 +86,13 @@ export const UserProvider = ({ children }) => {
   const logoutUser = () => {
     localStorage.removeItem("token");
     setUser(null);
+
     setDoctor(null);
     setAuditor(null);
     setIsAuthenticatedUser(false);
     setIsAuthenticatedDoctor(false);
     setIsAuthenticatedAuditor(false);
+
   };
 
   useEffect(() => {
@@ -120,6 +126,7 @@ export const UserProvider = ({ children }) => {
           setAuditor(null); // Reinicia el estado del auditor
           return;
         }
+
         // Determinar el tipo de usuario y actualizar los estados correspondientes
         if (!isDoctor && !isAuditor) {
           // Usuario normal
@@ -135,6 +142,7 @@ export const UserProvider = ({ children }) => {
           setAuditor(res);
         }
 
+
         setLoadingUser(false);
       } catch (error) {
         console.log(error);
@@ -142,8 +150,10 @@ export const UserProvider = ({ children }) => {
         setIsAuthenticatedDoctor(false);
         setIsAuthenticatedAuditor(false);
         setUser(null);
+
         setDoctor(null); // Reinicia el estado del doctor
         setAuditor(null); // Reinicia el estado del auditor
+
         setLoadingUser(false);
       }
     }
@@ -169,4 +179,5 @@ export const UserProvider = ({ children }) => {
       {children}
     </UserContext.Provider>
   );
+
 };
