@@ -25,10 +25,10 @@ export const AppointmentCardHistory = ({ appointment }) => {
 
   return (
     <div className="bg-white p-4 rounded-lg my-2 shadow-md">
-      <p className="font-medium">MEDICO: {doctor.name} {doctor.lastname}</p>
-      <p>ESPECIALIDAD: {doctor.specialty}</p>
-      <p>DIA: {new Date(appointment.appointmentDate).toLocaleDateString()}</p>
-      <p>HORA: {new Date(appointment.appointmentTime).toLocaleTimeString()}</p>
+      <p className="font-medium text-c">MEDICO: {doctor.name} {doctor.lastname}</p>
+      <p className="font-medium text-c">ESPECIALIDAD: {doctor.specialty}</p>
+      <p className="font-medium text-c">DIA: {new Date(appointment.appointmentDate).toLocaleDateString()}</p>
+      <p className="font-medium text-c">HORA: {new Date(appointment.appointmentTime).toLocaleTimeString()}</p>
     </div>
   );
 };

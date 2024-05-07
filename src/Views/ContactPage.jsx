@@ -36,19 +36,19 @@ export const ContactPage = () => {
   return (
    
     <div className="flex w-full justify-center rounded-md mt-6 mb-6">
-      <div className="grid bg-white rounded-md place-items-center">
+      <div className="grid bg-w rounded-md place-items-center">
 
       <div className="flex items-center justify-center rounded-md relative">
         <div className="bg-white-500 border-green-400 border solid-2 max-w-md p-10 rounded-md">
 
           <form onSubmit={handleSubmit(isSubmit)} ref={form}>
-          <h1 className="text-xl text-stone-950 font-bolt my-2">Elegí uno de nuestros planes</h1>
-          <p className="text-stone-950 font-bolt my-2">Un asesor se comunicará con vos</p>
+          <h1 className="text-xl text-c font-medium my-2">Elegí uno de nuestros planes</h1>
+          <p className="text-c font-medium my-2">Un asesor se comunicará con vos</p>
             <input
               id="user_name" 
               name="user_name"
               type="text"
-              className="w-full bg-white border-green-400 border-2 solid text-black px-4 py-2 my-2 rounded-md"
+              className="w-full bg-white border-ts border-2 solid text-c px-4 py-2 my-2 rounded-md"
               placeholder="Name"
               {...register('user_name', {
                           required: {
@@ -72,7 +72,7 @@ export const ContactPage = () => {
               id="user_lastname"
               name="user_lastname"
               type="text"
-              className="w-full bg-white border-green-400 border-2 solid text-black px-4 py-2 my-2 rounded-md"
+              className="w-full bg-white border-ts border-2 solid text-c px-4 py-2 my-2 rounded-md"
               placeholder="Lastname"
               {...register('user_lastname', {
                 required: {
@@ -96,7 +96,7 @@ export const ContactPage = () => {
                   <input
                     name="user_area"
                     type="number"
-                    className="w-full bg-white border-green-400 border-2 solid text-black px-4 py-2 my-2 rounded-md mr-4"
+                    className="w-full bg-white border-ts border-2 solid text-c px-4 py-2 my-2 rounded-md mr-4"
                     placeholder="Area"
                     {...register('user_area', {
                       required: {
@@ -120,7 +120,7 @@ export const ContactPage = () => {
                   <input
                     name="user_phone"
                     type="number"
-                    className="w-full bg-white border-green-400 border-2 solid text-black px-4 py-2 my-2 rounded-md"
+                    className="w-full bg-white border-ts border-2 solid text-c px-4 py-2 my-2 rounded-md"
                     placeholder="Phone"
                     {...register('user_phone', {
                       required: {
@@ -145,14 +145,14 @@ export const ContactPage = () => {
 
               <select name="user_location"
                       id="location"  
-                      className="w-full bg-white border-green-400 border-2 solid text-black px-4 py-2 my-2 rounded-md"
+                      className="w-full bg-white border-ts border-2 solid text-c px-4 py-2 my-2 rounded-md"
                       {...register('user_location', {
                         required: {
                         value: true,
                         message: "Debe seleccionar una localidad"
                         },
                         })}>
-                <option value="">Selecciona una localidad</option>
+                <option value="" className="text-c">Selecciona una localidad</option>
                 <option value="Aguilares">Aguilares</option>
                 <option value="Banda del Rio Sali">Banda del Río Salí</option>
                 <option value="Burruyacu">Burruyacú</option>
@@ -172,7 +172,7 @@ export const ContactPage = () => {
             <input
               name="user_email"
               type="email"
-              className="w-full bg-white border-green-400 border-2 solid text-black px-4 py-2 my-2 rounded-md"
+              className="w-full bg-white border-ts border-2 solid text-c px-4 py-2 my-2 rounded-md"
               placeholder="Email"
               {...register('user_email', {
                 required: {
@@ -192,11 +192,11 @@ export const ContactPage = () => {
               className="mr-3" 
 
               />
-              <label className="label-text flex place-items-center">¿Tiene Hijos?</label>
+              <label className="label-text flex place-items-center text-c">¿Tiene Hijos?</label>
               <input 
                 name="user_children"
                 type="text" 
-                className="w-1/3 bg-white border-green-400 border-2 solid text-black px-4 py-2 my-2 rounded-md ml-6"
+                className="w-1/3 bg-white border-ts border-2 solid text-c px-4 py-2 my-2 rounded-md ml-6"
                 placeholder="Children"
                 {...register('user_children', { required: false })}
                 
@@ -208,9 +208,9 @@ export const ContactPage = () => {
                   <input type="radio" 
                          name="user_plan"
                          value="Joven" 
-                         className="radio border-gray-400 checked:bg-blue-500 mr-1" 
+                         className="radio border-c checked:bg-blue-500 mr-1" 
                          {...register('user_plan')}/>
-                  <span className="label-text ml-1">Plan Jóven</span> 
+                  <span className="label-text ml-1 text-c">Plan Jóven</span> 
                     
                   </label>
               </div>
@@ -219,10 +219,10 @@ export const ContactPage = () => {
                     <input type="radio" 
                            name="user_plan" 
                            value="Familiar"
-                           className="radio border-gray-400 checked:bg-green-500 mr-1"
+                           className="radio border-c checked:bg-green-500 mr-1"
                            {...register('user_plan')}
                            />
-                    <span className="label-text ml-1">Plan Familiar</span> 
+                    <span className="label-text ml-1 text-c">Plan Familiar</span> 
                   </label>
               </div>
               <div className="flex align-items-center">
@@ -230,14 +230,14 @@ export const ContactPage = () => {
                     <input type="radio" 
                            name="user_plan" 
                            value="Senior" 
-                           className="radio border border-gray-400 checked:bg-red-500 mr-1" 
+                           className="radio border border-c checked:bg-red-500 mr-1" 
                            {...register('user_plan')}/>
-                    <span className="label-text ml-1">Plan Senior</span> 
+                    <span className="label-text ml-1 text-c">Plan Senior</span> 
                   </label>
               </div>
             </div>
             <div className="flex justify-end mt-4">
-            <button className="btn bg-emerald-600 border-none"  
+            <button className="btn btn-info bg-ts hover:bg-hb hover:text-w hover:border-none text-c"  
                     type="submit" 
                     value="Send"
                   

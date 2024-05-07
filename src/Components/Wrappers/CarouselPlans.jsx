@@ -59,7 +59,7 @@ const Carousel = () => {
             <div className="p-4 bg-w rounded-b-lg text-center">
               <h2 className="text-xl font-bold mb-2 text-c">{card.title}</h2>
               <p className="text-sm mb-4 text-c">{card.description}</p>
-              <Link to="/contact"><button className="btn btn-info bg-ts hover:bg-hb hover:text-w">Conocer más</button></Link>
+              <Link to="/contact"><button className="btn btn-info bg-ts hover:bg-hb hover:text-w hover:border-none">Conocer más</button></Link>
             </div>
           </div>
         ))}
