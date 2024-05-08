@@ -19,9 +19,7 @@ export const AppointmentCard = ({ appointment }) => {
       try {
         const res = await getDoctorsRequest();
         setDoctors(res.data);
-      } catch (error) {
-        console.log(error);
-      }
+      } catch (error) {}
     };
     fetchDoctors();
     // Verificar si la hora actual es posterior a la hora del turno
@@ -38,9 +36,7 @@ export const AppointmentCard = ({ appointment }) => {
       try {
         const res = await getUsersRequest();
         setUsers(res.data);
-      } catch (error) {
-        console.log(error);
-      }
+      } catch (error) {}
     };
     fetchUsers();
   }, []);
@@ -94,27 +90,17 @@ export const AppointmentCard = ({ appointment }) => {
                 state: false,
               });
             }}
-            className="bg-red-500 text-white px-4 py-2 mt-2 rounded-md"
-          >
+            className="bg-red-500 text-white px-4 py-2 mt-2 rounded-md">
             Inhabilitar
           </button>
-          <Link
-            to={`/appointments/${appointment._id}`}
-            className="bg-red-500 text-white px-4 py-2 mt-2 rounded-md"
-          >
+          <Link to={`/appointments/${appointment._id}`} className="bg-red-500 text-white px-4 py-2 mt-2 rounded-md">
             Reubicar
           </Link>
         </div>
       </header>
 
-      <p>
-        DÍA:{" "}
-        {new Date(
-          moment(appointment.appointmentDate).toDate()
-        ).toLocaleDateString()}
-      </p>
+      <p>DÍA: {new Date(moment(appointment.appointmentDate).toDate()).toLocaleDateString()}</p>
       <p>HORA: {appointment.appointmentTime}</p>
-      <p>CONSULTORIO: 305</p>
     </div>
   );
 };

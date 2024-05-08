@@ -22,13 +22,13 @@ export const Footer = () => {
       <nav>
         <h6 className="footer-title text-ts">Redes Sociales</h6>
         <div className="grid grid-flow-col gap-4">
-          <a>
+          <a href="https://www.facebook.com/Medical-Rolling" target="_blank">
             <img src="https://i.ibb.co/svX8BYY/facebook-5968973-BLANCO.png" width="29" height="29" className="img-fluid cursor-pointer" />
           </a>
-          <a>
+          <a href="https://www.instagram.com/Medical-Rolling" target="_blank">
             <img src="https://i.ibb.co/xs2KJMx/instagram-5968982-BLANCO.png" width="29" height="29" className="img-fluid cursor-pointer" />
           </a>
-          <a>
+          <a href="https://www.whatsapp.com/Medical-Rolling" target="_blank">
             <img src="https://i.ibb.co/s6fQm49/whatsapp-5969035-BLANCO.png" width="29" height="29" className="img-fluid cursor-pointer" />
           </a>
         </div>

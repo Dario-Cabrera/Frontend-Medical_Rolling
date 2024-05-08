@@ -11,7 +11,6 @@ export const ContactForm = () => {
   const [showModal, setShowModal] = useState(false);
 
   const onSubmit = (data) => {
-    console.log(data);
     setShowModal(true);
     reset();
   };

@@ -44,7 +44,6 @@ export const AppointmentFormPage = () => {
 
   const [doctores, setDoctores] = useState([]);
   const { user } = userAuth(); // Mover la obtención del usuario logueado dentro del componente
-  console.log("Datos del usuario logueado:", user, typeof user); // Mostrar los datos del usuario y su tipo
   const [dni, setDni] = useState(user.dni || ""); // Inicializar con el DNI del usuario logueado si está disponible
   const [userId, setUserId] = useState(user.id || ""); // Inicializar con el ID del usuario logueado si está disponible
   const [doctoresCreate, setDoctoresCreate] = useState([]);
@@ -79,7 +78,6 @@ export const AppointmentFormPage = () => {
 
   const handleDoctorChangeCreate = (event) => {
     const selectedDoctorId = event.target.value;
-    console.log("Valor seleccionado del campo de doctor:", selectedDoctorId);
     setDoctorId(selectedDoctorId);
   };
 
@@ -107,18 +105,14 @@ export const AppointmentFormPage = () => {
 
   const handleEspecialidadChange = (event) => {
     const selectedEspecialidad = event.target.value;
-    console.log("Especialidad seleccionada:", selectedEspecialidad);
     setEspecialidadSeleccionada(selectedEspecialidad);
   };
 
   useEffect(() => {
-    console.log("Especialidad seleccionada:", especialidadSeleccionada);
-
     if (especialidadSeleccionada) {
       axios
         .get(`http://localhost:3001/api/doctorsbyspecialty/${especialidadSeleccionada}`)
         .then((response) => {
-          console.log("Datos de doctores recibidos:", response.data);
           setDoctoresCreate(response.data);
         })
         .catch((error) => {
@@ -177,9 +171,7 @@ export const AppointmentFormPage = () => {
               values.doctor = doctorId;
               values.appointmentDate = formattedDate;
               values.user = userId;
-              console.log("Datos de la cita:", values);
               const response = await postAppointment(values);
-              console.log("Cita creada:", response);
               // Resto del código...
               openAppointmentCreated();
               resetForm(); // Esta línea reiniciará el formulario
@@ -258,8 +250,6 @@ export const AppointmentFormPage = () => {
                 </Field>
                 <ErrorMessage name="appointmentTime" component="div" className="text-red-300" />
               </div>
-              {/* Agregar console.log aquí para verificar la lista de doctores */}
-              {console.log("Lista de doctores:", doctores)}
               <div className="flex justify-between">
                 <button type="submit" className="btn text-black bg-ts hover:bg-hb hover:text-w w-24">
                   Crear cita

@@ -1,23 +1,18 @@
 /* eslint-disable no-useless-catch */
 import axios from "./axios";
 
-export const getDoctorsRequest = () => axios.get(`/gettingdoctors`)
-export const getUsersRequest = () => axios.get(`/gettingusers`)
+export const getDoctorsRequest = () => axios.get(`/gettingdoctors`);
+export const getUsersRequest = () => axios.get(`/gettingusers`);
 
+export const registerRequestDoctor = (doctor) => axios.post(`/createdoctor/`, doctor);
 
-export const registerRequestDoctor = (doctor) =>
-  axios.post(`/createdoctor/`, doctor);
-
-export const loginRequestDoctor = (doctor) =>
-  axios.post(`/logindoctor`, doctor);
+export const loginRequestDoctor = (doctor) => axios.post(`/logindoctor`, doctor);
 
 export const varityDoctorRequest = async (data) => {
   // eslint-disable-next-line no-useless-catch
-  /*     console.log("Estoy en docto.auth",data)
-   */ try {
+  try {
     const res = await axios.post("/verifydoctor", data);
-    /*       console.log("Estoy saliendo del await",res.data)
-     */ return res.data; //VERIFICAR QUE ESTA PASANDO AQUI
+    return res.data; //VERIFICAR QUE ESTA PASANDO AQUI
   } catch (error) {
     throw error;
   }

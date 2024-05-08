@@ -10,9 +10,7 @@ export const AppointmentCardHistory = ({ appointment }) => {
       try {
         const res = await getDoctorsRequest();
         setDoctors(res.data);
-      } catch (error) {
-        console.log(error);
-      }
+      } catch (error) {}
     };
     fetchDoctors();
   }, []);
@@ -32,13 +30,12 @@ export const AppointmentCardHistory = ({ appointment }) => {
       </p>
       <p>ESPECIALIDAD: {doctor.specialty}</p>
       <p>DIA: {new Date(appointment.appointmentDate).toLocaleDateString()}</p>
-      <p>HORA: {new Date(`1970-01-01T${appointment.appointmentTime}:00Z`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
+      <p>HORA: {new Date(`1970-01-01T${appointment.appointmentTime}:00Z`).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false })}</p>
       <button
         onClick={() => {
           deleteAppointment(appointment._id);
         }}
-        className="bg-red-500 text-white px-4 py-2 mt-2 rounded-md"
-      >
+        className="bg-red-500 text-white px-4 py-2 mt-2 rounded-md">
         Eliminar
       </button>
     </div>

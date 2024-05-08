@@ -94,7 +94,6 @@ const Table = () => {
 
   const handleDoctorChangeCreate = (event) => {
     const selectedDoctorId = event.target.value;
-    console.log("Valor seleccionado del campo de doctor:", selectedDoctorId);
     setDoctorId(selectedDoctorId);
   };
 
@@ -122,18 +121,14 @@ const Table = () => {
 
   const handleEspecialidadChange = (event) => {
     const selectedEspecialidad = event.target.value;
-    console.log("Especialidad seleccionada:", selectedEspecialidad);
     setEspecialidadSeleccionada(selectedEspecialidad);
   };
 
   useEffect(() => {
-    console.log("Especialidad seleccionada:", especialidadSeleccionada);
-
     if (especialidadSeleccionada) {
       axios
         .get(`http://localhost:3001/api/doctorsbyspecialty/${especialidadSeleccionada}`)
         .then((response) => {
-          console.log("Datos de doctores recibidos:", response.data);
           setDoctoresCreate(response.data);
         })
         .catch((error) => {
@@ -163,7 +158,6 @@ const Table = () => {
     try {
       const response = await axios.get("http://localhost:3001/api/gettingusers");
       setUsuarios(response.data);
-      console.log(response);
     } catch (error) {
       console.error("Error al obtener los usuarios desde el backend:", error);
     }
@@ -205,7 +199,6 @@ const Table = () => {
       const response = await axios.get(`http://localhost:3001/api/getappointmentbyuser/${userId}`);
       // Establece el estado con los datos de las citas del usuario
       setUserAppointments(response.data);
-      console.log("Citas del usuario:", response.data); // Agrega este console.log para ver las citas en la consola
     } catch (error) {
       // Maneja cualquier error que ocurra durante la solicitud
       setError(error.response.data.message);
@@ -222,7 +215,6 @@ const Table = () => {
       const response = await axios.get(`http://localhost:3001/api/getappointmentbydoctor/${doctorId}`);
       // Establece el estado con los datos de las citas del usuario
       setDoctorAppointments(response.data);
-      console.log("Citas del usuario:", response.data); // Agrega este console.log para ver las citas en la consola
     } catch (error) {
       // Maneja cualquier error que ocurra durante la solicitud
       setError(error.response.data.message);
@@ -241,7 +233,6 @@ const Table = () => {
     try {
       const response = await axios.get("http://localhost:3001/api/gettingdoctors");
       setDoctores(response.data);
-      console.log(response);
     } catch (error) {
       console.error("Error al obtener los usuarios desde el backend:", error);
     }
@@ -277,7 +268,6 @@ const Table = () => {
       const response = await axios.get("http://localhost:3001/api/gettingappointments");
       const citas = response.data;
       const { nombresApellidosDoctores, nombresApellidosUsuarios, filteredCitas } = await obtenerValorDoctor(citas);
-      console.log("Citas filtradas:", filteredCitas); // Agregamos un console.log para depurar
       setFilteredCitas(filteredCitas);
       setNombresApellidosDoctores(nombresApellidosDoctores);
       setNombresApellidosUsuarios(nombresApellidosUsuarios);
@@ -330,9 +320,6 @@ const Table = () => {
       );
     });
 
-    console.log("Valor de búsqueda:", busqueda); // Agregamos un console.log para depurar
-    console.log("Citas filtradas:", filteredCitas); // Agregamos un console.log para depurar
-
     return { nombresApellidosDoctores, nombresApellidosUsuarios, filteredCitas };
   }
 
@@ -342,19 +329,16 @@ const Table = () => {
 
   const handleCaptureUserId = (usuarioId) => {
     setUserIdToDelete(usuarioId);
-    console.log("ID capturado:", usuarioId);
   };
 
   const handleDeleteUserConfirm = () => {
     if (!userIdToDelete) {
-      console.log("No se ha capturado ningún ID para eliminar.");
       return;
     }
 
     axios
       .delete(`http://localhost:3001/api/deleteusers/${userIdToDelete}`)
       .then((response) => {
-        console.log("Usuario eliminado con éxito:", response);
         // Aquí puedes realizar acciones adicionales si es necesario, como mostrar un mensaje de éxito o actualizar la lista de usuarios
       })
       .catch((error) => {
@@ -375,19 +359,16 @@ const Table = () => {
 
   const handleCaptureDoctorId = (doctorId) => {
     setDoctorIdToDelete(doctorId);
-    console.log("ID capturado:", doctorId);
   };
 
   const handleDeleteDoctorConfirm = () => {
     if (!doctorIdToDelete) {
-      console.log("No se ha capturado ningún ID para eliminar.");
       return;
     }
 
     axios
       .delete(`http://localhost:3001/api/deletedoctors/${doctorIdToDelete}`)
       .then((response) => {
-        console.log("Doctor eliminado con éxito:", response);
         // Aquí puedes realizar acciones adicionales si es necesario, como mostrar un mensaje de éxito o actualizar la lista de usuarios
       })
       .catch((error) => {
@@ -408,19 +389,16 @@ const Table = () => {
 
   const handleCaptureCitaId = (citaId) => {
     setCitaIdToDelete(citaId);
-    console.log("ID capturado:", citaId);
   };
 
   const handleDeleteCitaConfirm = () => {
     if (!citaIdToDelete) {
-      console.log("No se ha capturado ningún ID para eliminar.");
       return;
     }
 
     axios
       .delete(`http://localhost:3001/api/deleteappointments/${citaIdToDelete}`)
       .then((response) => {
-        console.log("Cita eliminada con éxito:", response);
         // Aquí puedes realizar acciones adicionales si es necesario, como mostrar un mensaje de éxito o actualizar la lista de usuarios
       })
       .catch((error) => {
@@ -442,7 +420,6 @@ const Table = () => {
 
   const handleCaptureUserIdUpdate = (usuarioId) => {
     setUserIdToUpdate(usuarioId);
-    console.log("ID capturado:", usuarioId);
   };
 
   const handleCaptureUserData = (userData) => {
@@ -463,8 +440,6 @@ const Table = () => {
       if (!response.ok) {
         throw new Error("Error al enviar los datos al backend");
       }
-
-      console.log("Datos actualizados correctamente");
     } catch (error) {
       console.error(error.message);
     }
@@ -478,7 +453,6 @@ const Table = () => {
 
   const handleCaptureDoctorIdUpdate = (doctorId) => {
     setDoctorIdToUpdate(doctorId);
-    console.log("ID capturado:", doctorId);
   };
 
   const handleCaptureDoctorData = (doctorData) => {
@@ -499,8 +473,6 @@ const Table = () => {
       if (!response.ok) {
         throw new Error("Error al enviar los datos al backend");
       }
-
-      console.log("Datos actualizados correctamente");
     } catch (error) {
       console.error(error.message);
     }
@@ -516,13 +488,11 @@ const Table = () => {
 
   const handleCaptureCitaIdUpdate = (citaId) => {
     setCitaIdToUpdate(citaId);
-    console.log("ID capturado:", citaId);
   };
 
   const handleCaptureCitaData = (citaData) => {
     // Aquí guardamos los datos del usuario en el estado local o en un contexto, para luego utilizarlos al abrir la modal de edición
     setCitaData(citaData);
-    console.log("Datos de la cita:", citaData);
   };
 
   const actualizarDatosEnBackendCita = async (citaIdToUpdate, formDataCita) => {
@@ -538,8 +508,6 @@ const Table = () => {
       if (!response.ok) {
         throw new Error("Error al enviar los datos al backend");
       }
-
-      console.log("Datos actualizados correctamente");
     } catch (error) {
       console.error(error.message);
     }
@@ -1494,7 +1462,6 @@ const Table = () => {
                 }}
                 validationSchema={userValidationSchema}
                 onSubmit={(values) => {
-                  console.log(values); // Aquí puedes manejar la lógica para enviar los datos del formulario
                   // Define initial values for isDoctor and isAuditor
                   let isDoctorValue = false;
                   let isAuditorValue = false;
@@ -1525,7 +1492,6 @@ const Table = () => {
                     isDoctor: isDoctorValue,
                     isAuditor: isAuditorValue,
                   };
-                  console.log("soy el objeto", formDataUser);
                   actualizarDatosEnBackendUser(userIdToUpdate, formDataUser);
                   handleSaveChangesUserConfirm();
                   closeEditModalUser();
@@ -1623,7 +1589,6 @@ const Table = () => {
                 }}
                 validationSchema={doctorValidationSchema}
                 onSubmit={(values) => {
-                  console.log(values); // Aquí puedes manejar la lógica para enviar los datos del formulario
                   // Define initial values for isDoctor and isAuditor
                   let isDoctorValue = false;
                   let isAuditorValue = false;
@@ -1652,7 +1617,6 @@ const Table = () => {
                     isDoctor: isDoctorValue,
                     isAuditor: isAuditorValue,
                   };
-                  console.log("soy el objeto", formDataDoctor);
                   actualizarDatosEnBackendDoctor(doctorIdToUpdate, formDataDoctor);
                   handleSaveChangesDoctorConfirm();
                   closeEditModalDoctor();
@@ -1742,12 +1706,6 @@ const Table = () => {
                 }}
                 validationSchema={appointmentValidationSchema}
                 onSubmit={(values) => {
-                  // Agregar un console.log para verificar los valores que se pasan a la función onSubmit
-                  console.log("Valores del formulario:", values);
-
-                  // Lógica para manejar la lógica de envío del formulario
-                  console.log("Iniciando el envío del formulario...");
-
                   // Define initial values for isDoctor and isAuditor
                   let stateValue = false;
 
@@ -1773,17 +1731,6 @@ const Table = () => {
                     appointmentTime: values.hora,
                     state: stateValue,
                   };
-
-                  console.log(typeof formattedDate);
-
-                  // Agregar un console.log para verificar los datos que se enviarán al backend
-                  console.log("Datos que se enviarán al backend:", formDataCita);
-
-                  // Lógica para enviar los datos del formulario al backend
-                  console.log("Enviando datos al backend...");
-
-                  // Agregar un console.log para verificar cuando la función onSubmit se completa
-                  console.log("Formulario enviado con éxito");
 
                   // Aquí puedes manejar la lógica para enviar los datos del formulario
                   actualizarDatosEnBackendCita(citaIdToUpdate, formDataCita);
@@ -2009,7 +1956,6 @@ const Table = () => {
                 onSubmit={async (values, { setSubmitting }) => {
                   try {
                     const response = await signupUser(values);
-                    console.log("Esta es la respuesta", response);
                     if (response && response.status === 400) {
                       console.error("Error al registrar el usuario:", response.data);
                     } else {
@@ -2151,7 +2097,6 @@ const Table = () => {
                     // Llamar a la función signupDoctor con formDataDoctor
                     const response = await signupDoctor(formDataDoctor);
 
-                    console.log("Esta es la respuesta", response);
                     if (response && response.status === 400) {
                       console.error("Error al registrar el usuario:", response.data);
                     } else {
@@ -2251,9 +2196,7 @@ const Table = () => {
                     values.doctor = doctorId;
                     values.appointmentDate = formattedDate;
                     values.user = userId;
-                    console.log("Datos de la cita:", values);
                     const response = await postAppointment(values);
-                    console.log("Cita creada:", response);
                     // Resto del código...
                     handleCreateNewAppoinmentConfirm();
                     closeCreateNewModalAppointment();
@@ -2330,8 +2273,6 @@ const Table = () => {
                       </Field>
                       <ErrorMessage name="appointmentTime" component="div" className="text-red-300" />
                     </div>
-                    {/* Agregar console.log aquí para verificar la lista de doctores */}
-                    {console.log("Lista de doctores:", doctores)}
                     <div className="flex justify-between">
                       <button type="submit" className="btn text-black bg-ts hover:bg-hb hover:text-w">
                         Crear cita
