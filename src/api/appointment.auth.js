@@ -3,7 +3,8 @@ import axios from "./axios";
 
 export const getAppointmentsRequest = () => axios.get(`/gettingappointments`) //Plural
 
-export const getAppointmentRequest = (id) => axios.get(`/getoneappointment/${id}`)//Singular
+export const getAppointmentRequest = (id) => axios.get(`/getappointmentbyuser/${id}`)//Singular
+export const getAppointmentRequestDoctor = (id) => axios.get(`/getappointmentbydoctor/${id}`)//Singular
 
 export const createRequestAppointment = (appointment, token, doctorId) => {
     // Configuración de las cabeceras de la solicitud

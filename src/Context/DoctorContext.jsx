@@ -25,11 +25,9 @@ export const DoctorProvider = ({ children }) => {
       // doctor.licenceNumber = parseInt(doctor.licenceNumber);
 
       const res = await registerRequestDoctor(doctor);
-      /* console.log(res.data); */
       setDoctor(res.data);
       setIsAuthenticatedDoctor(true);
     } catch (error) {
-      console.log(error.response);
       setErrors(error.response.data);
     }
   };
@@ -37,13 +35,10 @@ export const DoctorProvider = ({ children }) => {
   const signin = async (doctor) => {
     try {
       const res = await loginRequestDoctor(doctor);
-      /*       console.log("Viendo que llega del primer await",res); //VER QUE ESTA LLEGANOD AQUI
-       */ const dataDoctor = res.data; //Comprobar que tienen la data que llega del back
+      const dataDoctor = res.data; //Comprobar que tienen la data que llega del back
       localStorage.setItem("Id_doctor", dataDoctor.id);
-      /*       console.log("dataDoctor",dataDoctor)
-       */ const resDoctor = await varityDoctorRequest({ dataDoctor });
-      /*       console.log("Esto es resDoctor",resDoctor);
-       */ setDoctor(resDoctor);
+      const resDoctor = await varityDoctorRequest({ dataDoctor });
+      setDoctor(resDoctor);
       setIsAuthenticatedDoctor(true);
     } catch (error) {
       if (Array.isArray(error.response.data)) {
@@ -70,7 +65,6 @@ export const DoctorProvider = ({ children }) => {
       }
       try {
         const res = await varityDoctorRequest2(dataDoctorId);
-        console.log("estou debajo del await ", res);
         if (!res) {
           setIsAuthenticatedDoctor(false);
           setLoadingDoctor(false);
@@ -80,7 +74,6 @@ export const DoctorProvider = ({ children }) => {
         setDoctor(res);
         setLoadingDoctor(false);
       } catch (error) {
-        console.log("error", error);
         setIsAuthenticatedDoctor(false);
         setDoctor(null);
         setLoadingDoctor(false);
