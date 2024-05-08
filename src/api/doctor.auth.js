@@ -2,6 +2,7 @@
 import axios from "./axios";
 
 export const getDoctorsRequest = () => axios.get(`/gettingdoctors`)
+export const getUsersRequest = () => axios.get(`/gettingusers`)
 
 
 export const registerRequestDoctor = (doctor) =>

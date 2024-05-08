@@ -4,6 +4,7 @@ import {
   deleteAppointmentRequest,
   getAppointmentRequest,
   updateAppointmentRequest,
+  getAppointmentRequestDoctor
 } from "../api/appointment.auth.js";
 
 const AppointmentContext = createContext();
@@ -23,8 +24,25 @@ export const AppointmentProvider = ({ children }) => {
   const getAppointments = async () => {
     try {
       const res = await getAppointmentsRequest();
-/*       console.log("Soy lo ahora estas haciendo", res);
- */      setAppointments(res.data);
+      setAppointments(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getAppointment = async (id) => {
+    try {
+      const res = await getAppointmentRequest(id);
+      setAppointments(res.data);
+      console.log(res)
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getAppointmentDoctor = async (id) => {
+    try {
+      const res = await getAppointmentRequestDoctor(id);
+      setAppointments(res.data);
+      console.log(res)
     } catch (error) {
       console.log(error);
     }
@@ -43,18 +61,12 @@ export const AppointmentProvider = ({ children }) => {
     }
   };
 
-  const getAppointment = async (id) => {
-    try {
-      const res = await getAppointmentRequest(id);
-/*       console.log(res);
- */    } catch (error) {
-      console.log(error);
-    }
-  };
+  
 
   const updateAppointment = async (id, appointment) => {
     try {
       const res = await updateAppointmentRequest(id, appointment);
+      console.log("Soy lo que queres actualizar ",res)
       if (res.status === 200){
         setAppointments((prevAppointments) =>
           prevAppointments.map((prevAppointment) =>
@@ -62,6 +74,7 @@ export const AppointmentProvider = ({ children }) => {
           )
         )
       }
+
     } catch (error) {
       console.log(error);
     }
@@ -74,6 +87,7 @@ export const AppointmentProvider = ({ children }) => {
         getAppointments,
         deleteAppointment,
         getAppointment,
+        getAppointmentDoctor
       }}
     >
       {children}
