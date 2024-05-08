@@ -44,7 +44,6 @@ export const AppointmentFormPage = () => {
 
   const [doctores, setDoctores] = useState([]);
   const { user } = userAuth(); // Mover la obtención del usuario logueado dentro del componente
-  console.log("Datos del usuario logueado:", user, typeof user); // Mostrar los datos del usuario y su tipo
   const [dni, setDni] = useState(user.dni || ""); // Inicializar con el DNI del usuario logueado si está disponible
   const [userId, setUserId] = useState(user.id || ""); // Inicializar con el ID del usuario logueado si está disponible
   const [doctoresCreate, setDoctoresCreate] = useState([]);
@@ -79,7 +78,6 @@ export const AppointmentFormPage = () => {
 
   const handleDoctorChangeCreate = (event) => {
     const selectedDoctorId = event.target.value;
-    console.log("Valor seleccionado del campo de doctor:", selectedDoctorId);
     setDoctorId(selectedDoctorId);
   };
 
@@ -107,18 +105,14 @@ export const AppointmentFormPage = () => {
 
   const handleEspecialidadChange = (event) => {
     const selectedEspecialidad = event.target.value;
-    console.log("Especialidad seleccionada:", selectedEspecialidad);
     setEspecialidadSeleccionada(selectedEspecialidad);
   };
 
   useEffect(() => {
-    console.log("Especialidad seleccionada:", especialidadSeleccionada);
-
     if (especialidadSeleccionada) {
       axios
         .get(`http://localhost:3001/api/doctorsbyspecialty/${especialidadSeleccionada}`)
         .then((response) => {
-          console.log("Datos de doctores recibidos:", response.data);
           setDoctoresCreate(response.data);
         })
         .catch((error) => {
@@ -155,7 +149,7 @@ export const AppointmentFormPage = () => {
 
   return (
     <div className="flex justify-center items-center p-40">
-      <div className="bg-c text-w rounded-lg p-8 max-w-md text-center">
+      <div className="bg-w text-c rounded-lg p-8 max-w-md text-center">
         <h1 className="text-3xl font-bold mb-6">Crear Turno</h1>
         <Formik
           initialValues={{
@@ -177,9 +171,7 @@ export const AppointmentFormPage = () => {
               values.doctor = doctorId;
               values.appointmentDate = formattedDate;
               values.user = userId;
-              console.log("Datos de la cita:", values);
               const response = await postAppointment(values);
-              console.log("Cita creada:", response);
               // Resto del código...
               openAppointmentCreated();
               resetForm(); // Esta línea reiniciará el formulario
@@ -194,7 +186,7 @@ export const AppointmentFormPage = () => {
               <div className="mb-4">
                 <input
                   type="text"
-                  className="input-field bg-w text-c rounded w-56"
+                  className="input-field bg-w text-c border-ts border rounded w-56"
                   name="dni"
                   placeholder="DNI/LC/LE/PASSPORT"
                   value={dni}
@@ -205,7 +197,7 @@ export const AppointmentFormPage = () => {
               <div className="mb-4">
                 <Field
                   as="select"
-                  className="input-field bg-w text-c rounded w-56"
+                  className="input-field bg-w text-c border-ts border rounded w-56"
                   name="especialidad"
                   onChange={(e) => {
                     handleEspecialidadChange(e); // Llama a la función handleEspecialidadChange
@@ -222,7 +214,7 @@ export const AppointmentFormPage = () => {
                 <ErrorMessage name="especialidad" component="div" className="text-red-300" />
               </div>
               <div className="mb-4">
-                <select className="input-field bg-w text-c rounded w-56" name="doctor" value={doctorId} onChange={handleDoctorChangeCreate}>
+                <select className="input-field bg-w text-c border-ts border rounded w-56" name="doctor" value={doctorId} onChange={handleDoctorChangeCreate}>
                   <option value="">Selecciona un doctor</option>
                   {doctoresCreate.map((doctor) => (
                     <option key={doctor._id} value={doctor._id}>
@@ -234,7 +226,7 @@ export const AppointmentFormPage = () => {
               </div>
               <div className="mb-4">
                 <DatePicker
-                  className="input-field bg-w text-c rounded w-56"
+                  className="input-field bg-w text-c border border-ts rounded w-56"
                   selected={values.appointmentDate}
                   onChange={(date) => {
                     setFieldValue("appointmentDate", date);
@@ -252,14 +244,12 @@ export const AppointmentFormPage = () => {
                 <ErrorMessage name="appointmentDate" component="div" className="text-red-300" />
               </div>
               <div className="mb-4">
-                <Field as="select" className="input-field bg-w text-c rounded w-56" name="appointmentTime">
+                <Field as="select" className="input-field bg-w text-c border border-ts rounded w-56" name="appointmentTime">
                   <option value="">Selecciona una hora</option>
                   {generateTimeOptionsCreate()}
                 </Field>
                 <ErrorMessage name="appointmentTime" component="div" className="text-red-300" />
               </div>
-              {/* Agregar console.log aquí para verificar la lista de doctores */}
-              {console.log("Lista de doctores:", doctores)}
               <div className="flex justify-between">
                 <button type="submit" className="btn text-black bg-ts hover:bg-hb hover:text-w w-24">
                   Crear cita

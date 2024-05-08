@@ -4,11 +4,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { createContext, useState, useContext, useEffect } from "react";
 
-import {
-  registerRequestUser,
-  loginRequestUser,
-  varityTokenRequest,
-} from "../api/user.auth";
+import { registerRequestUser, loginRequestUser, varityTokenRequest } from "../api/user.auth";
 
 export const UserContext = createContext();
 
@@ -41,11 +37,9 @@ export const UserProvider = ({ children }) => {
       const token = res.data;
       localStorage.setItem("token", token);
 
-
       setUser(res.data);
       setIsAuthenticatedUser(true);
     } catch (error) {
-      console.log(error.response);
       setErrors(error.response.data);
     }
   };
@@ -74,7 +68,6 @@ export const UserProvider = ({ children }) => {
         setAuditor(resUser);
         setIsAuthenticatedAuditor(true);
       }
-
     } catch (error) {
       if (Array.isArray(error.response.data)) {
         return setErrors(error.response.data);
@@ -92,7 +85,6 @@ export const UserProvider = ({ children }) => {
     setIsAuthenticatedUser(false);
     setIsAuthenticatedDoctor(false);
     setIsAuthenticatedAuditor(false);
-
   };
 
   useEffect(() => {
@@ -142,10 +134,8 @@ export const UserProvider = ({ children }) => {
           setAuditor(res);
         }
 
-
         setLoadingUser(false);
       } catch (error) {
-        console.log(error);
         setIsAuthenticatedUser(false);
         setIsAuthenticatedDoctor(false);
         setIsAuthenticatedAuditor(false);
@@ -174,10 +164,8 @@ export const UserProvider = ({ children }) => {
         isAuthenticatedDoctor,
         isAuthenticatedAuditor,
         errors,
-      }}
-    >
+      }}>
       {children}
     </UserContext.Provider>
   );
-
 };

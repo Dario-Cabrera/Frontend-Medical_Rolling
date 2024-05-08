@@ -1,10 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import {
-  getAppointmentsRequest,
-  deleteAppointmentRequest,
-  getAppointmentRequest,
-  updateAppointmentRequest,
-} from "../api/appointment.auth.js";
+import { getAppointmentsRequest, deleteAppointmentRequest, getAppointmentRequest, updateAppointmentRequest, getAppointmentRequestDoctor } from "../api/appointment.auth.js";
 
 const AppointmentContext = createContext();
 
@@ -23,48 +18,36 @@ export const AppointmentProvider = ({ children }) => {
   const getAppointments = async () => {
     try {
       const res = await getAppointmentsRequest();
-/*       console.log("Soy lo ahora estas haciendo", res);
- */      setAppointments(res.data);
-    } catch (error) {
-      console.log(error);
-    }
+      setAppointments(res.data);
+    } catch (error) {}
+  };
+  const getAppointment = async (id) => {
+    try {
+      const res = await getAppointmentRequest(id);
+      setAppointments(res.data);
+    } catch (error) {}
+  };
+  const getAppointmentDoctor = async (id) => {
+    try {
+      const res = await getAppointmentRequestDoctor(id);
+      setAppointments(res.data);
+    } catch (error) {}
   };
 
   const deleteAppointment = async (id) => {
     try {
       const res = await deleteAppointmentRequest(id);
-      console.log(res.data);
-      if (res.status === 200)
-        setAppointments(
-          appointments.filter((appointment) => appointment._id !== id)
-        );
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const getAppointment = async (id) => {
-    try {
-      const res = await getAppointmentRequest(id);
-/*       console.log(res);
- */    } catch (error) {
-      console.log(error);
-    }
+      if (res.status === 200) setAppointments(appointments.filter((appointment) => appointment._id !== id));
+    } catch (error) {}
   };
 
   const updateAppointment = async (id, appointment) => {
     try {
       const res = await updateAppointmentRequest(id, appointment);
-      if (res.status === 200){
-        setAppointments((prevAppointments) =>
-          prevAppointments.map((prevAppointment) =>
-            prevAppointment._id === id ? appointment : prevAppointment
-          )
-        )
+      if (res.status === 200) {
+        setAppointments((prevAppointments) => prevAppointments.map((prevAppointment) => (prevAppointment._id === id ? appointment : prevAppointment)));
       }
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
   return (
     <AppointmentContext.Provider
@@ -74,8 +57,8 @@ export const AppointmentProvider = ({ children }) => {
         getAppointments,
         deleteAppointment,
         getAppointment,
-      }}
-    >
+        getAppointmentDoctor,
+      }}>
       {children}
     </AppointmentContext.Provider>
   );

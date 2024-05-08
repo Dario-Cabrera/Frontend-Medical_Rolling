@@ -13,17 +13,10 @@ export const LoginPagesUser = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const {
-    signin,
-    errors: signinErrors,
-    isAuthenticatedUser,
-    isAuthenticatedDoctor,
-    isAuthenticatedAuditor,
-  } = userAuth();
+  const { signin, errors: signinErrors, isAuthenticatedUser, isAuthenticatedDoctor, isAuthenticatedAuditor } = userAuth();
   const navigate = useNavigate();
 
   const onSubmit = handleSubmit((data) => {
-    console.log(data);
     signin(data);
   });
 
@@ -66,7 +59,9 @@ export const LoginPagesUser = () => {
           />
           {errors.pass && <p className="text-red-500">Password is required</p>}
 
-          <button type="submit" className="text-hb">Login</button>
+          <button type="submit" className="text-hb">
+            Login
+          </button>
         </form>
         <p className="flex gap-x-2 py-3 justify-between text-c">
           Don't have an account?{" "}
