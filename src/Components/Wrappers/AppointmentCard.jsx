@@ -81,25 +81,14 @@ export const AppointmentCard = ({ appointment }) => {
             </>
           )}
         </div>
-        <div className="flex gap-x-2 items-center text-c">
-          <button
-            onClick={() => {
-              // Cambiar el estado del turno a false
-              updateAppointment(appointment._id, {
-                ...appointment,
-                state: false,
-              });
-            }}
-            className="btn-info bg-ts hover:bg-hb hover:text-w hover:border-none text-c  px-4 py-2 mt-2 rounded-md">
-            Inhabilitar
-          </button>
-          <Link to={`/appointments/${appointment._id}`} className="btn-info bg-ts hover:bg-hb hover:text-w hover:border-none text-c  py-2 mt-2 rounded-md">
-            Modificar
-          </Link>
-        </div>
       </header>
 
-      <p className="font-medium text-c">DÍA: {new Date(moment(appointment.appointmentDate).toDate()).toLocaleDateString()}</p>
+      <p className="font-medium text-c">
+        DÍA:{" "}
+        {new Date(
+          moment(appointment.appointmentDate).toDate()
+        ).toLocaleDateString()}
+      </p>
       <p className="font-medium text-c">HORA: {appointment.appointmentTime}</p>
       <p className="font-medium text-c">CONSULTORIO: 305</p>
     </div>
