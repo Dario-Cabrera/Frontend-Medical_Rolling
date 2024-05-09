@@ -70,7 +70,7 @@ const Table = () => {
     setDni(enteredDni);
 
     try {
-      const response = await axios.get(`http://localhost:3001/api/getUserByDNI/${enteredDni}`);
+      const response = await axios.get(`https://backend-medical-rolling.vercel.app/api/getUserByDNI/${enteredDni}`);
       if (response.status === 200) {
         const user = response.data;
         if (user) {
@@ -99,7 +99,7 @@ const Table = () => {
 
   const handleDateChangeCreate = async (date) => {
     try {
-      const response = await axios.get("http://localhost:3001/api/availableTimes", {
+      const response = await axios.get("https://backend-medical-rolling.vercel.app/api/availableTimes", {
         params: {
           doctorId: doctorId,
           date: moment(date).format("YYYY-MM-DD"),
@@ -127,7 +127,7 @@ const Table = () => {
   useEffect(() => {
     if (especialidadSeleccionada) {
       axios
-        .get(`http://localhost:3001/api/doctorsbyspecialty/${especialidadSeleccionada}`)
+        .get(`https://backend-medical-rolling.vercel.app/api/doctorsbyspecialty/${especialidadSeleccionada}`)
         .then((response) => {
           setDoctoresCreate(response.data);
         })
@@ -139,7 +139,7 @@ const Table = () => {
 
   const postAppointment = async (formData) => {
     try {
-      const response = await axios.post("http://localhost:3001/api/createappointment/", formData);
+      const response = await axios.post("https://backend-medical-rolling.vercel.app/api/createappointment/", formData);
       return response.data; // Devuelve los datos de la cita creada si la solicitud es exitosa
     } catch (error) {
       console.error("Error al crear la cita:", error);
@@ -156,7 +156,7 @@ const Table = () => {
   // Función para obtener los usuarios desde el backend
   async function obtenerUsuariosDesdeBackend() {
     try {
-      const response = await axios.get("http://localhost:3001/api/gettingusers");
+      const response = await axios.get("https://backend-medical-rolling.vercel.app/api/gettingusers");
       setUsuarios(response.data);
     } catch (error) {
       console.error("Error al obtener los usuarios desde el backend:", error);
@@ -196,7 +196,7 @@ const Table = () => {
   const fetchAppointmentsByUser = async (userId) => {
     try {
       // Realiza una solicitud GET al endpoint del backend para obtener las citas del usuario
-      const response = await axios.get(`http://localhost:3001/api/getappointmentbyuser/${userId}`);
+      const response = await axios.get(`https://backend-medical-rolling.vercel.app/api/getappointmentbyuser/${userId}`);
       // Establece el estado con los datos de las citas del usuario
       setUserAppointments(response.data);
     } catch (error) {
@@ -212,7 +212,7 @@ const Table = () => {
   const fetchAppointmentsByDoctor = async (doctorId) => {
     try {
       // Realiza una solicitud GET al endpoint del backend para obtener las citas del usuario
-      const response = await axios.get(`http://localhost:3001/api/getappointmentbydoctor/${doctorId}`);
+      const response = await axios.get(`https://backend-medical-rolling.vercel.app/api/getappointmentbydoctor/${doctorId}`);
       // Establece el estado con los datos de las citas del usuario
       setDoctorAppointments(response.data);
     } catch (error) {
@@ -231,7 +231,7 @@ const Table = () => {
   // Función para obtener los usuarios desde el backend
   async function obtenerDoctoresDesdeBackend() {
     try {
-      const response = await axios.get("http://localhost:3001/api/gettingdoctors");
+      const response = await axios.get("https://backend-medical-rolling.vercel.app/api/gettingdoctors");
       setDoctores(response.data);
     } catch (error) {
       console.error("Error al obtener los usuarios desde el backend:", error);
@@ -265,7 +265,7 @@ const Table = () => {
 
   async function obtenerCitasDesdeBackend() {
     try {
-      const response = await axios.get("http://localhost:3001/api/gettingappointments");
+      const response = await axios.get("https://backend-medical-rolling.vercel.app/api/gettingappointments");
       const citas = response.data;
       const { nombresApellidosDoctores, nombresApellidosUsuarios, filteredCitas } = await obtenerValorDoctor(citas);
       setFilteredCitas(filteredCitas);
@@ -279,8 +279,8 @@ const Table = () => {
   async function obtenerValorDoctor(citas) {
     const idsDoctores = citas.map((cita) => cita.doctor);
     const idsUsuarios = citas.map((cita) => cita.user);
-    const responseDoctores = await Promise.all(idsDoctores.map((idDoctor) => axios.get(`http://localhost:3001/api/getonedoctor/${idDoctor}`)));
-    const responseUsuarios = await Promise.all(idsUsuarios.map((idUsuario) => axios.get(`http://localhost:3001/api/getoneuser/${idUsuario}`)));
+    const responseDoctores = await Promise.all(idsDoctores.map((idDoctor) => axios.get(`https://backend-medical-rolling.vercel.app/api/getonedoctor/${idDoctor}`)));
+    const responseUsuarios = await Promise.all(idsUsuarios.map((idUsuario) => axios.get(`https://backend-medical-rolling.vercel.app/api/getoneuser/${idUsuario}`)));
 
     const nombresApellidosDoctores = responseDoctores.reduce((acc, response) => {
       const doctor = response.data;
@@ -337,7 +337,7 @@ const Table = () => {
     }
 
     axios
-      .delete(`http://localhost:3001/api/deleteusers/${userIdToDelete}`)
+      .delete(`https://backend-medical-rolling.vercel.app/api/deleteusers/${userIdToDelete}`)
       .then((response) => {
         // Aquí puedes realizar acciones adicionales si es necesario, como mostrar un mensaje de éxito o actualizar la lista de usuarios
       })
@@ -367,7 +367,7 @@ const Table = () => {
     }
 
     axios
-      .delete(`http://localhost:3001/api/deletedoctors/${doctorIdToDelete}`)
+      .delete(`https://backend-medical-rolling.vercel.app/api/deletedoctors/${doctorIdToDelete}`)
       .then((response) => {
         // Aquí puedes realizar acciones adicionales si es necesario, como mostrar un mensaje de éxito o actualizar la lista de usuarios
       })
@@ -397,7 +397,7 @@ const Table = () => {
     }
 
     axios
-      .delete(`http://localhost:3001/api/deleteappointments/${citaIdToDelete}`)
+      .delete(`https://backend-medical-rolling.vercel.app/api/deleteappointments/${citaIdToDelete}`)
       .then((response) => {
         // Aquí puedes realizar acciones adicionales si es necesario, como mostrar un mensaje de éxito o actualizar la lista de usuarios
       })
@@ -429,7 +429,7 @@ const Table = () => {
 
   const actualizarDatosEnBackendUser = async (userIdToUpdate, formDataUser) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/updateusers/${userIdToUpdate}`, {
+      const response = await fetch(`https://backend-medical-rolling.vercel.app/api/updateusers/${userIdToUpdate}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -462,7 +462,7 @@ const Table = () => {
 
   const actualizarDatosEnBackendDoctor = async (doctorIdToUpdate, formDataDoctor) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/updatedoctors/${doctorIdToUpdate}`, {
+      const response = await fetch(`https://backend-medical-rolling.vercel.app/api/updatedoctors/${doctorIdToUpdate}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -497,7 +497,7 @@ const Table = () => {
 
   const actualizarDatosEnBackendCita = async (citaIdToUpdate, formDataCita) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/updateappointments/${citaIdToUpdate}`, {
+      const response = await fetch(`https://backend-medical-rolling.vercel.app/api/updateappointments/${citaIdToUpdate}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -518,7 +518,7 @@ const Table = () => {
 
   const handleDateChange = async (date, doctor) => {
     try {
-      const response = await axios.get("http://localhost:3001/api/availableTimes", {
+      const response = await axios.get("https://backend-medical-rolling.vercel.app/api/availableTimes", {
         params: {
           doctorId: doctor,
           date: moment(date).format("YYYY-MM-DD"),
@@ -580,7 +580,7 @@ const Table = () => {
 
   const checkDniUserAvailability = async (dni) => {
     try {
-      const response = await axios.get(`http://localhost:3001/api/checkDniUser/${dni}`);
+      const response = await axios.get(`https://backend-medical-rolling.vercel.app/api/checkDniUser/${dni}`);
       return response.data.message === "The DNI is available";
     } catch (error) {
       console.error("Error checking DNI availability:", error);
@@ -590,7 +590,7 @@ const Table = () => {
 
   const checkEmailUserAvailability = async (email) => {
     try {
-      const response = await axios.get(`http://localhost:3001/api/checkEmailUser/${email}`);
+      const response = await axios.get(`https://backend-medical-rolling.vercel.app/api/checkEmailUser/${email}`);
       return response.data.message === "The email is available";
     } catch (error) {
       console.error("Error checking Email availability:", error);
@@ -600,7 +600,7 @@ const Table = () => {
 
   const checkDniDoctorAvailability = async (dni) => {
     try {
-      const response = await axios.get(`http://localhost:3001/api/checkDniDoctor/${dni}`);
+      const response = await axios.get(`https://backend-medical-rolling.vercel.app/api/checkDniDoctor/${dni}`);
       return response.data.message === "The DNI is available";
     } catch (error) {
       console.error("Error checking DNI availability:", error);
@@ -610,7 +610,7 @@ const Table = () => {
 
   const checkEmailDoctorAvailability = async (email) => {
     try {
-      const response = await axios.get(`http://localhost:3001/api/checkEmailDoctor/${email}`);
+      const response = await axios.get(`https://backend-medical-rolling.vercel.app/api/checkEmailDoctor/${email}`);
       return response.data.message === "The email is available";
     } catch (error) {
       console.error("Error checking Email availability:", error);
