@@ -11,12 +11,12 @@ const Carousel = () => {
         "https://img.freepik.com/free-photo/happy-grandparents-using-their-digital-laptop_329181-14741.jpg?t=st=1712706244~exp=1712709844~hmac=307187da4cf6f9a8fc98e25bab24fe70a963e8dd238502de2fb74331fc73866f&w=1380",
     },
     {
-      title: "PLAN FAMILY",
+      title: "PLAN FAMILIAR",
       description: "Pensado para más momentos felices juntos!",
       imageUrl: "https://lifeonlypractical.files.wordpress.com/2014/07/family.jpg",
     },
     {
-      title: "PLAN YOUNG",
+      title: "PLAN JOVEN",
       description: "Pensado para que vivas siempre al máximo!",
       imageUrl:
         "https://img.freepik.com/free-photo/smiley-couple-posing-together-outdoors_23-2148737854.jpg?t=st=1712706704~exp=1712710304~hmac=df48b3b4acd0713511b1fff7d737454b6534211f9b0e688d51b470b5b9784c8a&w=826",
