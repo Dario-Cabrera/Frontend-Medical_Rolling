@@ -54,7 +54,7 @@ export const AppointmentFormPage = () => {
     setDni(enteredDni);
 
     try {
-      const response = await axios.get(`http://localhost:3001/api/getUserByDNI/${enteredDni}`);
+      const response = await axios.get(`https://backend-medical-rolling.vercel.app/api/getUserByDNI/${enteredDni}`);
       if (response.status === 200) {
         const user = response.data;
         if (user) {
@@ -83,7 +83,7 @@ export const AppointmentFormPage = () => {
 
   const handleDateChangeCreate = async (date) => {
     try {
-      const response = await axios.get("http://localhost:3001/api/availableTimes", {
+      const response = await axios.get("https://backend-medical-rolling.vercel.app/api/availableTimes", {
         params: {
           doctorId: doctorId,
           date: moment(date).format("YYYY-MM-DD"),
@@ -111,7 +111,7 @@ export const AppointmentFormPage = () => {
   useEffect(() => {
     if (especialidadSeleccionada) {
       axios
-        .get(`http://localhost:3001/api/doctorsbyspecialty/${especialidadSeleccionada}`)
+        .get(`https://backend-medical-rolling.vercel.app/api/doctorsbyspecialty/${especialidadSeleccionada}`)
         .then((response) => {
           setDoctoresCreate(response.data);
         })
@@ -123,7 +123,7 @@ export const AppointmentFormPage = () => {
 
   const postAppointment = async (formData) => {
     try {
-      const response = await axios.post("http://localhost:3001/api/createappointment/", formData);
+      const response = await axios.post("https://backend-medical-rolling.vercel.app/api/createappointment/", formData);
       return response.data; // Devuelve los datos de la cita creada si la solicitud es exitosa
     } catch (error) {
       console.error("Error al crear la cita:", error);
