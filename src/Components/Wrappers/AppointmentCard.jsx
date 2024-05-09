@@ -65,7 +65,7 @@ export const AppointmentCard = ({ appointment }) => {
         <div>
           {isDoctor ? (
             <>
-              <p className="font-medium">
+              <p className="font-medium text-c">
                 PACIENTE: {user.name} {user.lastname}
               </p>
               <p>
@@ -74,33 +74,23 @@ export const AppointmentCard = ({ appointment }) => {
             </>
           ) : (
             <>
-              <p className="font-medium">
+              <p className="font-medium text-c">
                 MÉDICO: {doctor.name} {doctor.lastname}
               </p>
               <p>ESPECIALIDAD: {doctor.specialty}</p>
             </>
           )}
         </div>
-        <div className="flex gap-x-2 items-center">
-          <button
-            onClick={() => {
-              // Cambiar el estado del turno a false
-              updateAppointment(appointment._id, {
-                ...appointment,
-                state: false,
-              });
-            }}
-            className="bg-red-500 text-white px-4 py-2 mt-2 rounded-md">
-            Inhabilitar
-          </button>
-          <Link to={`/appointments/${appointment._id}`} className="bg-red-500 text-white px-4 py-2 mt-2 rounded-md">
-            Reubicar
-          </Link>
-        </div>
       </header>
 
-      <p>DÍA: {new Date(moment(appointment.appointmentDate).toDate()).toLocaleDateString()}</p>
-      <p>HORA: {appointment.appointmentTime}</p>
+      <p className="font-medium text-c">
+        DÍA:{" "}
+        {new Date(
+          moment(appointment.appointmentDate).toDate()
+        ).toLocaleDateString()}
+      </p>
+      <p className="font-medium text-c">HORA: {appointment.appointmentTime}</p>
+      <p className="font-medium text-c">CONSULTORIO: 305</p>
     </div>
   );
 };
