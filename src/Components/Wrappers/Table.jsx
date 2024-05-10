@@ -1379,14 +1379,14 @@ const Table = () => {
               <div className="flex justify-center mt-4">
                 <button
                   onClick={() => handleDeleteUserConfirm(userIdToDelete)}
-                  className="px-4 py-2 bg-red-500 text-white rounded mr-4 hover:bg-red-700"
+                  className="px-4 py-2 btn-info bg-ts hover:bg-hb hover:text-w hover:border-none text-c rounded mr-4"
                   // Llamar a la función para eliminar el elemento al confirmar
                 >
                   Sí, eliminar
                 </button>
                 <button
                   onClick={closeDeleteModalUser}
-                  className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
+                  className="btn-info bg-ts hover:bg-hb hover:text-w hover:border-none text-c px-4 py-2 rounded"
                   // Llamar a la función para cerrar la modal al cancelar
                 >
                   Cancelar
@@ -1403,14 +1403,14 @@ const Table = () => {
               <div className="flex justify-center mt-4">
                 <button
                   onClick={handleDeleteDoctorConfirm}
-                  className="px-4 py-2 bg-red-500 text-white rounded mr-4 hover:bg-red-700"
+                  className="px-4 py-2 btn-info bg-ts hover:bg-hb hover:text-w hover:border-none text-c rounded mr-4"
                   // Llamar a la función para eliminar el elemento al confirmar
                 >
                   Sí, eliminar
                 </button>
                 <button
                   onClick={closeDeleteModalDoctor}
-                  className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
+                  className="btn-info bg-ts hover:bg-hb hover:text-w hover:border-none text-c px-4 py-2 rounded"
                   // Llamar a la función para cerrar la modal al cancelar
                 >
                   Cancelar
@@ -1427,14 +1427,14 @@ const Table = () => {
               <div className="flex justify-center mt-4">
                 <button
                   onClick={handleDeleteCitaConfirm}
-                  className="px-4 py-2 bg-red-500 text-white rounded mr-4 hover:bg-red-700"
+                  className="px-4 py-2 btn-info bg-ts hover:bg-hb hover:text-w hover:border-none text-c rounded mr-4"
                   // Llamar a la función para eliminar el elemento al confirmar
                 >
                   Sí, eliminar
                 </button>
                 <button
                   onClick={closeDeleteModalAppointment}
-                  className="px-4 py-2 bg-gray-300 rounded hover:bg-w"
+                  className="btn-info bg-ts hover:bg-hb hover:text-w hover:border-none text-c px-4 py-2 rounded"
                   // Llamar a la función para cerrar la modal al cancelar
                 >
                   Cancelar
