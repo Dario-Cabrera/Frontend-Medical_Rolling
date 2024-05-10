@@ -1375,7 +1375,7 @@ const Table = () => {
         {showDeleteModalUser && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={closeDeleteModalUser}>
             <div className="bg-white rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
-              <p>¿Estás seguro de que quieres eliminar este Usuario?</p>
+              <p className="font-medium text-c">¿Estás seguro de que quieres eliminar este Usuario?</p>
               <div className="flex justify-center mt-4">
                 <button
                   onClick={() => handleDeleteUserConfirm(userIdToDelete)}
@@ -1399,7 +1399,7 @@ const Table = () => {
         {showDeleteModalDoctor && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={closeDeleteModalDoctor}>
             <div className="bg-white rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
-              <p>¿Estás seguro de que quieres eliminar este Doctor?</p>
+              <p className="font-medium text-c">¿Estás seguro de que quieres eliminar este Doctor?</p>
               <div className="flex justify-center mt-4">
                 <button
                   onClick={handleDeleteDoctorConfirm}
@@ -1423,7 +1423,7 @@ const Table = () => {
         {showDeleteModalAppoinment && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={closeDeleteModalAppointment}>
             <div className="bg-white rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
-              <p>¿Estás seguro de que quieres eliminar este Appointment?</p>
+              <p className="font-medium text-c">¿Estás seguro de que quieres eliminar este Appointment?</p>
               <div className="flex justify-center mt-4">
                 <button
                   onClick={handleDeleteCitaConfirm}
