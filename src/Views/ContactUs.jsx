@@ -37,13 +37,13 @@ export const ContactForm = () => {
                 <p className="">Tel: +54-0381-4123456</p>
                 <h6 className="footer-title mt-6 text-ts">Redes Sociales</h6>
                 <div className="flex mt-2">
-                  <a className="mr-2" href="#">
+                  <a className="mr-2" href="https://www.facebook.com/Medical-Rolling" target="_blank">
                     <img src="https://i.ibb.co/WGr2GVn/facebook-5968973-NEGRO.png" width="29" height="29" className="img-fluid cursor-pointer" />
                   </a>
-                  <a className="mr-2" href="#">
+                  <a className="mr-2" href="https://www.instagram.com/Medical-Rolling" target="_blank">
                     <img src="https://i.ibb.co/xDwCBvp/instagram-5968982-NEGRO.png" width="29" height="29" className="img-fluid cursor-pointer" />
                   </a>
-                  <a href="#">
+                  <a href="https://www.whatsapp.com/Medical-Rolling" target="_blank">
                     <img src="https://i.ibb.co/V22ntPY/whatsapp-5969035-NEGRO.png" width="29" height="29" className="img-fluid cursor-pointer" />
                   </a>
                 </div>
