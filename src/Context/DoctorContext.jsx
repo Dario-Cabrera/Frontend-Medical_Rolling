@@ -1,7 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-refresh/only-export-components */
-/* eslint-disable react/prop-types */
-/* eslint-disable react-hooks/rules-of-hooks */
 import { useContext, createContext, useState, useEffect } from "react";
 import { registerRequestDoctor, loginRequestDoctor, varityDoctorRequest, varityDoctorRequest2 } from "../api/doctor.auth";
 
@@ -22,8 +18,6 @@ export const DoctorProvider = ({ children }) => {
   const [loadingDoctor, setLoadingDoctor] = useState(true);
   const signup = async (doctor) => {
     try {
-      // doctor.licenceNumber = parseInt(doctor.licenceNumber);
-
       const res = await registerRequestDoctor(doctor);
       setDoctor(res.data);
       setIsAuthenticatedDoctor(true);
@@ -35,7 +29,7 @@ export const DoctorProvider = ({ children }) => {
   const signin = async (doctor) => {
     try {
       const res = await loginRequestDoctor(doctor);
-      const dataDoctor = res.data; //Comprobar que tienen la data que llega del back
+      const dataDoctor = res.data;
       localStorage.setItem("Id_doctor", dataDoctor.id);
       const resDoctor = await varityDoctorRequest({ dataDoctor });
       setDoctor(resDoctor);

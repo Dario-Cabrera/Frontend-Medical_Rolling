@@ -113,8 +113,6 @@ export const ContactForm = () => {
           </div>
         </div>
       </div>
-
-      {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" onClick={closeModal}>
           <div className="bg-white p-8 max-w-md rounded-lg" onClick={(e) => e.stopPropagation()}>
