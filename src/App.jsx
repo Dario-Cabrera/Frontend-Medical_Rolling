@@ -52,8 +52,9 @@ const App = () => {
               </Route>
 
               <Route element={<ProtectedRouteUser />}>
-                <Route path="/appointmentsUser" element={<PagesUserAppointmentManagement />} />
                 <Route path="/createappointmentsUser" element={<AppointmentFormPage />} />
+                <Route path="/appointmentsUser" element={<PagesUserAppointmentManagement />} />
+
               </Route>
             </Routes>
             <Footer />
