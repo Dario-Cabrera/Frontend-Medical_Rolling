@@ -1,4 +1,3 @@
-/* eslint-disable no-useless-catch */
 import axios from "./axios";
 
 export const getDoctorsRequest = () => axios.get(`/gettingdoctors`);
@@ -9,10 +8,9 @@ export const registerRequestDoctor = (doctor) => axios.post(`/createdoctor/`, do
 export const loginRequestDoctor = (doctor) => axios.post(`/logindoctor`, doctor);
 
 export const varityDoctorRequest = async (data) => {
-  // eslint-disable-next-line no-useless-catch
   try {
     const res = await axios.post("/verifydoctor", data);
-    return res.data; //VERIFICAR QUE ESTA PASANDO AQUI
+    return res.data;
   } catch (error) {
     throw error;
   }

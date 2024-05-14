@@ -11,16 +11,11 @@ export const PagesUserAppointmentManagement = () => {
   useEffect(() => {
     getAppointment(user.id);
   }, []);
-  
+
   if (appointments.length === 0) return <h1>No hay turnos</h1>;
 
-  // Filtrar turnos activos e inactivos
-  const activeAppointments = appointments.filter(
-    (appointment) => appointment.state === true
-  );
-  const inactiveAppointments = appointments.filter(
-    (appointment) => appointment.state === false
-  );
+  const activeAppointments = appointments.filter((appointment) => appointment.state === true);
+  const inactiveAppointments = appointments.filter((appointment) => appointment.state === false);
 
   return (
     <div className="p-4">
@@ -37,10 +32,7 @@ export const PagesUserAppointmentManagement = () => {
         <div>
           <h2 className="text-xl font-semibold mb-2 text-ts">HISTORIAL DE TURNOS</h2>
           {inactiveAppointments.map((appointment) => (
-            <AppointmentCardHistory
-              appointment={appointment}
-              key={appointment._id}
-            />
+            <AppointmentCardHistory appointment={appointment} key={appointment._id} />
           ))}
         </div>
       </div>

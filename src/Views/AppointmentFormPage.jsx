@@ -7,7 +7,6 @@ import "react-datepicker/dist/react-datepicker.css";
 import moment from "moment-timezone";
 import { userAuth } from "../Context/UserContext";
 
-// Establecer la zona horaria por defecto
 moment.tz.setDefault("America/Argentina/Buenos_Aires");
 
 export const AppointmentFormPage = () => {
@@ -40,12 +39,10 @@ export const AppointmentFormPage = () => {
     "Urología",
   ];
 
-  // ----POST APPOINTMENTS----
-
   const [doctores, setDoctores] = useState([]);
-  const { user } = userAuth(); // Mover la obtención del usuario logueado dentro del componente
-  const [dni, setDni] = useState(user.dni || ""); // Inicializar con el DNI del usuario logueado si está disponible
-  const [userId, setUserId] = useState(user.id || ""); // Inicializar con el ID del usuario logueado si está disponible
+  const { user } = userAuth();
+  const [dni, setDni] = useState(user.dni || "");
+  const [userId, setUserId] = useState(user.id || "");
   const [doctoresCreate, setDoctoresCreate] = useState([]);
   const [showAppointmentCreated, setShowAppointmentCreated] = useState(false);
 
@@ -60,15 +57,15 @@ export const AppointmentFormPage = () => {
         if (user) {
           setUserId(user._id);
         } else {
-          setUserId(""); // Si no se encuentra un usuario con el DNI especificado, reiniciar el ID del usuario a una cadena vacía
+          setUserId("");
         }
       } else {
         console.error("Error fetching user by DNI:", response.data.message);
-        setUserId(""); // En caso de error, reiniciar el ID del usuario a una cadena vacía
+        setUserId("");
       }
     } catch (error) {
       console.error("Error fetching user by DNI:", error);
-      setUserId(""); // En caso de error, reiniciar el ID del usuario a una cadena vacía
+      setUserId("");
     }
   };
 
@@ -124,7 +121,7 @@ export const AppointmentFormPage = () => {
   const postAppointment = async (formData) => {
     try {
       const response = await axios.post("https://backend-medical-rolling.vercel.app/api/createappointment/", formData);
-      return response.data; // Devuelve los datos de la cita creada si la solicitud es exitosa
+      return response.data;
     } catch (error) {
       console.error("Error al crear la cita:", error);
       throw new Error("Error al crear la cita");
@@ -132,11 +129,8 @@ export const AppointmentFormPage = () => {
   };
 
   const appointmentCreateValidationSchema = Yup.object().shape({
-    // user: Yup.string().required("El usuario es requerido"),
-    // doctor: Yup.string().required("El doctor es requerido"),
     appointmentDate: Yup.string().required("La fecha es requerida"),
     appointmentTime: Yup.string().required("La hora es requerida"),
-    // state: Yup.string().required("El estado es requerido"),
   });
 
   const openAppointmentCreated = () => {
@@ -153,30 +147,28 @@ export const AppointmentFormPage = () => {
         <h1 className="text-3xl font-bold mb-6">Crear Turno</h1>
         <Formik
           initialValues={{
-            user: userId, // Inicializar con el ID del usuario logueado
+            user: userId,
             doctor: "",
             appointmentDate: "",
             appointmentTime: "",
             state: true,
-            especialidad: "", // Agrega la especialidad al estado inicial
+            especialidad: "",
           }}
           validationSchema={appointmentCreateValidationSchema}
           onSubmit={async (values, { resetForm, setFieldValue }) => {
             try {
-              const selectedDate = moment(values.appointmentDate); // Obtener la fecha seleccionada del formulario
+              const selectedDate = moment(values.appointmentDate);
 
-              // Obtener la fecha formateada para enviarla al backend
               const formattedDate = selectedDate.format("YYYY-MM-DD");
-              // Actualizar el valor de 'doctor' en 'values' con el valor actual de 'doctorId'
               values.doctor = doctorId;
               values.appointmentDate = formattedDate;
               values.user = userId;
               const response = await postAppointment(values);
-              // Resto del código...
+
               openAppointmentCreated();
-              resetForm(); // Esta línea reiniciará el formulario
-              setFieldValue("doctor", ""); // Reiniciar el valor del campo doctor en Formik
-              setDoctorId(""); // Reiniciar el valor del doctor en el estado del componente
+              resetForm();
+              setFieldValue("doctor", "");
+              setDoctorId("");
             } catch (error) {
               console.error("Error al crear la cita:", error);
             }
@@ -191,7 +183,7 @@ export const AppointmentFormPage = () => {
                   placeholder="DNI/LC/LE/PASSPORT"
                   value={dni}
                   readOnly
-                  onChange={(e) => handleDniChange(e)} // Manejar cambios en el DNI
+                  onChange={(e) => handleDniChange(e)}
                 />
               </div>
               <div className="mb-4">
@@ -200,9 +192,9 @@ export const AppointmentFormPage = () => {
                   className="input-field bg-w text-c border-ts border rounded w-56"
                   name="especialidad"
                   onChange={(e) => {
-                    handleEspecialidadChange(e); // Llama a la función handleEspecialidadChange
+                    handleEspecialidadChange(e);
                     setFieldValue("especialidad", e.target.value);
-                    setDoctorId(""); // Resetear el doctor seleccionado cuando se cambia la especialidad
+                    setDoctorId("");
                   }}>
                   <option value="">Selecciona una especialidad</option>
                   {especialidadesMedicas.map((especialidad, index) => (
@@ -258,9 +250,9 @@ export const AppointmentFormPage = () => {
                   type="button"
                   className="btn text-black bg-ts hover:bg-hb hover:text-w w-24"
                   onClick={() => {
-                    setFieldValue("doctor", ""); // Reiniciar el valor del campo doctor en Formik
-                    setDoctorId(""); // Reiniciar el valor del doctor en el estado del componente
-                    resetForm(); // Reiniciar el formulario a los valores iniciales
+                    setFieldValue("doctor", "");
+                    setDoctorId("");
+                    resetForm();
                   }}>
                   Borrar
                 </button>
@@ -278,9 +270,7 @@ export const AppointmentFormPage = () => {
                 onClick={() => {
                   closeAppointmentCreated();
                 }}
-                className="px-4 py-2 bg-ts text-c rounded hover:bg-hb hover:text-w"
-                // Llamar a la función para cerrar la modal de confirmación
-              >
+                className="px-4 py-2 bg-ts text-c rounded hover:bg-hb hover:text-w">
                 Cerrar
               </button>
             </div>
