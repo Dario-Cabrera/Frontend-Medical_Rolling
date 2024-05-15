@@ -11,7 +11,6 @@ import { userAuth } from "../../Context/UserContext";
 import { doctorAuth } from "../../Context/DoctorContext";
 import { saveAs } from "file-saver";
 
-// Establecer la zona horaria por defecto
 moment.tz.setDefault("America/Argentina/Buenos_Aires");
 
 const Table = () => {
@@ -23,7 +22,6 @@ const Table = () => {
   const [filteredCitas, setFilteredCitas] = useState([]);
   const [nombresApellidosDoctores, setNombresApellidosDoctores] = useState({});
   const [nombresApellidosUsuarios, setNombresApellidosUsuarios] = useState({});
-  // Estado para la búsqueda global
   const [busqueda, setBusqueda] = useState("");
 
   const { signup: signupUser } = userAuth();
@@ -58,12 +56,8 @@ const Table = () => {
     "Urología",
   ];
 
-  // ----CRUD----
-
-  // ----POST APPOINTMENTS----
-
   const [dni, setDni] = useState("");
-  const [userId, setUserId] = useState(""); // Cambiar el valor inicial a una cadena vacía
+  const [userId, setUserId] = useState("");
 
   const handleDniChange = async (event) => {
     const enteredDni = event.target.value;
@@ -76,15 +70,15 @@ const Table = () => {
         if (user) {
           setUserId(user._id);
         } else {
-          setUserId(""); // Si no se encuentra un usuario con el DNI especificado, reiniciar el ID del usuario a una cadena vacía
+          setUserId("");
         }
       } else {
         console.error("Error fetching user by DNI:", response.data.message);
-        setUserId(""); // En caso de error, reiniciar el ID del usuario a una cadena vacía
+        setUserId("");
       }
     } catch (error) {
       console.error("Error fetching user by DNI:", error);
-      setUserId(""); // En caso de error, reiniciar el ID del usuario a una cadena vacía
+      setUserId("");
     }
   };
 
@@ -140,20 +134,17 @@ const Table = () => {
   const postAppointment = async (formData) => {
     try {
       const response = await axios.post("https://backend-medical-rolling.vercel.app/api/createappointment/", formData);
-      return response.data; // Devuelve los datos de la cita creada si la solicitud es exitosa
+      return response.data;
     } catch (error) {
       console.error("Error al crear la cita:", error);
       throw new Error("Error al crear la cita");
     }
   };
 
-  // ----GET USERS----
   useEffect(() => {
-    // Llamar a la función para obtener los usuarios cuando el componente se monta
     obtenerUsuariosDesdeBackend();
   }, []);
 
-  // Función para obtener los usuarios desde el backend
   async function obtenerUsuariosDesdeBackend() {
     try {
       const response = await axios.get("https://backend-medical-rolling.vercel.app/api/gettingusers");
@@ -164,10 +155,7 @@ const Table = () => {
   }
 
   const filteredUsuarios = usuarios.filter((usuario) => {
-    // Combinar nombre y apellido en una sola cadena
     const nombreCompleto = `${usuario.name} ${usuario.lastname}`.toLowerCase();
-
-    // Verificar si las propiedades están definidas antes de llamar a toLowerCase()
     const dni = usuario.dni ? usuario.dni.toString().toLowerCase() : "";
     const area = usuario.area ? usuario.area.toString().toLowerCase() : "";
     const phone = usuario.phone ? usuario.phone.toString().toLowerCase() : "";
@@ -175,7 +163,7 @@ const Table = () => {
     return (
       (usuario._id && usuario._id.toLowerCase().includes(busqueda.toLowerCase())) ||
       (dni && dni.includes(busqueda.toLowerCase())) ||
-      nombreCompleto.includes(busqueda.toLowerCase()) || // Buscar en el nombre completo
+      nombreCompleto.includes(busqueda.toLowerCase()) ||
       (usuario.email && usuario.email.toLowerCase().includes(busqueda.toLowerCase())) ||
       (usuario.province && usuario.province.toLowerCase().includes(busqueda.toLowerCase())) ||
       (area && area.includes(busqueda.toLowerCase())) ||
@@ -183,52 +171,36 @@ const Table = () => {
       (usuario.address && usuario.address.toLowerCase().includes(busqueda.toLowerCase())) ||
       (usuario.address && usuario.address.toLowerCase().includes(busqueda.toLowerCase())) ||
       (usuario.rol && usuario.rol.toLowerCase().includes(busqueda.toLowerCase()))
-
-      // Agrega más campos de usuario si es necesario
     );
   });
-
-  // ---Get appointments by user---
 
   const [userAppointments, setUserAppointments] = useState([]);
   const [error, setError] = useState(null);
 
   const fetchAppointmentsByUser = async (userId) => {
     try {
-      // Realiza una solicitud GET al endpoint del backend para obtener las citas del usuario
       const response = await axios.get(`https://backend-medical-rolling.vercel.app/api/getappointmentbyuser/${userId}`);
-      // Establece el estado con los datos de las citas del usuario
       setUserAppointments(response.data);
     } catch (error) {
-      // Maneja cualquier error que ocurra durante la solicitud
       setError(error.response.data.message);
     }
   };
-
-  // ---Get appointments by user---
 
   const [doctorAppointments, setDoctorAppointments] = useState([]);
 
   const fetchAppointmentsByDoctor = async (doctorId) => {
     try {
-      // Realiza una solicitud GET al endpoint del backend para obtener las citas del usuario
       const response = await axios.get(`https://backend-medical-rolling.vercel.app/api/getappointmentbydoctor/${doctorId}`);
-      // Establece el estado con los datos de las citas del usuario
       setDoctorAppointments(response.data);
     } catch (error) {
-      // Maneja cualquier error que ocurra durante la solicitud
       setError(error.response.data.message);
     }
   };
 
-  // ----GET DOCTORS----
-
   useEffect(() => {
-    // Llamar a la función para obtener los usuarios cuando el componente se monta
     obtenerDoctoresDesdeBackend();
   }, []);
 
-  // Función para obtener los usuarios desde el backend
   async function obtenerDoctoresDesdeBackend() {
     try {
       const response = await axios.get("https://backend-medical-rolling.vercel.app/api/gettingdoctors");
@@ -239,26 +211,20 @@ const Table = () => {
   }
 
   const filteredDoctors = doctores.filter((doctor) => {
-    // Combinar nombre y apellido en una sola cadena
     const nombreCompleto = `${doctor.name} ${doctor.lastname}`.toLowerCase();
-
-    // Verificar si las propiedades están definidas antes de llamar a toLowerCase()
     const dni = doctor.dni ? doctor.dni.toString().toLowerCase() : "";
     const licenceNumber = doctor.licenceNumber ? doctor.licenceNumber.toString() : "";
 
     return (
       (doctor._id && doctor._id.toLowerCase().includes(busqueda.toLowerCase())) ||
       (dni && dni.includes(busqueda.toLowerCase())) ||
-      nombreCompleto.includes(busqueda.toLowerCase()) || // Buscar en el nombre completo
+      nombreCompleto.includes(busqueda.toLowerCase()) ||
       (doctor.email && doctor.email.toLowerCase().includes(busqueda.toLowerCase())) ||
       (doctor.specialty && doctor.specialty.toLowerCase().includes(busqueda.toLowerCase())) ||
       (licenceNumber && licenceNumber.includes(busqueda.toLowerCase()))
     );
   });
 
-  // ----GET APPOINMENTS----
-
-  // OBTENER NOMBRE DOCTOR Y NOMBRE USUARIO
   useEffect(() => {
     obtenerCitasDesdeBackend();
   }, [busqueda]);
@@ -304,10 +270,8 @@ const Table = () => {
       const nombreCompletoUsuario = (nombresApellidosUsuarios[cita.user] ?? "").toLowerCase();
       const estado = typeof cita.state === "boolean" ? (cita.state ? "activa" : "inactiva") : cita.state.toLowerCase();
 
-      // Obtener partes de la fecha para búsqueda
-      const selectedDate = moment(cita.appointmentDate); // Obtener la fecha seleccionada del formulario
+      const selectedDate = moment(cita.appointmentDate);
 
-      // Obtener la fecha formateada para enviarla al backend
       const formattedDate = selectedDate.format("YYYY-MM-DD");
 
       return (
@@ -315,15 +279,13 @@ const Table = () => {
         cita.user.toLowerCase().includes(searchString) ||
         nombreCompletoDoctor.includes(searchString) ||
         nombreCompletoUsuario.includes(searchString) ||
-        formattedDate.includes(searchString) || // Buscar por fecha formateada
+        formattedDate.includes(searchString) ||
         estado.includes(searchString)
       );
     });
 
     return { nombresApellidosDoctores, nombresApellidosUsuarios, filteredCitas };
   }
-
-  // ----DELETE USERS----
 
   const [userIdToDelete, setUserIdToDelete] = useState(null);
 
@@ -338,22 +300,16 @@ const Table = () => {
 
     axios
       .delete(`https://backend-medical-rolling.vercel.app/api/deleteusers/${userIdToDelete}`)
-      .then((response) => {
-        // Aquí puedes realizar acciones adicionales si es necesario, como mostrar un mensaje de éxito o actualizar la lista de usuarios
-      })
+      .then((response) => {})
       .catch((error) => {
         console.error("Error al eliminar usuario:", error);
-        // Aquí puedes manejar el error, mostrar un mensaje de error, etc.
       })
       .finally(() => {
-        // Después de enviar la solicitud, ocultar el modal de confirmación y mostrar el modal de éxito
         setShowDeleteModalUser(false);
         setShowSuccessModalUser(true);
         obtenerUsuariosDesdeBackend();
       });
   };
-
-  // ----DELETE DOCTORS----
 
   const [doctorIdToDelete, setDoctorIdToDelete] = useState(null);
 
@@ -368,22 +324,16 @@ const Table = () => {
 
     axios
       .delete(`https://backend-medical-rolling.vercel.app/api/deletedoctors/${doctorIdToDelete}`)
-      .then((response) => {
-        // Aquí puedes realizar acciones adicionales si es necesario, como mostrar un mensaje de éxito o actualizar la lista de usuarios
-      })
+      .then((response) => {})
       .catch((error) => {
         console.error("Error al eliminar doctor:", error);
-        // Aquí puedes manejar el error, mostrar un mensaje de error, etc.
       })
       .finally(() => {
-        // Después de enviar la solicitud, ocultar el modal de confirmación y mostrar el modal de éxito
         setShowDeleteModalDoctor(false);
         setShowSuccessModalDoctor(true);
         obtenerDoctoresDesdeBackend();
       });
   };
-
-  // ----DELETE APPOINMENTS----
 
   const [citaIdToDelete, setCitaIdToDelete] = useState(null);
 
@@ -398,22 +348,16 @@ const Table = () => {
 
     axios
       .delete(`https://backend-medical-rolling.vercel.app/api/deleteappointments/${citaIdToDelete}`)
-      .then((response) => {
-        // Aquí puedes realizar acciones adicionales si es necesario, como mostrar un mensaje de éxito o actualizar la lista de usuarios
-      })
+      .then((response) => {})
       .catch((error) => {
         console.error("Error al eliminar cita:", error);
-        // Aquí puedes manejar el error, mostrar un mensaje de error, etc.
       })
       .finally(() => {
-        // Después de enviar la solicitud, ocultar el modal de confirmación y mostrar el modal de éxito
         setShowDeleteModalAppoinment(false);
         setShowSuccessModalAppoinment(true);
         obtenerCitasDesdeBackend();
       });
   };
-
-  // ----UPDATE USERS----
 
   const [userIdToUpdate, setUserIdToUpdate] = useState(null);
   const [userData, setUserData] = useState(null);
@@ -423,7 +367,6 @@ const Table = () => {
   };
 
   const handleCaptureUserData = (userData) => {
-    // Aquí guardamos los datos del usuario en el estado local o en un contexto, para luego utilizarlos al abrir la modal de edición
     setUserData(userData);
   };
 
@@ -446,8 +389,6 @@ const Table = () => {
     obtenerUsuariosDesdeBackend();
   };
 
-  // ----UPDATE DOCTORS----
-
   const [doctorIdToUpdate, setDoctorIdToUpdate] = useState(null);
   const [doctorData, setDoctorData] = useState(null);
 
@@ -456,7 +397,6 @@ const Table = () => {
   };
 
   const handleCaptureDoctorData = (doctorData) => {
-    // Aquí guardamos los datos del usuario en el estado local o en un contexto, para luego utilizarlos al abrir la modal de edición
     setDoctorData(doctorData);
   };
 
@@ -479,10 +419,6 @@ const Table = () => {
     obtenerDoctoresDesdeBackend();
   };
 
-  // Formatear la fecha en el formato deseado antes de enviarla al servidor
-
-  // ----UPDATE APPOINTMENTS----
-
   const [citaIdToUpdate, setCitaIdToUpdate] = useState(null);
   const [citaData, setCitaData] = useState(null);
 
@@ -491,7 +427,6 @@ const Table = () => {
   };
 
   const handleCaptureCitaData = (citaData) => {
-    // Aquí guardamos los datos del usuario en el estado local o en un contexto, para luego utilizarlos al abrir la modal de edición
     setCitaData(citaData);
   };
 
@@ -542,41 +477,36 @@ const Table = () => {
     return options;
   };
 
-  // Manejador de cambio de fecha
-
-  // ----CRUD----
-
-  // Funciones para cambiar de tabla con botones
   const [activeTab, setActiveTab] = useState("Users");
 
-  const [showDeleteModalUser, setShowDeleteModalUser] = useState(false); // Estado para controlar la visibilidad de la modal Users
-  const [showDeleteModalDoctor, setShowDeleteModalDoctor] = useState(false); // Estado para controlar la visibilidad de la modal Doctors
-  const [showDeleteModalAppoinment, setShowDeleteModalAppoinment] = useState(false); // Estado para controlar la visibilidad de la modal Doctors
+  const [showDeleteModalUser, setShowDeleteModalUser] = useState(false);
+  const [showDeleteModalDoctor, setShowDeleteModalDoctor] = useState(false);
+  const [showDeleteModalAppoinment, setShowDeleteModalAppoinment] = useState(false);
 
-  const [showSuccessModalUser, setShowSuccessModalUser] = useState(false); // Estado para controlar la visibilidad de la modal de confirmación de eliminación de Users
-  const [showSuccessModalDoctor, setShowSuccessModalDoctor] = useState(false); // Estado para controlar la visibilidad de la modal de confirmación de eliminación de Doctors
-  const [showSuccessModalAppoinment, setShowSuccessModalAppoinment] = useState(false); // Estado para controlar la visibilidad de la modal de confirmación de eliminación de Appointments
+  const [showSuccessModalUser, setShowSuccessModalUser] = useState(false);
+  const [showSuccessModalDoctor, setShowSuccessModalDoctor] = useState(false);
+  const [showSuccessModalAppoinment, setShowSuccessModalAppoinment] = useState(false);
 
-  const [showEditModalUser, setShowEditModalUser] = useState(false); // Estado para controlar la visibilidad de la modal Edit Users
-  const [showEditModalDoctor, setShowEditModalDoctor] = useState(false); // Estado para controlar la visibilidad de la modal Edit Doctors
-  const [showEditModalAppoinment, setShowEditModalAppoinment] = useState(false); // Estado para controlar la visibilidad de la modal Edit Appointments
+  const [showEditModalUser, setShowEditModalUser] = useState(false);
+  const [showEditModalDoctor, setShowEditModalDoctor] = useState(false);
+  const [showEditModalAppoinment, setShowEditModalAppoinment] = useState(false);
 
-  const [showSaveChangesModalUser, setShowSaveChangesModalUser] = useState(false); // Estado para controlar la visibilidad de la modal de confirmación de edit de Users
-  const [showSaveChangesModalDoctor, setShowSaveChangesModalDoctor] = useState(false); // Estado para controlar la visibilidad de la modal de confirmación de edit de Doctors
-  const [showSaveChangesModalAppoinment, setShowSaveChangesModalAppoinment] = useState(false); // Estado para controlar la visibilidad de la modal de confirmación de edit de Appointments
+  const [showSaveChangesModalUser, setShowSaveChangesModalUser] = useState(false);
+  const [showSaveChangesModalDoctor, setShowSaveChangesModalDoctor] = useState(false);
+  const [showSaveChangesModalAppoinment, setShowSaveChangesModalAppoinment] = useState(false);
 
-  const [showCreateNewModalUser, setShowCreateNewModalUser] = useState(false); // Estado para controlar la visibilidad de la modal Edit Users
-  const [showCreateNewModalDoctor, setShowCreateNewModalDoctor] = useState(false); // Estado para controlar la visibilidad de la modal Edit Doctors
-  const [showCreateNewModalAppoinment, setShowCreateNewModalAppoinment] = useState(false); // Estado para controlar la visibilidad de la modal Edit Appointments
+  const [showCreateNewModalUser, setShowCreateNewModalUser] = useState(false);
+  const [showCreateNewModalDoctor, setShowCreateNewModalDoctor] = useState(false);
+  const [showCreateNewModalAppoinment, setShowCreateNewModalAppoinment] = useState(false);
 
-  const [isOpen, setIsOpen] = useState(false); // Estado para controlar la visibilidad del dropdown
+  const [isOpen, setIsOpen] = useState(false);
 
-  const [showCreateNewModalUserConfirm, setShowCreateNewModalUserConfirm] = useState(false); // Estado para controlar la visibilidad de la modal de confirmación de creacion de Users
-  const [showCreateNewModalDoctorConfirm, setShowCreateNewModalDoctorConfirm] = useState(false); // Estado para controlar la visibilidad de la modal de confirmación de creacion de Doctors
-  const [showCreateNewModalAppoinmentConfirm, setShowCreateNewModalAppoinmentConfirm] = useState(false); // Estado para controlar la visibilidad de la modal de confirmación de creacion de Appointments
+  const [showCreateNewModalUserConfirm, setShowCreateNewModalUserConfirm] = useState(false);
+  const [showCreateNewModalDoctorConfirm, setShowCreateNewModalDoctorConfirm] = useState(false);
+  const [showCreateNewModalAppoinmentConfirm, setShowCreateNewModalAppoinmentConfirm] = useState(false);
 
-  const [showAppointmentbyIdUserModal, setShowAppointmentbyIdUserModal] = useState(false); // Estado para controlar la visibilidad de la modal de citas del User
-  const [showAppointmentbyIdDoctorModal, setShowAppointmentbyIdDoctorModal] = useState(false); // Estado para controlar la visibilidad de la modal de citas del Doctor
+  const [showAppointmentbyIdUserModal, setShowAppointmentbyIdUserModal] = useState(false);
+  const [showAppointmentbyIdDoctorModal, setShowAppointmentbyIdDoctorModal] = useState(false);
 
   const checkDniUserAvailability = async (dni) => {
     try {
@@ -618,12 +548,11 @@ const Table = () => {
     }
   };
 
-  // Esquema de validación de Yup con validación personalizada para el campo 'dni'
   const createUserValidationSchema = Yup.object().shape({
     dni: Yup.number()
       .required("El DNI es requerido")
       .test("checkDniAvailability", "El DNI ya está en uso", async function (value) {
-        if (!value) return true; // Si no hay valor, se omite la validación
+        if (!value) return true;
         return await checkDniUserAvailability(value);
       }),
     name: Yup.string().required("El nombre es requerido").min(3, "El nombre debe tener al menos 3 caracteres").max(50, "El nombre no debe exceder los 50 caracteres"),
@@ -632,7 +561,7 @@ const Table = () => {
       .email("Formato de correo electrónico inválido")
       .required("El correo electrónico es requerido")
       .test("checkEmailAvailability", "El email ya está en uso", async function (value) {
-        if (!value) return true; // Si no hay valor, se omite la validación
+        if (!value) return true;
         return await checkEmailUserAvailability(value);
       }),
     pass: Yup.string().required("La contraseña es requerida").min(8, "La contraseña debe tener al menos 8 caracteres").max(80, "La contraseña no debe exceder los 80 caracteres"),
@@ -648,7 +577,7 @@ const Table = () => {
     dni: Yup.number()
       .required("El DNI es requerido")
       .test("checkDniAvailability", "El DNI ya está en uso", async function (value) {
-        if (!value) return true; // Si no hay valor, se omite la validación
+        if (!value) return true;
         return await checkDniDoctorAvailability(value);
       }),
     name: Yup.string().required("El nombre es requerido").min(3, "El nombre debe tener al menos 3 caracteres").max(50, "El nombre no debe exceder los 50 caracteres"),
@@ -657,7 +586,7 @@ const Table = () => {
       .email("Formato de correo electrónico inválido")
       .required("El correo electrónico es requerido")
       .test("checkEmailAvailability", "El email ya está en uso", async function (value) {
-        if (!value) return true; // Si no hay valor, se omite la validación
+        if (!value) return true;
         return await checkEmailDoctorAvailability(value);
       }),
     pass: Yup.string().required("La contraseña es requerida").min(8, "La contraseña debe tener al menos 8 caracteres").max(80, "La contraseña no debe exceder los 80 caracteres"),
@@ -667,11 +596,8 @@ const Table = () => {
   });
 
   const appointmentCreateValidationSchema = Yup.object().shape({
-    // user: Yup.string().required("El usuario es requerido"),
-    // doctor: Yup.string().required("El doctor es requerido"),
     appointmentDate: Yup.string().required("La fecha es requerida"),
     appointmentTime: Yup.string().required("La hora es requerida"),
-    // state: Yup.string().required("El estado es requerido"),
   });
 
   const userValidationSchema = Yup.object().shape({
@@ -697,38 +623,32 @@ const Table = () => {
   });
 
   const appointmentValidationSchema = Yup.object().shape({
-    // usuario: Yup.string().required("El usuario es requerido"),
-    // doctor: Yup.string().required("El doctor es requerido"),
     fecha: Yup.string().required("La fecha es requerida"),
     hora: Yup.string().required("La hora es requerida"),
     estado: Yup.string().required("El estado es requerido"),
   });
 
-  //Funciones para manejar los filtros busqueda y de ordenamiento
   const handleBusquedaChange = (e) => {
     const searchTerm = e.target.value;
     setBusqueda(searchTerm);
   };
 
-  // Funciones para manejar la visibilidad de la modal de appoinments by id user
   const openAppointmentByIdUserModal = () => {
-    setShowAppointmentbyIdUserModal(true); // Abre la modal
+    setShowAppointmentbyIdUserModal(true);
   };
 
   const closeAppointmentByIdUserModal = () => {
-    setShowAppointmentbyIdUserModal(false); // Cierra la modal
+    setShowAppointmentbyIdUserModal(false);
   };
 
-  // Funciones para manejar la visibilidad de la modal de appoinments by id doctor
   const openAppointmentByIdDoctorModal = () => {
-    setShowAppointmentbyIdDoctorModal(true); // Abre la modal
+    setShowAppointmentbyIdDoctorModal(true);
   };
 
   const closeAppointmentByIdDoctorModal = () => {
-    setShowAppointmentbyIdDoctorModal(false); // Cierra la modal
+    setShowAppointmentbyIdDoctorModal(false);
   };
 
-  // Funciones para confirmar creacion de un Appointment
   const handleCreateNewAppoinmentConfirm = () => {
     setShowCreateNewModalAppoinmentConfirm(true);
   };
@@ -736,7 +656,7 @@ const Table = () => {
   const handleCerrarCreateNewAppoinmentSuccess = () => {
     setShowCreateNewModalAppoinmentConfirm(false);
   };
-  // Funciones para confirmar creacion de un Doctor
+
   const handleCreateNewDoctorConfirm = () => {
     setShowCreateNewModalDoctorConfirm(true);
   };
@@ -744,7 +664,7 @@ const Table = () => {
   const handleCerrarCreateNewDoctorSuccess = () => {
     setShowCreateNewModalDoctorConfirm(false);
   };
-  // Funciones para confirmar creacion de un User
+
   const handleCreateNewUserConfirm = () => {
     setShowCreateNewModalUserConfirm(true);
   };
@@ -753,24 +673,21 @@ const Table = () => {
     setShowCreateNewModalUserConfirm(false);
   };
 
-  // Funciones para abrir y cerrar la modal Create New Appointment
   const closeDropdownAndOpenCreateNewModalAppointment = () => {
     openCreateNewModalAppointment();
     closeDropdown();
   };
 
-  // Funciones para abrir y cerrar la modal Create New Doctor
   const closeDropdownAndOpenCreateNewModalDoctor = () => {
     openCreateNewModalDoctor();
     closeDropdown();
   };
 
-  // Funciones para abrir y cerrar la modal Create New User
   const closeDropdownAndOpenCreateNewModalUser = () => {
     openCreateNewModalUser();
     closeDropdown();
   };
-  // Funciones para abrir y cerrar la modal Create New Users
+
   const openCreateNewModalUser = () => {
     setShowCreateNewModalUser(true);
   };
@@ -779,7 +696,6 @@ const Table = () => {
     setShowCreateNewModalUser(false);
   };
 
-  // Funciones para abrir y cerrar la modal Create New Doctors
   const openCreateNewModalDoctor = () => {
     setShowCreateNewModalDoctor(true);
   };
@@ -788,7 +704,6 @@ const Table = () => {
     setShowCreateNewModalDoctor(false);
   };
 
-  // Funciones para abrir y cerrar la modal Create New Appointments
   const openCreateNewModalAppointment = () => {
     setShowCreateNewModalAppoinment(true);
   };
@@ -797,7 +712,6 @@ const Table = () => {
     setShowCreateNewModalAppoinment(false);
   };
 
-  // Funciones para confirmar los cambios guardados de un Appointment
   const handleSaveChangesAppoinmentConfirm = () => {
     setShowSaveChangesModalAppoinment(true);
   };
@@ -805,7 +719,7 @@ const Table = () => {
   const handleCerrarSaveChangesAppoinmentSuccess = () => {
     setShowSaveChangesModalAppoinment(false);
   };
-  // Funciones para confirmar los cambios guardados de un Doctor
+
   const handleSaveChangesDoctorConfirm = () => {
     setShowSaveChangesModalDoctor(true);
   };
@@ -813,7 +727,7 @@ const Table = () => {
   const handleCerrarSaveChangesDoctorSuccess = () => {
     setShowSaveChangesModalDoctor(false);
   };
-  // Funciones para confirmar los cambios guardados de un User
+
   const handleSaveChangesUserConfirm = () => {
     setShowSaveChangesModalUser(true);
   };
@@ -823,21 +737,17 @@ const Table = () => {
   };
 
   const handleCerrarDeleteAppoinmentSucess = () => {
-    // Aquí puedes manejar la cancelación de la eliminación del usuario
     setShowSuccessModalAppoinment(false);
   };
 
   const handleCerrarDeleteDoctorSucess = () => {
-    // Aquí puedes manejar la cancelación de la eliminación del doctor
     setShowSuccessModalDoctor(false);
   };
 
   const handleCerrarDeleteUserSucess = () => {
-    // Aquí puedes manejar la cancelación de la eliminación del usuario
     setShowSuccessModalUser(false);
   };
 
-  // Funciones para abrir y cerrar la modal EditUsers
   const openEditModalUser = () => {
     setShowEditModalUser(true);
   };
@@ -846,7 +756,6 @@ const Table = () => {
     setShowEditModalUser(false);
   };
 
-  // Funciones para abrir y cerrar la modal EditDoctors
   const openEditModalDoctor = () => {
     setShowEditModalDoctor(true);
   };
@@ -855,7 +764,6 @@ const Table = () => {
     setShowEditModalDoctor(false);
   };
 
-  // Funciones para abrir y cerrar la modal EditAppointments
   const openEditModalAppointment = () => {
     setShowEditModalAppoinment(true);
   };
@@ -864,7 +772,6 @@ const Table = () => {
     setShowEditModalAppoinment(false);
   };
 
-  // Funciones para abrir y cerrar la modal DeleteUsers
   const openDeleteModalUser = () => {
     setShowDeleteModalUser(true);
   };
@@ -873,7 +780,6 @@ const Table = () => {
     setShowDeleteModalUser(false);
   };
 
-  // Funciones para abrir y cerrar la modal DeleteDoctors
   const openDeleteModalDoctor = () => {
     setShowDeleteModalDoctor(true);
   };
@@ -882,7 +788,6 @@ const Table = () => {
     setShowDeleteModalDoctor(false);
   };
 
-  // Funciones para abrir y cerrar la modal DeleteAppointments
   const openDeleteModalAppointment = () => {
     setShowDeleteModalAppoinment(true);
   };
@@ -891,12 +796,10 @@ const Table = () => {
     setShowDeleteModalAppoinment(false);
   };
 
-  // Funciones cambiar entre las tablas
   const handleTabClick = (tabName) => {
     setActiveTab(tabName);
   };
 
-  // Cierrar boton Create New
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
@@ -905,30 +808,20 @@ const Table = () => {
     setIsOpen(false);
   };
 
-  // export tablas
-
   const [csvData, setCsvData] = useState([]);
 
   const handleExportCSV = () => {
     const dataToExport = getTableData();
-    const csvData = [
-      Object.keys(dataToExport[0]), // Encabezados
-      ...dataToExport.map((item) => Object.values(item)),
-    ];
+    const csvData = [Object.keys(dataToExport[0]), ...dataToExport.map((item) => Object.values(item))];
 
-    // Convertir los datos CSV a texto CSV
     const csvText = csvData.map((row) => row.join(",")).join("\n");
 
-    // Crear un Blob que contiene el texto CSV
     const blob = new Blob([csvText], { type: "text/csv;charset=utf-8" });
 
-    // Utilizar file-saver para descargar el archivo CSV
     saveAs(blob, "datos.csv");
 
-    // Actualizar el estado de csvData si es necesario
     setCsvData(csvData);
   };
-  // Función para obtener los datos de la tabla actual
   const getTableData = () => {
     switch (activeTab) {
       case "Users":
@@ -969,16 +862,11 @@ const Table = () => {
     }
   };
 
-  // export tablas
-
   return (
     <div className="bg-w">
-      {/* component */}
       <section className="container mx-auto max-w-full p-6 font-sans">
-        {/* ---Boton Export y Create New--- */}
         <div className="sm:flex sm:items-center sm:justify-between ">
           <div>
-            {/* ---Botones Users, Doctors y Appoinments--- */}
             <div className="inline-flex overflow-hidden bg-hb text-w border divide-x rounded-lg rtl:flex-row-reverse  border-c  divide-c">
               <button
                 className={`px-5 py-2 text-xs font-medium transition-colors duration-200 sm:text-sm hover:bg-ts hover:text-c ${activeTab === "Users" ? "bg-ts text-c" : ""}`}
@@ -997,8 +885,6 @@ const Table = () => {
               </button>
             </div>
           </div>
-          {/* ---Botones Users, Doctors y Appoinments--- */}
-          {/* ---Boton Export y Create New--- */}
           <div className="flex items-center mt-4 gap-x-3">
             <button
               onClick={handleExportCSV}
@@ -1032,8 +918,6 @@ const Table = () => {
             </div>
           </div>
         </div>
-        {/* ---Boton Export y Create New--- */}
-        {/* ---Input Search--- */}
         <div className="mt-6 md:flex md:items-center md:justify-between">
           <div className="relative flex items-center mt-4 md:mt-0">
             <span className="absolute">
@@ -1049,21 +933,13 @@ const Table = () => {
               className="block w-full py-1.5 pr-5 text-c bg-w border border-c rounded-lg md:w-80 placeholder-c pl-11 rtl:pr-11 rtl:pl-5 focus:border-ts  focus:outline-none focus:ring focus:ring-opacity-40"
             />
           </div>
-          {/* ---Input Search--- */}
-          {/* ---Span Mostrando resultados--- */}
-          {/* <div className="flex items-center gap-x-3">
-            <span className="px-3 py-1 text-xs text-hb bg-w rounded-full">Mostrando 1-10 de 1000 resultados</span>
-          </div> */}
         </div>
-        {/* ---Span Mostrando resultados--- */}
         <div className="flex flex-col mt-6  max-w-full">
           <div className="-mx-4 -my-2 overflow-x-auto xl:-mx-6 lg:-mx-8 ">
             <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8 ">
               <div className="overflow-hidden border border-c md:rounded-lg">
-                {/* ---TABLAUSERS--- */}
                 {activeTab === "Users" && (
                   <table className="min-w-full divide-y divide-c text-center">
-                    {/* ---THEAD--- */}
                     <thead className="bg-c text-center">
                       <tr>
                         <th scope="col" className="py-3.5 px-4 text-sm font-medium text-center text-w relative">
@@ -1119,10 +995,7 @@ const Table = () => {
                         </th>
                       </tr>
                     </thead>
-                    {/* ---THEAD--- */}
-                    {/* ---TBODY--- */}
                     <tbody className="bg-white divide-y divide-c">
-                      {/* Renderizar las filas filtradas */}
                       {filteredUsuarios.map((usuario) => (
                         <tr key={usuario._id}>
                           <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">{usuario._id}</td>
@@ -1168,14 +1041,10 @@ const Table = () => {
                         </tr>
                       ))}
                     </tbody>
-                    {/* ---TBODY--- */}
                   </table>
                 )}
-                {/* ---TABLAUSERS--- */}
-                {/* ---TABLADOCTORS--- */}
                 {activeTab === "Doctors" && (
                   <table className="min-w-full divide-y divide-c text-center">
-                    {/* ---THEAD--- */}
                     <thead className="bg-c text-center">
                       <tr>
                         <th scope="col" className="py-3.5 px-4 text-sm font-medium text-center text-w relative">
@@ -1221,8 +1090,6 @@ const Table = () => {
                         </th>
                       </tr>
                     </thead>
-                    {/* ---THEAD--- */}
-                    {/* ---TBODY--- */}
                     <tbody className="bg-white divide-y divide-c">
                       {filteredDoctors.map((doctor) => (
                         <tr key={doctor._id}>
@@ -1267,14 +1134,10 @@ const Table = () => {
                         </tr>
                       ))}
                     </tbody>
-                    {/* ---TBODY--- */}
                   </table>
                 )}
-                {/* ---TABLADOCTORS--- */}
-                {/* ---TABLAAPPOINTMENTS--- */}
                 {activeTab === "Appointments" && (
                   <table className="min-w-full divide-y divide-c text-center">
-                    {/* ---THEAD--- */}
                     <thead className="bg-c text-center">
                       <tr>
                         <th scope="col" className="py-3.5 px-4 text-sm font-medium text-center text-w relative">
@@ -1322,8 +1185,6 @@ const Table = () => {
                         </th>
                       </tr>
                     </thead>
-                    {/* ---THEAD--- */}
-                    {/* ---TBODY--- */}
                     <tbody className="bg-white divide-y divide-c">
                       {filteredCitas.map((cita) => (
                         <tr key={cita._id}>
@@ -1332,9 +1193,7 @@ const Table = () => {
                           <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">{nombresApellidosUsuarios[cita.user]}</td>
                           <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">{cita.doctor}</td>
                           <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">{nombresApellidosDoctores[cita.doctor]}</td>
-                          <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">
-                            {cita.appointmentDate} {/* Fecha */}
-                          </td>
+                          <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">{cita.appointmentDate}</td>
                           <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">{cita.appointmentTime}</td>
                           <td className="px-4 py-4 text-sm font-medium text-c whitespace-nowrap">{typeof cita.state === "string" ? cita.state.toLowerCase() : cita.state ? "Activa" : "Inactiva"}</td>
                           <td>
@@ -1344,7 +1203,6 @@ const Table = () => {
                                   handleCaptureCitaIdUpdate(cita._id);
                                   handleCaptureCitaData(cita);
                                   openEditModalAppointment();
-                                  // Aquí llamamos a handleDateChange con los valores relevantes
                                   handleDateChange(cita.appointmentDate, cita.doctor);
                                 }}
                                 className="hover:bg-w rounded focus:outline-none focus:shadow-outline">
@@ -1363,87 +1221,86 @@ const Table = () => {
                         </tr>
                       ))}
                     </tbody>
-                    {/* ---TBODY--- */}
                   </table>
                 )}
-                {/* ---TABLAAPPOINTMENTS--- */}
               </div>
             </div>
           </div>
         </div>
-        {/* Modal de confirmación para eliminar Users */}
         {showDeleteModalUser && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={closeDeleteModalUser}>
             <div className="bg-white rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
               <p className="font-medium text-c">¿Estás seguro de que quieres eliminar este Usuario?</p>
               <div className="flex justify-center mt-4">
+
+
                 <button
                   onClick={() => handleDeleteUserConfirm(userIdToDelete)}
                   className="px-4 py-2 btn-info bg-ts hover:bg-hb hover:text-w hover:border-none text-c rounded mr-4"
-                  // Llamar a la función para eliminar el elemento al confirmar
+                  
                 >
                   Sí, eliminar
                 </button>
                 <button
                   onClick={closeDeleteModalUser}
                   className="btn-info bg-ts hover:bg-hb hover:text-w hover:border-none text-c px-4 py-2 rounded"
-                  // Llamar a la función para cerrar la modal al cancelar
+                  
                 >
+
                   Cancelar
                 </button>
               </div>
             </div>
           </div>
         )}
-        {/* Modal de confirmación para eliminar Doctors */}
         {showDeleteModalDoctor && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={closeDeleteModalDoctor}>
             <div className="bg-white rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
               <p className="font-medium text-c">¿Estás seguro de que quieres eliminar este Doctor?</p>
               <div className="flex justify-center mt-4">
+
+
                 <button
                   onClick={handleDeleteDoctorConfirm}
                   className="px-4 py-2 btn-info bg-ts hover:bg-hb hover:text-w hover:border-none text-c rounded mr-4"
-                  // Llamar a la función para eliminar el elemento al confirmar
                 >
                   Sí, eliminar
                 </button>
                 <button
                   onClick={closeDeleteModalDoctor}
                   className="btn-info bg-ts hover:bg-hb hover:text-w hover:border-none text-c px-4 py-2 rounded"
-                  // Llamar a la función para cerrar la modal al cancelar
                 >
+
                   Cancelar
                 </button>
               </div>
             </div>
           </div>
         )}
-        {/* Modal de confirmación para eliminar Appointments */}
         {showDeleteModalAppoinment && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={closeDeleteModalAppointment}>
             <div className="bg-white rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
               <p className="font-medium text-c">¿Estás seguro de que quieres eliminar este Appointment?</p>
               <div className="flex justify-center mt-4">
+
+
                 <button
                   onClick={handleDeleteCitaConfirm}
                   className="px-4 py-2 btn-info bg-ts hover:bg-hb hover:text-w hover:border-none text-c rounded mr-4"
-                  // Llamar a la función para eliminar el elemento al confirmar
                 >
                   Sí, eliminar
                 </button>
                 <button
                   onClick={closeDeleteModalAppointment}
                   className="btn-info bg-ts hover:bg-hb hover:text-w hover:border-none text-c px-4 py-2 rounded"
-                  // Llamar a la función para cerrar la modal al cancelar
                 >
+
                   Cancelar
                 </button>
               </div>
             </div>
           </div>
         )}
-        {/* Modal para editar Users */}
         {showEditModalUser && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={closeEditModalUser}>
             <div className="bg-c text-w rounded-lg p-8 max-w-md text-center" onClick={(e) => e.stopPropagation()}>
@@ -1462,11 +1319,9 @@ const Table = () => {
                 }}
                 validationSchema={userValidationSchema}
                 onSubmit={(values) => {
-                  // Define initial values for isDoctor and isAuditor
                   let isDoctorValue = false;
                   let isAuditorValue = false;
 
-                  // Check the value of the role and update isDoctor and isAuditor accordingly
                   if (values.rol === "User") {
                     isDoctorValue = false;
                     isAuditorValue = false;
@@ -1478,7 +1333,6 @@ const Table = () => {
                     isAuditorValue = true;
                   }
 
-                  // Create an object with the form values including isDoctor and isAuditor
                   const formDataUser = {
                     dni: values.DNI,
                     name: values.nombre,
@@ -1572,7 +1426,6 @@ const Table = () => {
           </div>
         )}
 
-        {/* Modal para editar Doctors */}
         {showEditModalDoctor && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={closeEditModalDoctor}>
             <div className="bg-c text-w rounded-lg p-8 max-w-md text-center" onClick={(e) => e.stopPropagation()}>
@@ -1589,11 +1442,9 @@ const Table = () => {
                 }}
                 validationSchema={doctorValidationSchema}
                 onSubmit={(values) => {
-                  // Define initial values for isDoctor and isAuditor
                   let isDoctorValue = false;
                   let isAuditorValue = false;
 
-                  // Check the value of the role and update isDoctor and isAuditor accordingly
                   if (values.rol === "User") {
                     isDoctorValue = false;
                     isAuditorValue = false;
@@ -1605,7 +1456,6 @@ const Table = () => {
                     isAuditorValue = true;
                   }
 
-                  // Create an object with the form values including isDoctor and isAuditor
                   const formDataDoctor = {
                     dni: values.DNI,
                     name: values.nombre,
@@ -1691,7 +1541,6 @@ const Table = () => {
           </div>
         )}
 
-        {/* Modal para editar Appointments */}
         {showEditModalAppoinment && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={closeEditModalAppointment}>
             <div className="bg-c text-w rounded-lg p-8 max-w-md text-center" onClick={(e) => e.stopPropagation()}>
@@ -1706,24 +1555,20 @@ const Table = () => {
                 }}
                 validationSchema={appointmentValidationSchema}
                 onSubmit={(values) => {
-                  // Define initial values for isDoctor and isAuditor
                   let stateValue = false;
 
-                  // Check the value of the state and update stateValue accordingly
                   if (values.estado === "Activa") {
                     stateValue = true;
                   } else if (values.estado === "Inactiva") {
                     stateValue = false;
                   }
 
-                  stateValue = Boolean(stateValue); // Convertir a booleano
+                  stateValue = Boolean(stateValue);
 
-                  const selectedDate = moment(values.fecha); // Obtener la fecha seleccionada del formulario
+                  const selectedDate = moment(values.fecha);
 
-                  // Obtener la fecha formateada para enviarla al backend
                   const formattedDate = selectedDate.format("YYYY-MM-DD");
 
-                  // Create an object with the form values including isDoctor and isAuditor
                   const formDataCita = {
                     user: values.usuario,
                     doctor: values.Doctor,
@@ -1732,14 +1577,11 @@ const Table = () => {
                     state: stateValue,
                   };
 
-                  // Aquí puedes manejar la lógica para enviar los datos del formulario
                   actualizarDatosEnBackendCita(citaIdToUpdate, formDataCita);
                   closeEditModalAppointment();
                   handleSaveChangesAppoinmentConfirm();
                 }}>
-                {(
-                  { handleSubmit, values, setFieldValue } // Asegúrate de incluir values aquí
-                ) => (
+                {({ handleSubmit, values, setFieldValue }) => (
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="flex items-center justify-between">
                       <label htmlFor="usuario" className="mr-2 w-24">
@@ -1782,7 +1624,6 @@ const Table = () => {
                         placeholderText="Selecciona una fecha"
                         name="fecha"
                         filterDate={(date) => {
-                          // Restringe la selección a días posteriores a hoy y que no sean sábado ni domingo
                           const day = date.getDay();
                           const today = new Date();
                           return day !== 0 && day !== 6 && date >= today;
@@ -1825,58 +1666,42 @@ const Table = () => {
           </div>
         )}
 
-        {/* Modal de confirmación de eliminar User */}
         {showSuccessModalUser && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={handleCerrarDeleteUserSucess}>
             <div className="bg-white rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
               <p className="text-c font-medium">Usuario eliminado correctamente.</p>
               <div className="flex justify-center mt-4">
-                <button
-                  onClick={handleCerrarDeleteUserSucess}
-                  className="px-4 py-2 bg-ts text-c rounded hover:bg-hb hover:text-w"
-                  // Llamar a la función para cerrar la modal de confirmación
-                >
+                <button onClick={handleCerrarDeleteUserSucess} className="px-4 py-2 bg-ts text-c rounded hover:bg-hb hover:text-w">
                   Cerrar
                 </button>
               </div>
             </div>
           </div>
         )}
-        {/* Modal de confirmación de eliminar Doctor */}
         {showSuccessModalDoctor && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={handleCerrarDeleteDoctorSucess}>
             <div className="bg-white rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
               <p className="text-c font-medium">Doctor eliminado correctamente.</p>
               <div className="flex justify-center mt-4">
-                <button
-                  onClick={handleCerrarDeleteDoctorSucess}
-                  className="px-4 py-2 bg-ts text-c rounded hover:bg-hb hover:text-w"
-                  // Llamar a la función para cerrar la modal de confirmación
-                >
+                <button onClick={handleCerrarDeleteDoctorSucess} className="px-4 py-2 bg-ts text-c rounded hover:bg-hb hover:text-w">
                   Cerrar
                 </button>
               </div>
             </div>
           </div>
         )}
-        {/* Modal de confirmación de eliminar Doctor */}
         {showSuccessModalAppoinment && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={handleCerrarDeleteAppoinmentSucess}>
             <div className="bg-white rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
               <p className="text-c font-medium">Doctor eliminado correctamente.</p>
               <div className="flex justify-center mt-4">
-                <button
-                  onClick={handleCerrarDeleteAppoinmentSucess}
-                  className="px-4 py-2 bg-ts text-c rounded hover:bg-hb hover:text-w"
-                  // Llamar a la función para cerrar la modal de confirmación
-                >
+                <button onClick={handleCerrarDeleteAppoinmentSucess} className="px-4 py-2 bg-ts text-c rounded hover:bg-hb hover:text-w">
                   Cerrar
                 </button>
               </div>
             </div>
           </div>
         )}
-        {/* Modal de confirmación de guardar cambios de User */}
         {showSaveChangesModalUser && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={handleCerrarSaveChangesUserSuccess}>
             <div className="bg-white rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
@@ -1887,9 +1712,7 @@ const Table = () => {
                     handleCerrarSaveChangesUserSuccess();
                     closeEditModalUser();
                   }}
-                  className="px-4 py-2 bg-ts text-c rounded hover:bg-hb hover:text-w"
-                  // Llamar a la función para cerrar la modal de confirmación
-                >
+                  className="px-4 py-2 bg-ts text-c rounded hover:bg-hb hover:text-w">
                   Cerrar
                 </button>
               </div>
@@ -1906,16 +1729,13 @@ const Table = () => {
                     handleCerrarSaveChangesDoctorSuccess();
                     closeEditModalDoctor();
                   }}
-                  className="px-4 py-2 bg-ts text-c rounded hover:bg-hb hover:text-w"
-                  // Llamar a la función para cerrar la modal de confirmación
-                >
+                  className="px-4 py-2 bg-ts text-c rounded hover:bg-hb hover:text-w">
                   Cerrar
                 </button>
               </div>
             </div>
           </div>
         )}
-        {/* Modal de confirmación de guardar cambios de User */}
         {showSaveChangesModalAppoinment && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={handleCerrarSaveChangesAppoinmentSuccess}>
             <div className="bg-white rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
@@ -1926,16 +1746,13 @@ const Table = () => {
                     handleCerrarSaveChangesAppoinmentSuccess();
                     closeEditModalAppointment();
                   }}
-                  className="px-4 py-2 bg-ts text-c rounded hover:bg-hb hover:text-w"
-                  // Llamar a la función para cerrar la modal de confirmación
-                >
+                  className="px-4 py-2 bg-ts text-c rounded hover:bg-hb hover:text-w">
                   Cerrar
                 </button>
               </div>
             </div>
           </div>
         )}
-        {/* Modal para Crear Nuevos Users */}
         {showCreateNewModalUser && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={closeCreateNewModalUser}>
             <div className="bg-c text-w rounded-lg p-8 max-w-md text-center" onClick={(e) => e.stopPropagation()}>
@@ -2047,7 +1864,6 @@ const Table = () => {
             </div>
           </div>
         )}
-        {/* Modal para Crear Nuevos Doctors */}
         {showCreateNewModalDoctor && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={closeCreateNewModalDoctor}>
             <div className="bg-c text-w rounded-lg p-8 max-w-md text-center" onClick={(e) => e.stopPropagation()}>
@@ -2069,7 +1885,6 @@ const Table = () => {
                     let isDoctorValue = true;
                     let isAuditorValue = false;
 
-                    // Verificar el valor del rol y actualizar isDoctor e isAuditor en consecuencia
                     if (values.rol === "User") {
                       isDoctorValue = false;
                       isAuditorValue = false;
@@ -2081,7 +1896,6 @@ const Table = () => {
                       isAuditorValue = true;
                     }
 
-                    // Crear un objeto con los valores del formulario incluyendo isDoctor e isAuditor
                     const formDataDoctor = {
                       dni: values.dni,
                       name: values.name,
@@ -2094,7 +1908,6 @@ const Table = () => {
                       isAuditor: isAuditorValue,
                     };
 
-                    // Llamar a la función signupDoctor con formDataDoctor
                     const response = await signupDoctor(formDataDoctor);
 
                     if (response && response.status === 400) {
@@ -2106,7 +1919,6 @@ const Table = () => {
                   } catch (error) {
                     console.error("Error al registrar el usuario:", error);
                   } finally {
-                    // Realizar cualquier acción adicional necesaria después del envío del formulario
                     obtenerDoctoresDesdeBackend();
                     setSubmitting(false);
                   }
@@ -2153,7 +1965,6 @@ const Table = () => {
                         <option value="Doctor">Selecciona un rol</option>
                         <option value="Doctor">Doctor</option>
                         <option value="Auditor">Auditor</option>
-                        {/* Agregar otras opciones si es necesario */}
                       </Field>
                       <ErrorMessage name="rol" component="div" className="text-red-300" />
                     </div>
@@ -2171,7 +1982,6 @@ const Table = () => {
             </div>
           </div>
         )}
-        {/* Modal para Crear Nuevos Appointments */}
         {showCreateNewModalAppoinment && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={closeCreateNewModalAppointment}>
             <div className="bg-c text-w rounded-lg p-8 max-w-md text-center" onClick={(e) => e.stopPropagation()}>
@@ -2183,21 +1993,18 @@ const Table = () => {
                   appointmentDate: "",
                   appointmentTime: "",
                   state: true,
-                  especialidad: "", // Agrega la especialidad al estado inicial
+                  especialidad: "",
                 }}
                 validationSchema={appointmentCreateValidationSchema}
                 onSubmit={async (values) => {
                   try {
-                    const selectedDate = moment(values.appointmentDate); // Obtener la fecha seleccionada del formulario
+                    const selectedDate = moment(values.appointmentDate);
 
-                    // Obtener la fecha formateada para enviarla al backend
                     const formattedDate = selectedDate.format("YYYY-MM-DD");
-                    // Actualizar el valor de 'doctor' en 'values' con el valor actual de 'doctorId'
                     values.doctor = doctorId;
                     values.appointmentDate = formattedDate;
                     values.user = userId;
                     const response = await postAppointment(values);
-                    // Resto del código...
                     handleCreateNewAppoinmentConfirm();
                     closeCreateNewModalAppointment();
                     obtenerCitasDesdeBackend();
@@ -2208,14 +2015,7 @@ const Table = () => {
                 {({ handleSubmit, values, setFieldValue }) => (
                   <form onSubmit={handleSubmit}>
                     <div className="mb-4">
-                      <input
-                        type="text"
-                        className="input-field bg-w text-c rounded w-56"
-                        name="dni"
-                        placeholder="DNI/LC/LE/PASSPORT"
-                        value={dni}
-                        onChange={(e) => handleDniChange(e)} // Manejar cambios en el DNI
-                      />
+                      <input type="text" className="input-field bg-w text-c rounded w-56" name="dni" placeholder="DNI/LC/LE/PASSPORT" value={dni} onChange={(e) => handleDniChange(e)} />
                     </div>
                     <div className="mb-4">
                       <Field
@@ -2223,9 +2023,9 @@ const Table = () => {
                         className="input-field bg-w text-c rounded w-56"
                         name="especialidad"
                         onChange={(e) => {
-                          handleEspecialidadChange(e); // Llama a la función handleEspecialidadChange
+                          handleEspecialidadChange(e);
                           setFieldValue("especialidad", e.target.value);
-                          setDoctorId(""); // Resetear el doctor seleccionado cuando se cambia la especialidad
+                          setDoctorId("");
                         }}>
                         <option value="">Selecciona una especialidad</option>
                         {especialidadesMedicas.map((especialidad, index) => (
@@ -2298,9 +2098,7 @@ const Table = () => {
                     handleCerrarCreateNewUserSuccess();
                     closeCreateNewModalUser();
                   }}
-                  className="px-4 py-2 bg-ts text-c rounded hover:bg-hb hover:text-w"
-                  // Llamar a la función para cerrar la modal de confirmación
-                >
+                  className="px-4 py-2 bg-ts text-c rounded hover:bg-hb hover:text-w">
                   Cerrar
                 </button>
               </div>
@@ -2317,16 +2115,13 @@ const Table = () => {
                     handleCerrarCreateNewDoctorSuccess();
                     closeCreateNewModalDoctor();
                   }}
-                  className="px-4 py-2 bg-ts text-c rounded hover:bg-hb hover:text-w"
-                  // Llamar a la función para cerrar la modal de confirmación
-                >
+                  className="px-4 py-2 bg-ts text-c rounded hover:bg-hb hover:text-w">
                   Cerrar
                 </button>
               </div>
             </div>
           </div>
         )}
-        {/* Modal de confirmación de guardar cambios de User */}
         {showCreateNewModalAppoinmentConfirm && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={handleCerrarCreateNewAppoinmentSuccess}>
             <div className="bg-white rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
@@ -2337,26 +2132,21 @@ const Table = () => {
                     handleCerrarCreateNewAppoinmentSuccess();
                     closeCreateNewModalAppointment();
                   }}
-                  className="px-4 py-2 bg-ts text-c rounded hover:bg-hb hover:text-w"
-                  // Llamar a la función para cerrar la modal de confirmación
-                >
+                  className="px-4 py-2 bg-ts text-c rounded hover:bg-hb hover:text-w">
                   Cerrar
                 </button>
               </div>
             </div>
           </div>
         )}
-        {/* Modal de appoinments By Id User */}
         {showAppointmentbyIdUserModal && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={closeAppointmentByIdUserModal}>
             <div className="bg-c rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
               <div className="citas-contenedor max-h-80 overflow-y-auto bg-c">
                 <h1 className="text-center mb-3 font-medium">Citas del Usuario</h1>
-                {/* Verificar si el usuario tiene citas */}
                 {userAppointments.length === 0 ? (
                   <p className="text-center text-w">El usuario no tiene citas registradas.</p>
                 ) : (
-                  // Ordenar las citas por fecha de forma descendente
                   userAppointments
                     .sort((a, b) => new Date(b.appointmentDate) - new Date(a.appointmentDate))
                     .map((appointment, index) => (
@@ -2375,7 +2165,6 @@ const Table = () => {
                           <p>
                             <strong className="text-hb">Nombre de médico:</strong> {nombresApellidosDoctores[appointment.doctor]}
                           </p>
-                          {/* Mostrar más detalles de la cita según sea necesario */}
                         </div>
                       </div>
                     ))
@@ -2386,27 +2175,21 @@ const Table = () => {
                   onClick={() => {
                     closeAppointmentByIdUserModal();
                   }}
-                  className="px-4 py-2 rounded hover:bg-hb hover:text-w text-c bg-ts"
-                  // Llamar a la función para cerrar la modal de confirmación
-                >
+                  className="px-4 py-2 rounded hover:bg-hb hover:text-w text-c bg-ts">
                   Cerrar
                 </button>
               </div>
             </div>
           </div>
         )}
-
-        {/* Modal de appoinments By Id Doctor */}
         {showAppointmentbyIdDoctorModal && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={closeAppointmentByIdDoctorModal}>
             <div className="bg-c rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
               <div className="citas-contenedor max-h-80 overflow-y-auto bg-c">
                 <h1 className="text-center mb-3 font-medium">Citas del Doctor</h1>
-                {/* Verificar si el usuario tiene citas */}
                 {doctorAppointments.length === 0 ? (
                   <p className="text-center text-w">El doctor no tiene citas registradas.</p>
                 ) : (
-                  // Ordenar las citas por fecha de forma descendente
                   doctorAppointments
                     .sort((a, b) => new Date(b.appointmentDate) - new Date(a.appointmentDate))
                     .map((appointment, index) => (
@@ -2425,7 +2208,6 @@ const Table = () => {
                           <p>
                             <strong className="text-hb">Nombre de médico:</strong> {nombresApellidosDoctores[appointment.doctor]}
                           </p>
-                          {/* Mostrar más detalles de la cita según sea necesario */}
                         </div>
                       </div>
                     ))
@@ -2436,9 +2218,7 @@ const Table = () => {
                   onClick={() => {
                     closeAppointmentByIdDoctorModal();
                   }}
-                  className="px-4 py-2 rounded hover:bg-hb hover:text-w text-c bg-ts"
-                  // Llamar a la función para cerrar la modal de confirmación
-                >
+                  className="px-4 py-2 rounded hover:bg-hb hover:text-w text-c bg-ts">
                   Cerrar
                 </button>
               </div>

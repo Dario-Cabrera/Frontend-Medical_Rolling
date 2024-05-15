@@ -22,14 +22,11 @@ export const AppointmentCard = ({ appointment }) => {
       } catch (error) {}
     };
     fetchDoctors();
-    // Verificar si la hora actual es posterior a la hora del turno
     const currentTime = new Date();
     const appointmentTime = new Date(appointment.appointmentTime);
     if (currentTime < appointmentTime && appointment.state === true) {
-      // Cambiar el estado del turno a false
       updateAppointment(appointment._id, { ...appointment, state: false });
     }
-    //Agregar el condicional de la fecha
   }, []);
   useEffect(() => {
     const fetchUsers = async () => {
@@ -83,12 +80,7 @@ export const AppointmentCard = ({ appointment }) => {
         </div>
       </header>
 
-      <p className="font-medium text-c">
-        DÍA:{" "}
-        {new Date(
-          moment(appointment.appointmentDate).toDate()
-        ).toLocaleDateString()}
-      </p>
+      <p className="font-medium text-c">DÍA: {new Date(moment(appointment.appointmentDate).toDate()).toLocaleDateString()}</p>
       <p className="font-medium text-c">HORA: {appointment.appointmentTime}</p>
       <p className="font-medium text-c">CONSULTORIO: 305</p>
     </div>

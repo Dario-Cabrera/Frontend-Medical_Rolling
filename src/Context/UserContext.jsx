@@ -48,23 +48,20 @@ export const UserProvider = ({ children }) => {
     try {
       const res = await loginRequestUser(user);
 
-      const token = res.data; // Suponiendo que el token está devuelto en res.data
+      const token = res.data;
 
       localStorage.setItem("token", token);
 
-      const resUser = await varityTokenRequest({ token }); //De lo que llegue tendra que jugar con validaciones para que se actualice una data determinada user, doctor o auditor
+      const resUser = await varityTokenRequest({ token });
       const { isDoctor, isAuditor } = resUser;
 
       if (!isDoctor && !isAuditor) {
-        // Usuario normal
         setIsAuthenticatedUser(true);
         setUser(resUser);
       } else if (isDoctor && !isAuditor) {
-        // Doctor
         setDoctor(resUser);
         setIsAuthenticatedDoctor(true);
       } else {
-        // Auditor
         setAuditor(resUser);
         setIsAuthenticatedAuditor(true);
       }
@@ -93,7 +90,7 @@ export const UserProvider = ({ children }) => {
         setErrors([]);
       }, 5000);
       return () => clearTimeout(timer);
-    } //se ejecuta cuando se desmonta el componente
+    }
   }, [[errors]]);
 
   useEffect(() => {
@@ -104,8 +101,8 @@ export const UserProvider = ({ children }) => {
         setUser(null);
         setIsAuthenticatedUser(false);
         setLoadingUser(false);
-        setDoctor(null); // Reinicia el estado del doctor
-        setAuditor(null); // Reinicia el estado del auditor
+        setDoctor(null);
+        setAuditor(null);
         return;
       }
       try {
@@ -114,22 +111,18 @@ export const UserProvider = ({ children }) => {
         if (!res) {
           setIsAuthenticatedUser(false);
           setLoadingUser(false);
-          setDoctor(null); // Reinicia el estado del doctor
-          setAuditor(null); // Reinicia el estado del auditor
+          setDoctor(null);
+          setAuditor(null);
           return;
         }
 
-        // Determinar el tipo de usuario y actualizar los estados correspondientes
         if (!isDoctor && !isAuditor) {
-          // Usuario normal
           setIsAuthenticatedUser(true);
           setUser(res);
         } else if (isDoctor && !isAuditor) {
-          // Doctor
           setIsAuthenticatedDoctor(true);
           setDoctor(res);
         } else {
-          // Auditor
           setIsAuthenticatedAuditor(true);
           setAuditor(res);
         }
@@ -141,8 +134,8 @@ export const UserProvider = ({ children }) => {
         setIsAuthenticatedAuditor(false);
         setUser(null);
 
-        setDoctor(null); // Reinicia el estado del doctor
-        setAuditor(null); // Reinicia el estado del auditor
+        setDoctor(null);
+        setAuditor(null);
 
         setLoadingUser(false);
       }

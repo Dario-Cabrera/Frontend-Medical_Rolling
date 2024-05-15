@@ -1,4 +1,3 @@
-// import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Homepage } from "../src/Views/Homepage";
 import { RegisterPageUser } from "../src/Views/RegisterPageUser";
@@ -23,7 +22,6 @@ import { Error404 } from "./Views/ERROR404";
 import { ContactForm } from "./Views/ContactUs";
 import moment from "moment-timezone";
 
-// Establecer la zona horaria por defecto
 moment.tz.setDefault("America/Argentina/Buenos_Aires");
 
 const App = () => {
@@ -43,72 +41,21 @@ const App = () => {
               <Route path="/contactPlan" element={<ContactPage />} />
               <Route path="/contact" element={<ContactForm />} />
               <Route path="/error" element={<Error404 />} />
-           
 
               <Route element={<ProtectedRouteAuditor />}>
                 <Route path="/auditorPage" element={<AuditorPage />} />
               </Route>
 
               <Route element={<ProtectedRouteDoctor />}>
-                <Route
-                  path="/appointmentsDoctor"
-                  element={<PagesDoctorAppointmentManagement />}
-                />
-                <Route
-                  path="/createappointmentsDoctor"
-                  element={<AppointmentFormPage />}
-                />
+                <Route path="/appointmentsDoctor" element={<PagesDoctorAppointmentManagement />} />
+                <Route path="/createappointmentsDoctor" element={<AppointmentFormPage />} />
               </Route>
 
               <Route element={<ProtectedRouteUser />}>
-                <Route
-                  path="/appointmentsUser"
-                  element={<PagesUserAppointmentManagement />}
-                />
-                <Route
-                  path="/createappointmentsUser"
-                  element={<AppointmentFormPage />}
-                />
+                <Route path="/createappointmentsUser" element={<AppointmentFormPage />} />
+                <Route path="/appointmentsUser" element={<PagesUserAppointmentManagement />} />
+
               </Route>
-
-              {/* <ProtectedRouteUser >
-              <Route path="/appointmentsUser" element={<AppointmentFormPage />   
-              } />
-              </ProtectedRouteUser> */}
-
-              {/* <Route
-                  path="/appointmentsUser"
-                  element={
-                    <ProtectedRoutes>
-                      <PagesUserAppointmentManagement />
-                </ProtectedRoutes>
-                }
-                /> */}
-
-              {/* <Route element={<ProtectedRouteUser />}>
-                <Route
-                  path="/appointmentsUser"
-                  element={<PagesUserAppointmentManagement />}
-                />
-
-                <Route
-                  path="/add-appointmentsUser"
-                  element={<AppointmentFormPage />}
-                />
-                <Route
-                  path="/appointments/:id"
-                  element={<AppointmentFormPage />}
-                />
-
-                <Route path="/users/:id" element={<RegisterPageUser />} />
-              </Route>
-              <Route element={<ProtectedRouteDoctor />}>
-                <Route path="/registerDoctor/" element={<RegisterPageDoctor />} />
-                <Route path="/appointmentsDoctor" element={<PagesDoctorAppointmentManagement />} />
-                <Route path="/add-appointments" element={<AppointmentFormPage />} />
-                <Route path="/appointments/:id" element={<AppointmentFormPage />} />
-                <Route path="/doctors/:id" element={<RegisterPageDoctor />} />
-              </Route> */}
             </Routes>
             <Footer />
           </BrowserRouter>

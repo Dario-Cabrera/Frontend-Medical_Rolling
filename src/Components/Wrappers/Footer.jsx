@@ -33,9 +33,6 @@ export const Footer = () => {
           </a>
         </div>
       </nav>
-      {/* <div>
-    <p>Copyright © 2024 - All right reserved by ACME Industries Ltd</p>
-  </div> */}
     </footer>
   );
 };
