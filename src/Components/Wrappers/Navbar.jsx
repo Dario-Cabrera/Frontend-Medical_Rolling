@@ -1,25 +1,9 @@
-// import React, { useState } from "react";
 import Logo_MR from "../../assets/img/Logo_MR.png";
 import { Link, NavLink, Navigate } from "react-router-dom";
 import { userAuth } from "../../Context/UserContext";
 import { useNavigate } from "react-router-dom";
-
-// import { doctorAuth } from "../../Context/DoctorContext";
-// import {ProtectedRoutes} from "../../Routes/ProtectedRoutes";
-
-// import { NavLink } from 'react-router-dom';
-
 export const Navbar = () => {
   const { isAuthenticatedUser, isAuthenticatedDoctor, isAuthenticatedAuditor, logoutUser, user, doctor, auditor } = userAuth();
-
-  //user/doctor/auditor ==> Tiene los datos de user.
-
-  // const { isAuthenticatedUser, logoutUser, user } = userAuth();
-  // const { isAuthenticatedDoctor, logoutDoctor, doctor } = doctorAuth();
-
-  //  const isAuthenticatedAuditor = false
-  //  const isAuthenticatedDoctor = false
-  //  const isAuthenticatedUser = true
 
   const LogOut = () => {
     logoutUser();
@@ -71,8 +55,6 @@ export const Navbar = () => {
               </>
             )}
 
-            {/* ----------------Botones Dropdown ----------------- */}
-
             {isAuthenticatedAuditor && (
               <li>
                 <Link to="/auditorPage" className="btn btn-xs mt-3 btn-info bg-hb text-w hover:text-c">
@@ -117,18 +99,12 @@ export const Navbar = () => {
               </Link>
             </li>
           </ul>
-
-          {/* ----------------Botones Dropdown ----------------- */}
         </div>
 
         <Link to="/" className="w-16 cursor-pointer">
           <img src={Logo_MR} alt="logo" />
         </Link>
-        {/* <img className="w-16 cursor-pointer" src={Logo_MR} alt="logo" /> */}
-        {/* <Link className="btn btn-ghost text-xl">daisyUI</Link> */}
       </div>
-
-      {/* ----------------Menú Navbar ----------------- */}
 
       {!(isAuthenticatedAuditor || isAuthenticatedDoctor) && (
         <div className="navbar-center hidden lg:flex ">
@@ -164,10 +140,6 @@ export const Navbar = () => {
           </ul>
         </div>
       )}
-
-      {/* ----------------Menú Navbar ----------------- */}
-
-      {/* ----------------Botones Navbar ----------------- */}
 
       <div className="navbar-end hidden lg:flex">
         {isAuthenticatedAuditor && (

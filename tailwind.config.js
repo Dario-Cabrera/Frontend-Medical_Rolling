@@ -4,7 +4,6 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Aquí puedes extender o agregar colores personalizados
         w: "#EDECE6",
         ts: "#00C4D0",
         hb: "#016096",

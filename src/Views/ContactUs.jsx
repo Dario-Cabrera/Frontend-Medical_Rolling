@@ -37,13 +37,13 @@ export const ContactForm = () => {
                 <p className="">Tel: +54-0381-4123456</p>
                 <h6 className="footer-title mt-6 text-ts">Redes Sociales</h6>
                 <div className="flex mt-2">
-                  <a className="mr-2" href="#">
+                  <a className="mr-2" href="https://www.facebook.com/Medical-Rolling" target="_blank">
                     <img src="https://i.ibb.co/WGr2GVn/facebook-5968973-NEGRO.png" width="29" height="29" className="img-fluid cursor-pointer" />
                   </a>
-                  <a className="mr-2" href="#">
+                  <a className="mr-2" href="https://www.instagram.com/Medical-Rolling" target="_blank">
                     <img src="https://i.ibb.co/xDwCBvp/instagram-5968982-NEGRO.png" width="29" height="29" className="img-fluid cursor-pointer" />
                   </a>
-                  <a href="#">
+                  <a href="https://www.whatsapp.com/Medical-Rolling" target="_blank">
                     <img src="https://i.ibb.co/V22ntPY/whatsapp-5969035-NEGRO.png" width="29" height="29" className="img-fluid cursor-pointer" />
                   </a>
                 </div>
@@ -57,12 +57,25 @@ export const ContactForm = () => {
                 </label>
                 <input
                   type="text"
-                  {...register("name", { required: "Este campo es obligatorio" })}
+                  {...register("name", { 
+                    required: {
+                      value: true,
+                      message: "Campo obligatorio"
+                      },
+                      minLength: {
+                      value: 3,
+                      message: "El nombre no es válido"
+                      },
+                      pattern: {
+                        value: /^(?!.* $)[A-Za-z][A-Za-z\s]+(?<!\s)$/,
+                        message: "El nombre no es válido"
+                      } 
+                  })}
                   id="name"
                   placeholder="Nombre Completo"
                   className="w-full mt-2 py-2 px-4 rounded-lg bg-white border border-ts text-c font-semibold focus:border-ts focus:outline-none"
                 />
-                {errors.name && <span className="text-red-500">{errors.name.message}</span>}
+                {errors.name && <span className="text-red-700">⚠️{errors.name.message}</span>}
               </div>
 
               <div className="flex flex-col mt-4">
@@ -71,12 +84,21 @@ export const ContactForm = () => {
                 </label>
                 <input
                   type="email"
-                  {...register("email", { required: "Este campo es obligatorio" })}
+                  {...register("email", { 
+                    required: {
+                      value: true,
+                      message: "Campo obligatorio"
+                      },
+                      pattern: {
+                        value: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+                        message: "Correo inválido"
+                      } 
+                  })}
                   id="email"
                   placeholder="Correo Electrónico"
                   className="w-full mt-2 py-2 px-4 rounded-lg bg-white border border-ts text-c font-semibold focus:border-ts focus:outline-none"
                 />
-                {errors.email && <span className="text-red-500">{errors.email.message}</span>}
+                {errors.email && <span className="text-red-700">⚠️{errors.email.message}</span>}
               </div>
 
               <div className="flex flex-col mt-4">
@@ -85,12 +107,29 @@ export const ContactForm = () => {
                 </label>
                 <input
                   type="tel"
-                  {...register("tel", { required: "Este campo es obligatorio", minLength: { value: 8, message: "El número de teléfono debe tener al menos 8 caracteres" } })}
+                  {...register("tel", { 
+                    required: {
+                      value: true,
+                      message: "Campo obligatorio"
+                      },
+                      minLength: {
+                      value: 6,
+                      message: "El teléfono debe tener 6 caracteres mínimo"
+                      },
+                      maxLength: {
+                        value: 8,
+                        message: "El teléfono debe tener 8 caracteres máximo"
+                        },
+                      pattern: {
+                        value: /^\d+$/,
+                        message: "Teléfono inválido"
+                      } 
+                  })}
                   id="tel"
                   placeholder="Número de Teléfono"
                   className="w-full mt-2 py-2 px-4 rounded-lg bg-white border border-ts text-c font-semibold focus:border-ts focus:outline-none"
                 />
-                {errors.tel && <span className="text-red-500">{errors.tel.message}</span>}
+                {errors.tel && <span className="text-red-700">⚠️{errors.tel.message}</span>}
               </div>
 
               <div className="flex flex-col mt-4">
@@ -98,12 +137,25 @@ export const ContactForm = () => {
                   Mensaje
                 </label>
                 <textarea
-                  {...register("message", { required: "Este campo es obligatorio" })}
+                  {...register("message", { 
+                    required: {
+                      value: true,
+                      message: "Campo obligatorio"
+                      },
+                      maxLength: {
+                      value: 300,
+                      message: "Excedió el número máximo de caracteres"
+                      }, 
+                      pattern: {
+                        value: /^\S.*\S$/,
+                        message: "Por favor, escriba un mensaje"
+                      } 
+                  })}
                   id="message"
                   placeholder="Mensaje"
                   className="w-full min-h-[200px] max-h-[300px] mt-2 py-2 px-4 rounded-lg bg-white border border-ts text-c font-semibold focus:border-ts focus:outline-none resize-none"
                 />
-                {errors.message && <span className="text-red-500">{errors.message.message}</span>}
+                {errors.message && <span className="text-red-700">⚠️{errors.message.message}</span>}
               </div>
 
               <button type="submit" className="w-full mt-6 bg-hb text-w hover:text-c font-bold py-3 px-6 rounded-lg hover:bg-ts transition ease-in-out duration-300">
@@ -113,8 +165,6 @@ export const ContactForm = () => {
           </div>
         </div>
       </div>
-
-      {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" onClick={closeModal}>
           <div className="bg-white p-8 max-w-md rounded-lg" onClick={(e) => e.stopPropagation()}>

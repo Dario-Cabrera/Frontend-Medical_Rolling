@@ -8,7 +8,7 @@ const Carousel = () => {
       title: "PLAN SENIOR",
       description: "Pensado para que vivas mejor que nunca!",
       imageUrl:
-        "https://img.freepik.com/free-photo/happy-grandparents-using-their-digital-laptop_329181-14741.jpg?t=st=1712706244~exp=1712709844~hmac=307187da4cf6f9a8fc98e25bab24fe70a963e8dd238502de2fb74331fc73866f&w=1380",
+        "https://img.freepik.com/foto-gratis/mujer-mayor-que-abraza-su-marido-que-usa-ordenador-portatil_23-2147901398.jpg?t=st=1715645917~exp=1715649517~hmac=b018a8d732a06fac2d99d76d39cd86155d32ccb2a26fe466c5dc00b18b3b6742&w=740",
     },
     {
       title: "PLAN FAMILIAR",
@@ -25,18 +25,17 @@ const Carousel = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 640); // Definir el ancho para dispositivos móviles según tus necesidades
+      setIsMobile(window.innerWidth <= 640);
     };
 
     window.addEventListener("resize", handleResize);
-    handleResize(); // Verificar el tamaño de la ventana al cargar la página
+    handleResize();
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const handleCarouselClick = (index) => {
     if (!isMobile) {
-      // Verificar si no es un dispositivo móvil
       const newCardsData = [...cardsData];
       const clickedCard = newCardsData.splice(index, 1)[0];
       newCardsData.splice(1, 0, clickedCard);
@@ -59,7 +58,9 @@ const Carousel = () => {
             <div className="p-4 bg-w rounded-b-lg text-center">
               <h2 className="text-xl font-bold mb-2 text-c">{card.title}</h2>
               <p className="text-sm mb-4 text-c">{card.description}</p>
-              <Link to="/contactPlan"><button className="btn btn-info bg-ts hover:bg-hb hover:text-w hover:border-none">Conocer más</button></Link>
+              <Link to="/contactPlan">
+                <button className="btn btn-info bg-ts hover:bg-hb hover:text-w hover:border-none">Conocer más</button>
+              </Link>
             </div>
           </div>
         ))}

@@ -1,5 +1,3 @@
-/* eslint-disable react/jsx-key */
-/* eslint-disable no-unused-vars */
 import { useForm } from "react-hook-form";
 import { userAuth } from "../Context/UserContext";
 import { useEffect } from "react";
@@ -23,7 +21,7 @@ export const RegisterPageUser = () => {
   });
 
   return (
-    <div className="flex h-[calc(100vh-100px)] items-center justify-center">
+    <div className="flex items-center justify-center">
       <div className="bg-w max-w-md p-10 rounded-md">
         {registerUserErrors.map((error, i) => (
           <div className="bg-red-500 p-2 text-white" key={i}>
@@ -33,50 +31,111 @@ export const RegisterPageUser = () => {
         <form onSubmit={onSubmit}>
           <input
             type="text"
-            {...register("name", { required: true })}
+            {...register("name", { 
+              required: {
+                value: true,
+                message: "Campo obligatorio"
+                },
+                minLength: {
+                value: 3,
+                message: "El nombre no es válido"
+                },
+                pattern: {
+                  value: /^(?!.* $)[A-Za-z][A-Za-z\s]+(?<!\s)$/,
+                  message: "El nombre no es válido"
+                }  
+            })}
             className="w-full  bg-white border-ts border-2 solid text-c px-4 py-2 my-2 rounded-md"
             placeholder="Name"
           />
-          {errors.name && <p className="text-red-500">Name is required</p>}
+          {errors.name && <span className="text-red-700">⚠️{errors.name.message}</span>}
           <input
             type="text"
-            {...register("lastname", { required: true })}
+            {...register("lastname", { 
+              required: {
+                value: true,
+                message: "Campo obligatorio"
+                },
+                minLength: {
+                value: 3,
+                message: "El apellido no es válido"
+                },
+                pattern: {
+                  value: /^(?!.* $)[A-Za-z][A-Za-z\s]+(?<!\s)$/,
+                  message: "El apellido no es válido"
+                }
+            })}
             className="w-full  bg-white border-ts border-2 solid text-c px-4 py-2 my-2 rounded-md"
             placeholder="Lastname"
           />
-          {errors.lastname && (
-            <p className="text-red-500">Lastname is required</p>
-          )}
+          {errors.lastname && <span className="text-red-700">⚠️{errors.lastname.message}</span>}
           <input
             type="number"
-            {...register("dni", { required: true })}
+            {...register("dni", { 
+              required: {
+                value: true,
+                message: "Campo obligatorio"
+                },
+                minLength: {
+                value: 7,
+                message: "Longitud de caracteres inválida"
+                },
+                maxLength: {
+                value: 8,
+                message: "Longitud de caracteres inválida"
+                },
+                pattern: {
+                value: /^\d+$/,
+                message: "Ingrese solo números"
+                } 
+            })}
             className="w-full  bg-white border-ts border-2 solid text-c px-4 py-2 my-2 rounded-md"
             placeholder="dni"
           />
-          {errors.dni && <p className="text-red-500">dni is required</p>}
+          {errors.dni && <span className="text-red-700">⚠️{errors.dni.message}</span>}
           <input
             type="email"
-            {...register("email", { required: true })}
+            {...register("email", { 
+              required: {
+                value: true,
+                message: "Campo obligatorio"
+                },
+                pattern: {
+                  value: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+                  message: "Correo inválido"
+                } 
+            })}
             className="w-full  bg-white border-ts border-2 solid text-c px-4 py-2 my-2 rounded-md"
             placeholder="Email"
           />
-          {errors.email && <p className="text-red-500">Email is required</p>}
+          {errors.email && <span className="text-red-700">⚠️{errors.email.message}</span>}
           <input
             type="password"
             {...register("pass", { required: true })}
             className="w-full  bg-white border-ts border-2 solid text-c px-4 py-2 my-2 rounded-md"
             placeholder="Password"
           />
-          {errors.pass && <p className="text-red-500">Password is required</p>}
+          {errors.pass && <p className="text-red-700">Password is required</p>}
           <input
             type="text"
-            {...register("province", { required: true })}
+            {...register("province", { 
+              required: {
+                value: true,
+                message: "Campo obligatorio"
+                },
+                minLength: {
+                value: 6,
+                message: "Longitud de caracteres inválida"
+                },
+                pattern: {
+                  value: /^(?!.* $)[A-Za-z][A-Za-z\s]+(?<!\s)$/,
+                  message: "Ingrese solo letras"
+                }    
+            })}
             className="w-full  bg-white border-ts border-2 solid text-c px-4 py-2 my-2 rounded-md"
             placeholder="Province"
           />
-          {errors.province && (
-            <p className="text-red-500">Province is required</p>
-          )}
+          {errors.province && <span className="text-red-700">⚠️{errors.province.message}</span>}
           <input
             type="text"
             {...register("address", { required: true })}
@@ -84,23 +143,57 @@ export const RegisterPageUser = () => {
             placeholder="Address"
           />
           {errors.address && (
-            <p className="text-red-500">Address is required</p>
+            <p className="text-red-700">Address is required</p>
           )}
           <input
             type="number"
-            {...register("area", { required: true })}
+            {...register("area", { 
+              required: {
+                value: true,
+                message: "Campo obligatorio"
+                },
+                minLength: {
+                value: 3,
+                message: "Cód. inválido"
+                },
+                maxLength: {
+                  value: 4,
+                  message: "Cód. inválido"
+                  },
+                pattern: {
+                  value: /^\d+$/,
+                  message: "Cód. inválido"
+                }
+            })}
             className="w-full  bg-white border-ts border-2 solid text-c px-4 py-2 my-2 rounded-md"
             placeholder="Area"
           />
-          {errors.area && <p className="text-red-500">Area is required</p>}
+          {errors.area && <span className="text-red-700">⚠️{errors.area.message}</span>}
           <input
             type="number"
-            {...register("phone", { required: true })}
+            {...register("phone", { 
+              required: {
+                value: true,
+                message: "Campo obligatorio"
+                },
+                minLength: {
+                value: 6,
+                message: "Teléfono inválido"
+                },
+                maxLength: {
+                  value: 8,
+                  message: "Teléfono inválido"
+                  },
+                pattern: {
+                  value: /^\d+$/,
+                  message: "Teléfono inválido"
+                }
+            })}
             className="w-full  bg-white border-ts border-2 solid text-c px-4 py-2 my-2 rounded-md"
             placeholder="Phone"
           />
 
-          {errors.phone && <p className="text-red-500">Phone is required</p>}
+          {errors.phone && <span className="text-red-700">⚠️{errors.phone.message}</span>}
           <button type="submit" className="text-hb">Register</button>
         </form>
         <p className="flex gap-x-2 py-3 justify-between">
