@@ -63,7 +63,7 @@ export const ContactPage = () => {
                     message: "El nombre no es válido",
                   },
                   pattern: {
-                    value: /^[A-Za-z\s]+$/,
+                    value: /^(?!.* $)[A-Za-z][A-Za-z\s]+(?<!\s)$/,
                     message: "El nombre no es válido",
                   },
                 })}
@@ -86,7 +86,7 @@ export const ContactPage = () => {
                     message: "El apellido no es válido",
                   },
                   pattern: {
-                    value: /^[A-Za-z\s]+$/,
+                    value: /^(?!.* $)[A-Za-z][A-Za-z\s]+(?<!\s)$/,
                     message: "El apellido no es válido",
                   },
                 })}
@@ -106,6 +106,10 @@ export const ContactPage = () => {
                       },
                       minLength: {
                         value: 3,
+                        message: "Cód. inválido",
+                      },
+                      maxLength: {
+                        value: 4,
                         message: "Cód. inválido",
                       },
                       pattern: {
@@ -129,6 +133,10 @@ export const ContactPage = () => {
                       },
                       minLength: {
                         value: 6,
+                        message: "Teléfono inválido",
+                      },
+                      maxLength: {
+                        value: 8,
                         message: "Teléfono inválido",
                       },
                       pattern: {
