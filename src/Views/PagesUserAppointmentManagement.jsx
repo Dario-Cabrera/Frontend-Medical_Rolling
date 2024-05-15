@@ -16,7 +16,7 @@ export const PagesUserAppointmentManagement = () => {
 return (
       <div className="p-4">
         <div className="flex flex-col  min-h-screen">
-          <h1 className="text-2xl font-bold mb-4 text-ts">No appointments</h1>;
+          <h1 className="text-2xl font-bold mb-4 text-ts">No appointments</h1>
         </div>
       </div>
     );
