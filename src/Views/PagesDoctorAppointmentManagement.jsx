@@ -13,8 +13,13 @@ export const PagesDoctorAppointmentManagement = () => {
   }, []);
 
   if (appointments.length === 0)
-    return <h1 className="text-2xl font-bold mb-4 text-ts">No appointments</h1>;
-
+return (
+      <div className="p-4">
+        <div className="flex flex-col  min-h-screen">
+          <h1 className="text-2xl font-bold mb-4 text-ts">No appointments</h1>;
+        </div>
+      </div>
+    );
   const activeAppointments = appointments.filter(
     (appointment) => appointment.state === true
   );
