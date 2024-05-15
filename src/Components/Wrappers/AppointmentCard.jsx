@@ -65,7 +65,7 @@ export const AppointmentCard = ({ appointment }) => {
               <p className="font-medium text-c">
                 PACIENTE: {user.name} {user.lastname}
               </p>
-              <p>
+              <p className="font-medium text-c">
                 MÉDICO: {doctor.name} {doctor.lastname}
               </p>
             </>
@@ -74,7 +74,7 @@ export const AppointmentCard = ({ appointment }) => {
               <p className="font-medium text-c">
                 MÉDICO: {doctor.name} {doctor.lastname}
               </p>
-              <p>ESPECIALIDAD: {doctor.specialty}</p>
+              <p className="font-medium text-c">ESPECIALIDAD: {doctor.specialty}</p>
             </>
           )}
         </div>

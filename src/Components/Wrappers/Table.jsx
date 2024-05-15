@@ -1230,12 +1230,23 @@ const Table = () => {
         {showDeleteModalUser && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={closeDeleteModalUser}>
             <div className="bg-white rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
-              <p>¿Estás seguro de que quieres eliminar este Usuario?</p>
+              <p className="font-medium text-c">¿Estás seguro de que quieres eliminar este Usuario?</p>
               <div className="flex justify-center mt-4">
-                <button onClick={() => handleDeleteUserConfirm(userIdToDelete)} className="px-4 py-2 bg-red-500 text-white rounded mr-4 hover:bg-red-700">
+
+
+                <button
+                  onClick={() => handleDeleteUserConfirm(userIdToDelete)}
+                  className="px-4 py-2 btn-info bg-ts hover:bg-hb hover:text-w hover:border-none text-c rounded mr-4"
+                  
+                >
                   Sí, eliminar
                 </button>
-                <button onClick={closeDeleteModalUser} className="px-4 py-2 bg-gray-300 rounded hover:bg-w">
+                <button
+                  onClick={closeDeleteModalUser}
+                  className="btn-info bg-ts hover:bg-hb hover:text-w hover:border-none text-c px-4 py-2 rounded"
+                  
+                >
+
                   Cancelar
                 </button>
               </div>
@@ -1245,12 +1256,21 @@ const Table = () => {
         {showDeleteModalDoctor && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={closeDeleteModalDoctor}>
             <div className="bg-white rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
-              <p>¿Estás seguro de que quieres eliminar este Doctor?</p>
+              <p className="font-medium text-c">¿Estás seguro de que quieres eliminar este Doctor?</p>
               <div className="flex justify-center mt-4">
-                <button onClick={handleDeleteDoctorConfirm} className="px-4 py-2 bg-red-500 text-white rounded mr-4 hover:bg-red-700">
+
+
+                <button
+                  onClick={handleDeleteDoctorConfirm}
+                  className="px-4 py-2 btn-info bg-ts hover:bg-hb hover:text-w hover:border-none text-c rounded mr-4"
+                >
                   Sí, eliminar
                 </button>
-                <button onClick={closeDeleteModalDoctor} className="px-4 py-2 bg-gray-300 rounded hover:bg-w">
+                <button
+                  onClick={closeDeleteModalDoctor}
+                  className="btn-info bg-ts hover:bg-hb hover:text-w hover:border-none text-c px-4 py-2 rounded"
+                >
+
                   Cancelar
                 </button>
               </div>
@@ -1260,12 +1280,21 @@ const Table = () => {
         {showDeleteModalAppoinment && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center" onClick={closeDeleteModalAppointment}>
             <div className="bg-white rounded-lg p-8" onClick={(e) => e.stopPropagation()}>
-              <p>¿Estás seguro de que quieres eliminar este Appointment?</p>
+              <p className="font-medium text-c">¿Estás seguro de que quieres eliminar este Appointment?</p>
               <div className="flex justify-center mt-4">
-                <button onClick={handleDeleteCitaConfirm} className="px-4 py-2 bg-red-500 text-white rounded mr-4 hover:bg-red-700">
+
+
+                <button
+                  onClick={handleDeleteCitaConfirm}
+                  className="px-4 py-2 btn-info bg-ts hover:bg-hb hover:text-w hover:border-none text-c rounded mr-4"
+                >
                   Sí, eliminar
                 </button>
-                <button onClick={closeDeleteModalAppointment} className="px-4 py-2 bg-gray-300 rounded hover:bg-w">
+                <button
+                  onClick={closeDeleteModalAppointment}
+                  className="btn-info bg-ts hover:bg-hb hover:text-w hover:border-none text-c px-4 py-2 rounded"
+                >
+
                   Cancelar
                 </button>
               </div>
